@@ -922,7 +922,8 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "[variables('apiVersionLinkTemplate')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('openshiftMasterHostname'))]"
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('openshiftMasterHostname'))]",
+                "nodeScriptLoop"
             ],
             "properties": {
                 "mode": "Incremental",
