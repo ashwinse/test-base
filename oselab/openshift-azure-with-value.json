@@ -196,7 +196,6 @@
         },
         "sshPublicKey": {
             "type": "securestring",
-            "defaultValue":"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8T46pA0uM64Yeis6DO9Q01g8lfvHMe4I4kpRW9u4QYiDL6jctLw6+Y1VHtROIYvuN4AHqBR7hQgAX3256Cu90EhmygWZglsVcKUBhir25NRuRM4qBcA+k1oBJt0EOKXZRDw6Efb/wLEcDtP2jnx7dOb9C7NewNNPCAEIOIvwfLechHAC7VcTe6cvqQ37r8TJpMz7WHZYhS4eyCajZt3KLbi+XciEWbucXISLPL4h+9RpVAkybmCkIfB08lX/wQ+d2O7Q0hOOLB6gU/49w/fkBmEjz13pRQcB5gV9ULbHIkP6Wn3mXYXGZm6rwzDHSC1BcxZy1erKqekhHtTMqZ6DZ",
             "metadata": {
                 "description": "SSH public key on all VMs"
             }
@@ -236,14 +235,14 @@
     "variables": {
         "openshiftMasterPublicIpDnsLabel":"[concat(parameters('openshiftMasterPublicIpDnsLabelPrefix'),uniqueString(resourceGroup().id))]",
         "nodeLbPublicIpDnsLabel":"[concat(parameters('nodeLbPublicIpDnsLabelPrefix'),uniqueString(resourceGroup().id))]",
-        "baseUrl":"https://raw.githubusercontent.com/haroldwongms/oselab/master",
+        "baseUrl":"https://raw.githubusercontent.com/ashwinse/test-base/master/oselab",
         "osDiskStorageAccount":"https://openshiftimage.blob.core.windows.net/",
         "location": "westus",
         "apiVersionCompute": "2015-06-15",
         "apiVersionNetwork": "2015-06-15",
         "apiVersionStorage": "2015-06-15",
         "apiVersionLinkTemplate": "2015-01-01",
-        "storageAccountType": "Standard_LRS",
+        
         "namingInfix": "[toLower(parameters('nodePrefix'))]",
         "newStorageAccountMaster": "[concat(uniqueString(concat(resourceGroup().id, 'msa', '0')), 'msa')]",
         "addressPrefix": "192.168.0.0/16",
@@ -266,21 +265,14 @@
             "sku": "7.2",
             "version": "latest"
         },
-        "sshPrivateKey": {
-            "reference": {
-                "keyvault": {
-                    "id": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('keyVaultResourceGroup'), '/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
-                },
-                "secretName": "[parameters('keyVaultSecret')]"
-            }
-        },
-        "osDiskVhdSourceContainer": "images/",
+        
+       
         "osDiskVhdContainer": "[concat('labdeploy',uniqueString(resourceGroup().id),'/')]",
         "userImageMasterVhdName": "master.vhd",
         "userImageNodeVhdName": "node.vhd",
         "userImageMasterName": "https://openshiftimage.blob.core.windows.net/image/master.vhd",
         "userImageNodeName": "https://openshiftimage.blob.core.windows.net/image/node.vhd",
-        "imageReference": "[variables('osType')]",
+        
         "sshKeyPath": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
         "nodePrepScriptUrl": "[concat(variables('baseUrl'), '/nodePrep.sh')]",
         "masterPrepScriptUrl": "[concat(variables('baseUrl'), '/masterPrep.sh')]",
