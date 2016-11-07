@@ -166,6 +166,7 @@
         },
         "adminPassword": {
             "type": "securestring",
+            "defaultValue": "Ashpassword123",
             "minLength": 1,
             "metadata": {
                 "description": "Administrator password for OpenShift Console"
@@ -181,6 +182,7 @@
         },
         "cloudAccessPassword": {
             "type": "securestring",
+            
             "minLength": 1,
             "metadata": {
                 "description": "Cloud Access password"
