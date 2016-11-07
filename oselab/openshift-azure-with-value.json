@@ -198,6 +198,7 @@
         },
         "sshPublicKey": {
             "type": "securestring",
+            "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAlCo2jb4a7d8i6gSKBPcs4IXUyZul2uu+lOUV76169iifoqJc8clgMJjO/9aqi+8VY7D2qJYe7CWOPDLSkfCqe9YNLovRAwxeP7jprnNfC/I2wbPaC9NBVsHCme84rX7KcZzkXu/n9CmH9RrX6cqL+krv8l24eTsG8UKl7bxrA97gC3bbMvEo4weF2y/xqcJkIO/xm38/hIaxaZdaJ6iEKeLHnMlAHTHHzwlmliSDumEjy8i3FgeMpx1BVGJ2Z/u8RBl/7a9oId+SWhRrqLKOfev+zaVTiJsj1rIxKly6KRS3ZQeyMEm4A4QuPS0Wrpk0ZqfIlIMcAIpRH9fewYQB5w== rsa-key-20161107",
             "metadata": {
                 "description": "SSH public key on all VMs"
             }
