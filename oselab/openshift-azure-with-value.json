@@ -2,7 +2,6 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        
         "masterVmSize": {
             "type": "string",
             "defaultValue": "Standard_DS3_v2",
@@ -116,7 +115,7 @@
             }
         },
         "openshiftMasterHostname": {
-            "defaultValue": "red",
+            "defaultValue": "redMaster",
             "type": "string",
             "minLength": 1,
             "metadata": {
@@ -173,7 +172,7 @@
             }
         },
         "cloudAccessUsername": {
-            "defaultValue":"pradeep-sysgain",
+            "defaultValue": "pradeep-sysgain",
             "type": "string",
             "minLength": 1,
             "metadata": {
@@ -182,14 +181,14 @@
         },
         "cloudAccessPassword": {
             "type": "securestring",
-
             "minLength": 1,
+            "defaultValue": "S3aHawks#",
             "metadata": {
                 "description": "Cloud Access password"
             }
         },
         "cloudAccessPoolId": {
-            "defaultValue":"8a85f98151bb49d20151ca249d483d93",
+            "defaultValue": "8a85f98151bb49d20151ca249d483d93",
             "type": "string",
             "minLength": 1,
             "metadata": {
@@ -205,7 +204,7 @@
         },
         "subscriptionId": {
             "type": "string",
-            "defaultValue":"7eab3893-bd71-4690-84a5-47624df0b0e5",
+            "defaultValue": "7eab3893-bd71-4690-84a5-47624df0b0e5",
             "minLength": 1,
             "metadata": {
                 "description": "Azure Subscription ID"
@@ -213,7 +212,7 @@
         },
         "keyVaultResourceGroup": {
             "type": "string",
-            "defaultValue":"bbtestos6",
+            "defaultValue": "bbtestos6",
             "minLength": 1,
             "metadata": {
                 "description": "Resource Group that contains the Key Vault"
@@ -221,7 +220,7 @@
         },
         "keyVaultName": {
             "type": "string",
-            "defaultValue":"bbopenshiftkeyvault6",
+            "defaultValue": "bbopenshiftkeyvault6",
             "minLength": 1,
             "metadata": {
                 "description": "Name of the Key Vault"
@@ -229,6 +228,7 @@
         },
         "keyVaultSecret": {
             "type": "securestring",
+            "defaultValue": "privatekey6",
             "minLength": 1,
             "metadata": {
                 "description": "Key Vault Secret Name that contains the Private Key"
@@ -236,23 +236,21 @@
         }
     },
     "variables": {
-        "openshiftMasterPublicIpDnsLabel":"[concat(parameters('openshiftMasterPublicIpDnsLabelPrefix'),uniqueString(resourceGroup().id))]",
-        "nodeLbPublicIpDnsLabel":"[concat(parameters('nodeLbPublicIpDnsLabelPrefix'),uniqueString(resourceGroup().id))]",
-        "baseUrl":"https://raw.githubusercontent.com/ashwinse/test-base/master/oselab",
-        "osDiskStorageAccount":"https://openshiftimage.blob.core.windows.net/",
+        "openshiftMasterPublicIpDnsLabel": "[concat(parameters('openshiftMasterPublicIpDnsLabelPrefix'),uniqueString(resourceGroup().id))]",
+        "nodeLbPublicIpDnsLabel": "[concat(parameters('nodeLbPublicIpDnsLabelPrefix'),uniqueString(resourceGroup().id))]",
+        "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/oselab",
+        "osDiskStorageAccount": "https://openshiftimage.blob.core.windows.net/",
         "location": "westus",
         "apiVersionCompute": "2015-06-15",
         "apiVersionNetwork": "2015-06-15",
         "apiVersionStorage": "2015-06-15",
         "apiVersionLinkTemplate": "2015-01-01",
-        
         "namingInfix": "[toLower(parameters('nodePrefix'))]",
         "newStorageAccountMaster": "[concat(uniqueString(concat(resourceGroup().id, 'msa', '0')), 'msa')]",
         "addressPrefix": "192.168.0.0/16",
         "masterSubnetPrefix": "192.168.1.0/24",
         "nodeSubnetPrefix": "192.168.2.0/24",
         "virtualNetworkName": "osvnet",
-  
         "masterSubnetName": "mastersubnet",
         "nodeSubnetName": "[concat(variables('namingInfix'), 'nodesubnet')]",
         "nodeLoadBalancerName": "[concat(variables('namingInfix'), 'lb')]",
@@ -268,13 +266,9 @@
             "sku": "7.2",
             "version": "latest"
         },
-        
-       
         "osDiskVhdContainer": "[concat('labdeploy',uniqueString(resourceGroup().id),'/')]",
-     
         "userImageMasterName": "https://openshiftimage.blob.core.windows.net/image/master.vhd",
         "userImageNodeName": "https://openshiftimage.blob.core.windows.net/image/node.vhd",
-        
         "sshKeyPath": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
         "nodePrepScriptUrl": "[concat(variables('baseUrl'), '/nodePrep.sh')]",
         "masterPrepScriptUrl": "[concat(variables('baseUrl'), '/masterPrep.sh')]",
