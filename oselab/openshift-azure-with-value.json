@@ -182,7 +182,7 @@
         },
         "cloudAccessPassword": {
             "type": "securestring",
-            
+
             "minLength": 1,
             "metadata": {
                 "description": "Cloud Access password"
@@ -251,7 +251,7 @@
         "masterSubnetPrefix": "192.168.1.0/24",
         "nodeSubnetPrefix": "192.168.2.0/24",
         "virtualNetworkName": "osvnet",
-        "nodeLbPublicIpAddressName": "[concat(variables('namingInfix'), 'lbpip')]",
+  
         "masterSubnetName": "mastersubnet",
         "nodeSubnetName": "[concat(variables('namingInfix'), 'nodesubnet')]",
         "nodeLoadBalancerName": "[concat(variables('namingInfix'), 'lb')]",
@@ -270,8 +270,7 @@
         
        
         "osDiskVhdContainer": "[concat('labdeploy',uniqueString(resourceGroup().id),'/')]",
-        "userImageMasterVhdName": "master.vhd",
-        "userImageNodeVhdName": "node.vhd",
+     
         "userImageMasterName": "https://openshiftimage.blob.core.windows.net/image/master.vhd",
         "userImageNodeName": "https://openshiftimage.blob.core.windows.net/image/node.vhd",
         
