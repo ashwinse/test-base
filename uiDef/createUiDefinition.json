@@ -152,6 +152,12 @@
                             ]
                         },
                         "osPlatform": "Linux",
+                        "imageReference": {
+                            "publisher": "marklogic",
+                            "offer": "marklogic_80-preview",
+                            "sku": "marklogic_80-preview",
+                            "version":"latest"
+                        },
                         "count": 1,
                         "visible": "[equals(steps('nodesSettings').clusterType, 'SingleNode')]"
                     },
@@ -179,6 +185,12 @@
                             ]
                         },
                         "osPlatform": "Linux",
+                        "imageReference": {
+                            "publisher": "marklogic",
+                            "offer": "marklogic_80-preview",
+                            "sku": "marklogic_80-preview",
+                            "version":"latest"
+                        },
                         "count": "[steps('nodesSettings').multiNodeVmCount]",
                         "visible": "[equals(steps('nodesSettings').clusterType, 'MultiNode')]"
                     }
@@ -219,7 +231,7 @@
                         "name": "MarkLogicLicenseKey",
                         "type": "Microsoft.Common.TextBox",
                         "label": "MarkLogic License Key",
-                        "toolTip": "The Username for MarkLogic Portal.",
+                        "toolTip": "The MarkLogic Licencse Key.",
                         "constraints": {
                             "required": true
                         }
