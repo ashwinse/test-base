@@ -180,7 +180,7 @@
                                 }
                             ]
                         },
-                        "visible": "[equals(steps('nodesSettings').clusterType, 'SingleNode')]"
+                        "visible": "[equals(steps('nodesSettings').clusterType, 'MultiNode')]"
                     }
                 ]
             },
