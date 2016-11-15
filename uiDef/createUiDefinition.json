@@ -28,7 +28,7 @@
             },
             {
                 "name": "SSHCredentials",
-                "type": "Microsoft.Compute.CredentialsCombo-linux",
+                "type": "Microsoft.Compute.CredentialsCombo",
                 "label": {
                     "authenticationType": "Authentication type",
                     "password": "Password",
@@ -44,9 +44,11 @@
                     "required": true
                 },
                 "options": {
-                    "hideConfirmation": false
+                    "hideConfirmation": false,
+                    "hidePassword": false
                 },
-                "osPlatform": "Linux"
+                "osPlatform": "Linux",
+                "visible": true
             }
         ],
         "steps": [
