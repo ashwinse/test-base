@@ -28,7 +28,7 @@
             },
             {
                 "name": "SSHCredentials",
-                "type": "Microsoft.Compute.CredentialsCombo",
+                "type": "Microsoft.Compute.CredentialsCombo-linux",
                 "label": {
                     "authenticationType": "Authentication type",
                     "password": "Password",
