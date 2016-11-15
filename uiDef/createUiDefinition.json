@@ -300,7 +300,7 @@
                         },
                         "defaultValue": {
                             "publicIpAddressName": "markIP",
-                            "domainNameLabel": "change_me_to_be_unique"
+                            "domainNameLabel": null
                         },
                         "constraints": {
                             "required": {
@@ -324,7 +324,7 @@
                         },
                         "defaultValue": {
                             "publicIpAddressName": "lbpip",
-                            "domainNameLabel": "change_me_to_be_unique"
+                            "domainNameLabel": null
                         },
                         "options": {
                             "hideNone": true,
