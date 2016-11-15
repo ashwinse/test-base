@@ -391,7 +391,8 @@
             "nodepublicIPdnsPrefix": "[steps('networkSettings').markLogicNodePublicIpAddressPrefix.domainNameLabel]",
             "loadBalancerpublicIPdnsPrefix": "[steps('networkSettings').loadBalancerPublicIpAddressPrefix.domainNameLabel]",
             "loadBalancerType": "[steps('networkSettings').loadBalancerType]",
-            "internalLoadBalancerPrivateIP": "[steps('networkSettings').internalLoadBalancerPrivateIP]"
+            "internalLoadBalancerPrivateIP": "[steps('networkSettings').internalLoadBalancerPrivateIP]",
+            "dataDiskStorageAccountType":"[steps('storageSettings').storageAccount]"
         }
     }
 }
