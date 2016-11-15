@@ -82,7 +82,7 @@
                         "name": "multiNodeVmCount",
                         "type": "Microsoft.Common.DropDown",
                         "label": "Number of Nodes",
-                        "defaultValue": 3,
+                        "defaultValue": "3",
                         "toolTip": "Number of nodes in the cluster",
                         "constraints": {
                             "allowedValues": [
@@ -272,7 +272,7 @@
                         "name": "loadBalancerType",
                         "type": "Microsoft.Common.DropDown",
                         "label": "Load Balancer Type",
-                        "defaultValue": "external",
+                        "defaultValue": "External",
                         "toolTip": "Type of Load Balancer to be used. External or Internal.",
                         "constraints": {
                             "allowedValues": [
