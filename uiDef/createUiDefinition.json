@@ -179,7 +179,7 @@
                             ]
                         },
                         "osPlatform": "Linux",
-                        "count": "[equals(steps('nodesSettings').multiNodeVmCount)]",
+                        "count": "[steps('nodesSettings').multiNodeVmCount]",
                         "visible": "[equals(steps('nodesSettings').clusterType, 'MultiNode')]"
                     }
                     
