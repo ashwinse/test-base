@@ -82,7 +82,7 @@
                         "name": "multiNodeVmCount",
                         "type": "Microsoft.Common.DropDown",
                         "label": "Number of Nodes",
-                        "defaultValue": "3",
+                        "defaultValue": 3,
                         "toolTip": "Number of nodes in the cluster",
                         "constraints": {
                             "allowedValues": [
@@ -182,7 +182,6 @@
                         "count": "[steps('nodesSettings').multiNodeVmCount]",
                         "visible": "[equals(steps('nodesSettings').clusterType, 'MultiNode')]"
                     }
-                    
                 ]
             },
             {
@@ -347,6 +346,25 @@
                             "required": true
                         },
                         "visible": "[equals(steps('networkSettings').loadBalancerType, 'internal')]"
+                    }
+                ]
+            },
+            {
+                "name": "storageSettings",
+                "label": "Storage Settings",
+                "subLabel": {
+                    "preValidation": "Required",
+                    "postValidation": "Done"
+                },
+                "bladeTitle": "Storage Settings",
+                "elements": [
+                    {
+                        "name": "storageAccount",
+                        "type": "Microsoft.Storage.StorageAccountSelector",
+                        "label": "Storage account",
+                        "defaultValue": {
+                            "type": "Standard_LRS"
+                        }
                     }
                 ]
             }
