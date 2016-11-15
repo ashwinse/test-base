@@ -54,7 +54,7 @@
                 "name": "nodesSettings",
                 "label": "Node settings",
                 "subLabel": {
-                    "preValidation": "Configure the node",
+                    "preValidation": "Required",
                     "postValidation": "Done"
                 },
                 "bladeTitle": "Node settings",
@@ -77,6 +77,50 @@
                             ],
                             "required": true
                         }
+                    },
+                    {
+                        "name": "multiNodeVmCount",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Number of Nodes",
+                        "defaultValue": "3",
+                        "toolTip": "Number of nodes in the cluster",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "3",
+                                    "value": 3
+                                },
+                                {
+                                    "label": "4",
+                                    "value": 4
+                                },
+                                {
+                                    "label": "5",
+                                    "value": 5
+                                },
+                                {
+                                    "label": "6",
+                                    "value": 6
+                                },
+                                {
+                                    "label": "7",
+                                    "value": 7
+                                },
+                                {
+                                    "label": "8",
+                                    "value": 8
+                                },
+                                {
+                                    "label": "9",
+                                    "value": 9
+                                },
+                                {
+                                    "label": "10",
+                                    "value": 10
+                                }
+                            ]
+                        },
+                        "visible": "[equals(steps('nodesSettings').clusterType, 'MultiNode')]"
                     },
                     {
                         "name": "singleNodeVmSize",
@@ -137,51 +181,8 @@
                         "osPlatform": "Linux",
                         "count": "[equals(steps('nodesSettings').multiNodeVmCount)]",
                         "visible": "[equals(steps('nodesSettings').clusterType, 'MultiNode')]"
-                    },
-                    {
-                        "name": "multiNodeVmCount",
-                        "type": "Microsoft.Common.DropDown",
-                        "label": "Number of Nodes",
-                        "defaultValue": "3",
-                        "toolTip": "Number of nodes in the cluster",
-                        "constraints": {
-                            "allowedValues": [
-                                {
-                                    "label": "3",
-                                    "value": 3
-                                },
-                                {
-                                    "label": "4",
-                                    "value": 4
-                                },
-                                {
-                                    "label": "5",
-                                    "value": 5
-                                },
-                                {
-                                    "label": "6",
-                                    "value": 6
-                                },
-                                {
-                                    "label": "7",
-                                    "value": 7
-                                },
-                                {
-                                    "label": "8",
-                                    "value": 8
-                                },
-                                {
-                                    "label": "9",
-                                    "value": 9
-                                },
-                                {
-                                    "label": "10",
-                                    "value": 10
-                                }
-                            ]
-                        },
-                        "visible": "[equals(steps('nodesSettings').clusterType, 'MultiNode')]"
                     }
+                    
                 ]
             },
             {
