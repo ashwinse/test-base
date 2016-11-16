@@ -274,38 +274,23 @@
                         "constraints": {
                             "minAddressPrefixSize": "/29"
                         },
+                        "options": {
+                            "hideExisting": false
+                        },
                         "subnets": {
                             "subnet1": {
                                 "label": "Subnet",
                                 "defaultValue": {
-                                    "name": "shsubnet",
+                                    "name": "subnet-1",
                                     "addressPrefixSize": "/24"
                                 },
                                 "constraints": {
                                     "minAddressPrefixSize": "/29",
-                                    "minAddressCount": 1,
+                                    "minAddressCount": "[steps('nodesSettings').multiNodeVmCount]",
                                     "requireContiguousAddresses": true
                                 }
-                            }
-                        }
-                    },
-                    {
-                        "name": "loadBalancerType",
-                        "type": "Microsoft.Common.DropDown",
-                        "label": "Load Balancer Type",
-                        "defaultValue": "External",
-                        "toolTip": "Type of Load Balancer to be used. External or Internal.",
-                        "constraints": {
-                            "allowedValues": [
-                                {
-                                    "label": "External",
-                                    "value": "external"
-                                },
-                                {
-                                    "label": "Internal",
-                                    "value": "internal"
-                                }
-                            ]
+                            },
+                            "visible": true
                         }
                     },
                     {
@@ -331,6 +316,25 @@
                         "options": {
                             "hideNone": true,
                             "hideDomainNameLabel": false
+                        }
+                    },
+                    {
+                        "name": "loadBalancerType",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Load Balancer Type",
+                        "defaultValue": "External",
+                        "toolTip": "Type of Load Balancer to be used. External or Internal.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "External",
+                                    "value": "external"
+                                },
+                                {
+                                    "label": "Internal",
+                                    "value": "internal"
+                                }
+                            ]
                         }
                     },
                     {
@@ -391,7 +395,6 @@
             }
         ],
         "outputs": {
-            "location": "[location()]",
             "clusterPrefix": "[basics('Basics').clusterName]",
             "clusterType": "[steps('nodesSettings').clusterType]",
             "adminUsername": "[basics('Basics').adminUsername]",
@@ -413,7 +416,8 @@
             "loadBalancerpublicIPdnsPrefix": "[steps('networkSettings').loadBalancerPublicIpAddressPrefix.domainNameLabel]",
             "loadBalancerType": "[steps('networkSettings').loadBalancerType]",
             "internalLoadBalancerPrivateIP": "[steps('networkSettings').internalLoadBalancerPrivateIP]",
-            "dataDiskStorageAccountType": "[steps('storageSettings').storageAccount]"
+            "dataDiskStorageAccountType": "[steps('storageSettings').storageAccount]",
+            "location": "[location()]"
         }
     }
 }
