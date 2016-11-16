@@ -300,9 +300,10 @@
                                     "minAddressCount": "[steps('nodesSettings').multiNodeVmCount]",
                                     "requireContiguousAddresses": true
                                 }
-                            },
-                            "visible": true
-                        }
+                            }
+                            
+                        },
+                        "visible": true
                     },
                     {
                         "name": "markLogicNodePublicIpAddressPrefix",
