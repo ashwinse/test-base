@@ -412,7 +412,7 @@
             "virtualNetworkNewOrExisting": "[steps('networkSettings').vnetSpec.newOrExisting]",
             "virtualNetworkExistingRGName": "[steps('networkSettings').vnetSpec.resourceGroup]",
             "virtualNetworkAddressPrefix": "[steps('networkSettings').vnetSpec.addressPrefix]",
-            "subnetName": "[steps('networkSettings').vnetSpec.subnets.subnet.name]",
+            "subnetName": "[steps('networkSettings').vnetSpec.subnets.subnet1.name]",
             "subnetPrefix": "[steps('networkSettings').vnetSpec.subnets.subnet1.addressPrefix]",
             "nodepublicIPdnsPrefix": "[steps('networkSettings').markLogicNodePublicIpAddressPrefix.domainNameLabel]",
             "loadBalancerpublicIPdnsPrefix": "[steps('networkSettings').loadBalancerPublicIpAddressPrefix.domainNameLabel]",
