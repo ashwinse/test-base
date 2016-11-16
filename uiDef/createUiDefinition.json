@@ -200,8 +200,7 @@
                         "imageReference": {
                             "publisher": "marklogic",
                             "offer": "marklogic_80-preview",
-                            "sku": "marklogic_80-preview",
-                            "version": "latest"
+                            "sku": "marklogic_80-preview"
                         },
                         "count": "[steps('nodesSettings').multiNodeVmCount]",
                         "visible": "[equals(steps('nodesSettings').clusterType, 'MultiNode')]"
@@ -309,7 +308,7 @@
                         },
                         "defaultValue": {
                             "publicIpAddressName": "markIP",
-                            "domainNameLabel": null
+                            "domainNameLabel": "pipxamp1a1"
                         },
                         "constraints": {
                             "required": {
@@ -352,7 +351,7 @@
                         },
                         "defaultValue": {
                             "publicIpAddressName": "lbpip",
-                            "domainNameLabel": null
+                            "domainNameLabel": "lbxamp1a1"
                         },
                         "options": {
                             "hideNone": true,
@@ -389,7 +388,7 @@
                     {
                         "name": "storageAccount",
                         "type": "Microsoft.Storage.StorageAccountSelector",
-                        "label": "Storage account",
+                        "label": "Storage account for Data disks",
                         "defaultValue": {
                             "type": "Standard_LRS"
                         }
