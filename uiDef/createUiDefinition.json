@@ -6,7 +6,11 @@
             {
                 "name": "Basics",
                 "type": "Microsoft.Common.Section",
-                "label": "Basic cluster configuration",
+                "label": "Basic configuration",
+                "subLabel": {
+                    "preValidation": "Required",
+                    "postValidation": "Done"
+                },
                 "elements": [
                     {
                         "name": "clusterName",
@@ -164,8 +168,7 @@
                         "imageReference": {
                             "publisher": "marklogic",
                             "offer": "marklogic_80-preview",
-                            "sku": "marklogic_80-preview",
-                            "version": "latest"
+                            "sku": "marklogic_80-preview"
                         },
                         "count": 1,
                         "visible": "[equals(steps('nodesSettings').clusterType, 'SingleNode')]"
