@@ -398,7 +398,7 @@
             "adminPassword": "[basics('Basics').SSHCredentials.password]",
             "sshPublicKey": "[basics('Basics').SSHCredentials.sshPublicKey]",
             "authenticationType": "[basics('Basics').SSHCredentials.authenticationType]",
-            "clusterNodeCount": "[steps('nodesSettings').multiNodeVmCount]",
+            "clusterNodeCount": "[int(steps('nodesSettings').multiNodeVmCount)]",
             "singleNodeSize": "[steps('nodesSettings').singleNodeVmSize]",
             "clusterNodeSize": "[steps('nodesSettings').multiNodeVmSize]",
             "MarkLogicLicenseKey": "[steps('markLogicPortal').MarkLogicLicenseKey]",
