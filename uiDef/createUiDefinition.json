@@ -96,7 +96,7 @@
                         "name": "multiNodeVmCount",
                         "type": "Microsoft.Common.DropDown",
                         "label": "Number of Nodes",
-                        "defaultValue": "3",
+                        "defaultValue": 3,
                         "toolTip": "Number of nodes in the cluster",
                         "constraints": {
                             "allowedValues": [
@@ -393,7 +393,7 @@
             "adminPassword": "[basics('Basics').SSHCredentials.password]",
             "sshPublicKey": "[basics('Basics').SSHCredentials.sshPublicKey]",
             "authenticationType": "[basics('Basics').SSHCredentials.authenticationType]",
-            "clusterNodeCount": "[int(steps('nodesSettings').multiNodeVmCount)]",
+            "clusterNodeCount": "[steps('nodesSettings').multiNodeVmCount]",
             "singleNodeSize": "[steps('nodesSettings').singleNodeVmSize]",
             "clusterNodeSize": "[steps('nodesSettings').multiNodeVmSize]",
             "MarkLogicLicenseKey": "[steps('markLogicPortal').MarkLogicLicenseKey]",
