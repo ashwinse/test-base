@@ -13,17 +13,6 @@
                 },
                 "elements": [
                     {
-                        "name": "clusterName",
-                        "type": "Microsoft.Common.TextBox",
-                        "label": "Cluster Prefix",
-                        "toolTip": "Unique identifier for the MarkLogic cluster.",
-                        "constraints": {
-                            "required": true,
-                            "regex": "^[a-z0-9]{3,24}$",
-                            "validationMessage": "Cluster names must be between 3 and 24 characters long, and can contain only numbers and lowercase letters."
-                        }
-                    },
-                    {
                         "name": "adminUsername",
                         "type": "Microsoft.Compute.UserNameTextBox",
                         "label": "Username",
@@ -72,6 +61,18 @@
                 },
                 "bladeTitle": "Node settings",
                 "elements": [
+                    {
+                        "name": "clusterName",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Cluster Prefix",
+                        "defaultValue": "mk",
+                        "toolTip": "Unique identifier for the MarkLogic cluster.",
+                        "constraints": {
+                            "required": true,
+                            "regex": "^[a-z0-9]{3,24}$",
+                            "validationMessage": "Cluster names must be between 3 and 24 characters long, and can contain only numbers and lowercase letters."
+                        }
+                    },
                     {
                         "name": "clusterType",
                         "type": "Microsoft.Common.DropDown",
@@ -204,6 +205,14 @@
                         },
                         "count": "[steps('nodesSettings').multiNodeVmCount]",
                         "visible": "[equals(steps('nodesSettings').clusterType, 'MultiNode')]"
+                    },
+                    {
+                        "name": "storageAccount",
+                        "type": "Microsoft.Storage.StorageAccountSelector",
+                        "label": "Storage account for Data disks",
+                        "defaultValue": {
+                            "type": "Standard_LRS"
+                        }
                     }
                 ]
             },
@@ -375,29 +384,10 @@
                         "visible": "[equals(steps('networkSettings').loadBalancerType, 'internal')]"
                     }
                 ]
-            },
-            {
-                "name": "storageSettings",
-                "label": "Storage Settings",
-                "subLabel": {
-                    "preValidation": "Required",
-                    "postValidation": "Done"
-                },
-                "bladeTitle": "Storage Settings",
-                "elements": [
-                    {
-                        "name": "storageAccount",
-                        "type": "Microsoft.Storage.StorageAccountSelector",
-                        "label": "Storage account for Data disks",
-                        "defaultValue": {
-                            "type": "Standard_LRS"
-                        }
-                    }
-                ]
             }
         ],
         "outputs": {
-            "clusterPrefix": "[basics('Basics').clusterName]",
+            "clusterPrefix": "[steps('nodesSettings').clusterName]",
             "clusterType": "[steps('nodesSettings').clusterType]",
             "adminUsername": "[basics('Basics').adminUsername]",
             "adminPassword": "[basics('Basics').SSHCredentials.password]",
@@ -418,7 +408,7 @@
             "loadBalancerpublicIPdnsPrefix": "[steps('networkSettings').loadBalancerPublicIpAddressPrefix.domainNameLabel]",
             "loadBalancerType": "[steps('networkSettings').loadBalancerType]",
             "internalLoadBalancerPrivateIP": "[steps('networkSettings').internalLoadBalancerPrivateIP]",
-            "dataDiskStorageAccountType": "[steps('storageSettings').storageAccount]",
+            "dataDiskStorageAccountType": "[steps('nodesSettings').storageAccount]",
             "location": "[location()]"
         }
     }
