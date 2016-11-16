@@ -1,54 +1,61 @@
 {
     "handler": "Microsoft.Compute.MultiVm",
-    "version": "0.1.2-preview",
+    "version": "0.0.1-preview",
     "parameters": {
         "basics": [
             {
-                "name": "clusterName",
-                "type": "Microsoft.Common.TextBox",
-                "label": "Cluster Prefix",
-                "toolTip": "Unique identifier for the MarkLogic cluster.",
-                "constraints": {
-                    "required": true,
-                    "regex": "^[a-z0-9]{3,24}$",
-                    "validationMessage": "Cluster names must be between 3 and 24 characters long, and can contain only numbers and lowercase letters."
-                }
-            },
-            {
-                "name": "adminUsername",
-                "type": "Microsoft.Compute.UserNameTextBox",
-                "label": "Username",
-                "toolTip": "Admin username for the virtual machines. Same Credientials is to SSH to the box.",
-                "constraints": {
-                    "required": true,
-                    "regex": "^[A-z][A-z0-9]{4,15}$",
-                    "validationMessage": "Admin username between 5 and 16 characters long, and can contain only letters and numbers."
-                },
-                "osPlatform": "Linux"
-            },
-            {
-                "name": "SSHCredentials",
-                "type": "Microsoft.Compute.CredentialsCombo",
-                "label": {
-                    "authenticationType": "Authentication type",
-                    "password": "Password",
-                    "confirmPassword": "Confirm password",
-                    "sshPublicKey": "SSH public key"
-                },
-                "toolTip": {
-                    "authenticationType": "Authentication Type for the admin user",
-                    "password": "OS Admin User Password",
-                    "sshPublicKey": "SSH Public Key for the Admin User"
-                },
-                "constraints": {
-                    "required": true
-                },
-                "options": {
-                    "hideConfirmation": false,
-                    "hidePassword": false
-                },
-                "osPlatform": "Linux",
-                "visible": true
+                "name": "Basics",
+                "type": "Microsoft.Common.Section",
+                "label": "Basic cluster configuration",
+                "elements": [
+                    {
+                        "name": "clusterName",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Cluster Prefix",
+                        "toolTip": "Unique identifier for the MarkLogic cluster.",
+                        "constraints": {
+                            "required": true,
+                            "regex": "^[a-z0-9]{3,24}$",
+                            "validationMessage": "Cluster names must be between 3 and 24 characters long, and can contain only numbers and lowercase letters."
+                        }
+                    },
+                    {
+                        "name": "adminUsername",
+                        "type": "Microsoft.Compute.UserNameTextBox",
+                        "label": "Username",
+                        "toolTip": "Admin username for the virtual machines. Same Credientials is to SSH to the box.",
+                        "constraints": {
+                            "required": true,
+                            "regex": "^[A-z][A-z0-9]{4,15}$",
+                            "validationMessage": "Admin username between 5 and 16 characters long, and can contain only letters and numbers."
+                        },
+                        "osPlatform": "Linux"
+                    },
+                    {
+                        "name": "SSHCredentials",
+                        "type": "Microsoft.Compute.CredentialsCombo",
+                        "label": {
+                            "authenticationType": "Authentication type",
+                            "password": "Password",
+                            "confirmPassword": "Confirm password",
+                            "sshPublicKey": "SSH public key"
+                        },
+                        "toolTip": {
+                            "authenticationType": "Authentication Type for the admin user",
+                            "password": "OS Admin User Password",
+                            "sshPublicKey": "SSH Public Key for the Admin User"
+                        },
+                        "constraints": {
+                            "required": true
+                        },
+                        "options": {
+                            "hideConfirmation": false,
+                            "hidePassword": false
+                        },
+                        "osPlatform": "Linux",
+                        "visible": true
+                    }
+                ]
             }
         ],
         "steps": [
@@ -158,7 +165,7 @@
                             "publisher": "marklogic",
                             "offer": "marklogic_80-preview",
                             "sku": "marklogic_80-preview",
-                            "version":"latest"
+                            "version": "latest"
                         },
                         "count": 1,
                         "visible": "[equals(steps('nodesSettings').clusterType, 'SingleNode')]"
@@ -191,7 +198,7 @@
                             "publisher": "marklogic",
                             "offer": "marklogic_80-preview",
                             "sku": "marklogic_80-preview",
-                            "version":"latest"
+                            "version": "latest"
                         },
                         "count": "[steps('nodesSettings').multiNodeVmCount]",
                         "visible": "[equals(steps('nodesSettings').clusterType, 'MultiNode')]"
@@ -385,12 +392,12 @@
         ],
         "outputs": {
             "location": "[location()]",
-            "clusterPrefix": "[basics('clusterName')]",
+            "clusterPrefix": "[basics('Basics').clusterName]",
             "clusterType": "[steps('nodesSettings').clusterType]",
-            "adminUsername": "[basics('adminUsername')]",
-            "adminPassword": "[basics('SSHCredentials').password]",
-            "sshPublicKey": "[basics('SSHCredentials').sshPublicKey]",
-            "authenticationType": "[basics('SSHCredentials').authenticationType]",
+            "adminUsername": "[basics('Basics').adminUsername]",
+            "adminPassword": "[basics('Basics').SSHCredentials.password]",
+            "sshPublicKey": "[basics('Basics').SSHCredentials.sshPublicKey]",
+            "authenticationType": "[basics('Basics').SSHCredentials.authenticationType]",
             "clusterNodeCount": "[steps('nodesSettings').multiNodeVmCount]",
             "singleNodeSize": "[steps('nodesSettings').singleNodeVmSize]",
             "clusterNodeSize": "[steps('nodesSettings').multiNodeVmSize]",
@@ -406,7 +413,7 @@
             "loadBalancerpublicIPdnsPrefix": "[steps('networkSettings').loadBalancerPublicIpAddressPrefix.domainNameLabel]",
             "loadBalancerType": "[steps('networkSettings').loadBalancerType]",
             "internalLoadBalancerPrivateIP": "[steps('networkSettings').internalLoadBalancerPrivateIP]",
-            "dataDiskStorageAccountType":"[steps('storageSettings').storageAccount]"
+            "dataDiskStorageAccountType": "[steps('storageSettings').storageAccount]"
         }
     }
 }
