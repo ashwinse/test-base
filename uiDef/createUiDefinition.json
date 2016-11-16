@@ -65,7 +65,7 @@
                         "name": "clusterName",
                         "type": "Microsoft.Common.TextBox",
                         "label": "Cluster Prefix",
-                        "defaultValue": "mk",
+                        "defaultValue": "mkl",
                         "toolTip": "Unique identifier for the MarkLogic cluster.",
                         "constraints": {
                             "required": true,
