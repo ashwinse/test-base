@@ -53,6 +53,48 @@
         ],
         "steps": [
             {
+                "name": "markLogicPortal",
+                "label": "MarkLogic portal",
+                "subLabel": {
+                    "preValidation": "Required",
+                    "postValidation": "Done"
+                },
+                "bladeTitle": "Portal Credentials",
+                "elements": [
+                    {
+                        "name": "adminUsernameMarkLogicPortal",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "MarkLogic Portal Username",
+                        "toolTip": "The Username for MarkLogic Portal.",
+                        "constraints": {
+                            "required": true,
+                            "regex": "^[A-z][A-z0-9]{4,15}$",
+                            "validationMessage": "Admin username between 5 and 16 characters long, and can contain only letters and numbers."
+                        }
+                    },
+                    {
+                        "name": "adminPasswordMarkLogicPortal",
+                        "type": "Microsoft.Common.PasswordBox",
+                        "label": "MarkLogic Portal Password",
+                        "toolTip": "The password for MarkLogic Portal.",
+                        "constraints": {
+                            "required": true,
+                            "regex": "^(?:(?=.*[a-z])(?:(?=.*[A-Z])(?=.*[\\d\\W])|(?=.*\\W)(?=.*\\d))|(?=.*\\W)(?=.*[A-Z])(?=.*\\d)).{6,30}$",
+                            "validationMessage": "The password must be between 6 and 30 characters long, and contain characters from at least 3 of the following groups: uppercase characters, lowercase characters, numbers, and special characters."
+                        }
+                    },
+                    {
+                        "name": "MarkLogicLicenseKey",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "MarkLogic License Key",
+                        "toolTip": "The MarkLogic Licencse Key.",
+                        "constraints": {
+                            "required": true
+                        }
+                    }
+                ]
+            },
+            {
                 "name": "nodesSettings",
                 "label": "Node settings",
                 "subLabel": {
@@ -209,51 +251,9 @@
                     {
                         "name": "storageAccount",
                         "type": "Microsoft.Storage.StorageAccountSelector",
-                        "label": "Storage account for Data disks",
+                        "label": "Storage account for data disks",
                         "defaultValue": {
                             "type": "Standard_LRS"
-                        }
-                    }
-                ]
-            },
-            {
-                "name": "markLogicPortal",
-                "label": "MarkLogic portal",
-                "subLabel": {
-                    "preValidation": "Required",
-                    "postValidation": "Done"
-                },
-                "bladeTitle": "Portal Credentials",
-                "elements": [
-                    {
-                        "name": "adminUsernameMarkLogicPortal",
-                        "type": "Microsoft.Common.TextBox",
-                        "label": "MarkLogic Portal Username",
-                        "toolTip": "The Username for MarkLogic Portal.",
-                        "constraints": {
-                            "required": true,
-                            "regex": "^[A-z][A-z0-9]{4,15}$",
-                            "validationMessage": "Admin username between 5 and 16 characters long, and can contain only letters and numbers."
-                        }
-                    },
-                    {
-                        "name": "adminPasswordMarkLogicPortal",
-                        "type": "Microsoft.Common.PasswordBox",
-                        "label": "MarkLogic Portal Password",
-                        "toolTip": "The password for MarkLogic Portal.",
-                        "constraints": {
-                            "required": true,
-                            "regex": "^(?:(?=.*[a-z])(?:(?=.*[A-Z])(?=.*[\\d\\W])|(?=.*\\W)(?=.*\\d))|(?=.*\\W)(?=.*[A-Z])(?=.*\\d)).{6,30}$",
-                            "validationMessage": "The password must be between 6 and 30 characters long, and contain characters from at least 3 of the following groups: uppercase characters, lowercase characters, numbers, and special characters."
-                        }
-                    },
-                    {
-                        "name": "MarkLogicLicenseKey",
-                        "type": "Microsoft.Common.TextBox",
-                        "label": "MarkLogic License Key",
-                        "toolTip": "The MarkLogic Licencse Key.",
-                        "constraints": {
-                            "required": true
                         }
                     }
                 ]
