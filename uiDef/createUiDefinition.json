@@ -13,9 +13,9 @@
                 },
                 "elements": [
                     {
-                        "name": "adminUsername",
+                        "name": "vmUsername",
                         "type": "Microsoft.Compute.UserNameTextBox",
-                        "label": "Username",
+                        "label": "VM User name",
                         "toolTip": "Admin username for the virtual machines. Same Credientials is to SSH to the box.",
                         "constraints": {
                             "required": true,
@@ -54,17 +54,17 @@
         "steps": [
             {
                 "name": "markLogicPortal",
-                "label": "MarkLogic portal",
+                "label": "MarkLogic Configuration",
                 "subLabel": {
                     "preValidation": "Required",
                     "postValidation": "Done"
                 },
-                "bladeTitle": "Portal Credentials",
+                "bladeTitle": "MarkLogic Portal Credentials",
                 "elements": [
                     {
                         "name": "adminUsernameMarkLogicPortal",
                         "type": "Microsoft.Common.TextBox",
-                        "label": "MarkLogic Portal Username",
+                        "label": "MarkLogic Admin Username",
                         "toolTip": "The Username for MarkLogic Portal.",
                         "constraints": {
                             "required": true,
@@ -75,7 +75,7 @@
                     {
                         "name": "adminPasswordMarkLogicPortal",
                         "type": "Microsoft.Common.PasswordBox",
-                        "label": "MarkLogic Portal Password",
+                        "label": "MarkLogic Admin Password",
                         "toolTip": "The password for MarkLogic Portal.",
                         "constraints": {
                             "required": true,
@@ -84,12 +84,21 @@
                         }
                     },
                     {
+                        "name": "MarkLogicLicensee",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "MarkLogic Licensee",
+                        "toolTip": "The MarkLogic Licencse Key.",
+                        "constraints": {
+                            "required": false
+                        }
+                    },
+                    {
                         "name": "MarkLogicLicenseKey",
                         "type": "Microsoft.Common.TextBox",
                         "label": "MarkLogic License Key",
                         "toolTip": "The MarkLogic Licencse Key.",
                         "constraints": {
-                            "required": true
+                            "required": false
                         }
                     }
                 ]
@@ -118,7 +127,7 @@
                     {
                         "name": "clusterType",
                         "type": "Microsoft.Common.DropDown",
-                        "label": "MarkLogic Cluster Type.",
+                        "label": "MarkLogic Cluster Type",
                         "defaultValue": "Single node",
                         "constraints": {
                             "allowedValues": [
@@ -127,7 +136,7 @@
                                     "value": "SingleNode"
                                 },
                                 {
-                                    "label": "Multi node",
+                                    "label": "Multi nodes",
                                     "value": "MultiNode"
                                 }
                             ],
@@ -135,7 +144,23 @@
                         }
                     },
                     {
-                        "name": "multiNodeVmCount",
+                        "name": "nodeCount",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Number of Nodes",
+                        "defaultValue": 1,
+                        "toolTip": "Number of nodes in the cluster",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "1",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "visible": "[equals(steps('nodesSettings').clusterType, 'SingleNode')]"
+                    },
+                    {
+                        "name": "nodeCount",
                         "type": "Microsoft.Common.DropDown",
                         "label": "Number of Nodes",
                         "defaultValue": 3,
@@ -147,32 +172,16 @@
                                     "value": 3
                                 },
                                 {
-                                    "label": "4",
-                                    "value": 4
-                                },
-                                {
                                     "label": "5",
                                     "value": 5
-                                },
-                                {
-                                    "label": "6",
-                                    "value": 6
                                 },
                                 {
                                     "label": "7",
                                     "value": 7
                                 },
                                 {
-                                    "label": "8",
-                                    "value": 8
-                                },
-                                {
                                     "label": "9",
                                     "value": 9
-                                },
-                                {
-                                    "label": "10",
-                                    "value": 10
                                 }
                             ]
                         },
@@ -245,7 +254,7 @@
                             "offer": "marklogic_80-preview",
                             "sku": "marklogic_80-preview"
                         },
-                        "count": "[steps('nodesSettings').multiNodeVmCount]",
+                        "count": "[steps('nodesSettings').nodeCount]",
                         "visible": "[equals(steps('nodesSettings').clusterType, 'MultiNode')]"
                     },
                     {
@@ -297,7 +306,7 @@
                                 },
                                 "constraints": {
                                     "minAddressPrefixSize": "/29",
-                                    "minAddressCount": "[steps('nodesSettings').multiNodeVmCount]",
+                                    "minAddressCount": "[steps('nodesSettings').nodeCount]",
                                     "requireContiguousAddresses": true
                                 }
                             }
@@ -353,7 +362,7 @@
                         "type": "Microsoft.Network.PublicIpAddressCombo",
                         "label": {
                             "publicIpAddress": "Name of IP address for Node load balancer",
-                            "domainNameLabel": "DNS label for Node load balancer"
+                            "domainNameLabel": "Domain Name for Node load balancer"
                         },
                         "toolTip": {
                             "domainNameLabel": "DNS label for the Node load balancer public IP address. This must be unique."
@@ -387,18 +396,20 @@
             }
         ],
         "outputs": {
+            "location": "[location()]",
             "clusterPrefix": "[steps('nodesSettings').clusterName]",
-            "clusterType": "[steps('nodesSettings').clusterType]",
-            "adminUsername": "[basics('Basics').adminUsername]",
-            "adminPassword": "[basics('Basics').SSHCredentials.password]",
-            "sshPublicKey": "[basics('Basics').SSHCredentials.sshPublicKey]",
+            "clusterNodeCount": "[steps('nodesSettings').nodeCount]",
+            "adminUsername": "[basics('Basics').vmUsername]",
+            "password": "[basics('Basics').SSHCredentials.password]",
+            "sshkey": "[basics('Basics').SSHCredentials.sshPublicKey]",
             "authenticationType": "[basics('Basics').SSHCredentials.authenticationType]",
-            "clusterNodeCount": "[steps('nodesSettings').multiNodeVmCount]",
-            "singleNodeSize": "[steps('nodesSettings').singleNodeVmSize]",
-            "clusterNodeSize": "[steps('nodesSettings').multiNodeVmSize]",
-            "MarkLogicLicenseKey": "[steps('markLogicPortal').MarkLogicLicenseKey]",
             "adminUsernameMarkLogicPortal": "[steps('markLogicPortal').adminUsernameMarkLogicPortal]",
             "adminPasswordMarkLogicPortal": "[steps('markLogicPortal').adminPasswordMarkLogicPortal]",
+            "singleNodeSize": "[steps('nodesSettings').singleNodeVmSize]",
+            "clusterNodeSize": "[steps('nodesSettings').multiNodeVmSize]",
+            "markLogicLicenseKey": "[steps('markLogicPortal').MarkLogicLicenseKey]",
+            "markLogicLicensee": "[steps('markLogicPortal').MarkLogicLicensee]",
+            "virtualNetworkName": "[steps('networkSettings').vnetSpec.name]",
             "virtualNetworkNewOrExisting": "[steps('networkSettings').vnetSpec.newOrExisting]",
             "virtualNetworkExistingRGName": "[steps('networkSettings').vnetSpec.resourceGroup]",
             "virtualNetworkAddressPrefix": "[steps('networkSettings').vnetSpec.addressPrefix]",
@@ -408,8 +419,7 @@
             "loadBalancerpublicIPdnsPrefix": "[steps('networkSettings').loadBalancerPublicIpAddressPrefix.domainNameLabel]",
             "loadBalancerType": "[steps('networkSettings').loadBalancerType]",
             "internalLoadBalancerPrivateIP": "[steps('networkSettings').internalLoadBalancerPrivateIP]",
-            "dataDiskStorageAccountType": "[steps('nodesSettings').storageAccount]",
-            "location": "[location()]"
+            "dataDiskStorageAccountType": "[steps('nodesSettings').storageAccount.type]"
         }
     }
 }
