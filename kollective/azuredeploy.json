@@ -26,7 +26,7 @@
         "nodeCount": {
             "type": "int",
             "defaultValue": 2,
-            "allowedValues": [ 
+            "allowedValues": [
                 2,
                 3,
                 4,
@@ -79,18 +79,17 @@
         }
     },
     "variables": {
-        "suffix":"[substring(uniqueString('resourceGroup().id'), 0, 7)]",
+        "suffix": "[substring(uniqueString('resourceGroup().id'), 0, 7)]",
         "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/kollective/nested/",
-        
         "nicNamePrefix": "[concat(parameters('clusterNamePrefix'),'-nic')]",
-        "storageAccountName":"[concat(parameters('clusterNamePrefix'),'sa')]",
-        "dnsNameForPublicIP":"[parameters('clusterNamePrefix')]",
+        "storageAccountName": "[concat(parameters('clusterNamePrefix'),'sa')]",
+        "dnsNameForPublicIP": "[parameters('clusterNamePrefix')]",
         "vnetName": "[concat(parameters('clusterNamePrefix'),'-vnet')]",
         "availabilitySetName": "[concat(parameters('clusterNamePrefix'),'-avset')]",
         "loadBalancerName": "[concat(parameters('clusterNamePrefix'),'-lb')]",
         "publicIPAddressName": "[concat(parameters('clusterNamePrefix'),'-pip')]",
         "dnsName": "[concat(variables('dnsNameForPublicIP'),variables('suffix'))]",
-        "storageAccName":"[concat(variables('storageAccountName'),variables('suffix'))]",
+        "storageAccName": "[concat(variables('storageAccountName'),variables('suffix'))]",
         "vmSize": "Standard_D2",
         "imagePublisher": "kollective",
         "imageOffer": "sd-ecdn-test-flight-vm",
@@ -280,8 +279,8 @@
                             "value1": "[parameters('tag').value1]"
                         }
                     },
-                    "nodeCount":{
-                        "value":"[parameters('nodeCount')]"
+                    "nodeCount": {
+                        "value": "[parameters('nodeCount')]"
                     }
                 }
             }
@@ -408,7 +407,7 @@
         },
         "dnsName": {
             "type": "string",
-            "value":"[reference('publicIPSetup').outputs.fqdn]"
+            "value": "[reference('publicIPSetup').outputs.fqdn]"
         }
     }
 }
