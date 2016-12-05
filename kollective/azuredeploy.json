@@ -408,7 +408,7 @@
             "type": "string",
             "value": "[parameters('adminUsername')]"
         },
-        "DnsName": {
+        "dnsName": {
             "type": "string",
             "value":"[reference('publicIPSetup').outputs.fqdn]"
         }
