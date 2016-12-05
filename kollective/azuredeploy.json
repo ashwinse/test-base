@@ -285,12 +285,15 @@
                             "key1": "Load Balancer",
                             "value1": "[parameters('tag').value1]"
                         }
+                    },
+                    "nodeCount":{
+                        "value":"[parameters('nodeCount')]"
                     }
                 }
             }
         },
         {
-            "name": "[concat('networkInterfaceSetup',copyIndex(1))]",
+            "name": "[concat('networkInterfaceSetup',copyIndex())]",
             "apiVersion": "2015-01-01",
             "type": "Microsoft.Resources/deployments",
             "dependsOn": [
@@ -312,10 +315,10 @@
                         "value": "[parameters('location')]"
                     },
                     "loadBalancerInboundNatRef": {
-                        "value": "[concat(variables('loadBalancerInboundNatRef'),copyIndex(1))]"
+                        "value": "[concat(variables('loadBalancerInboundNatRef'),copyIndex())]"
                     },
                     "networkInterfaceName": {
-                        "value": "[concat(variables('nicNamePrefix'),copyIndex(1))]"
+                        "value": "[concat(variables('nicNamePrefix'),copyIndex())]"
                     },
                     "subnetRef": {
                         "value": "[variables('subnetRef')]"
@@ -336,12 +339,12 @@
             }
         },
         {
-            "name": "[concat('virtualMachineSetup',copyIndex(1))]",
+            "name": "[concat('virtualMachineSetup',copyIndex())]",
             "apiVersion": "2015-01-01",
             "type": "Microsoft.Resources/deployments",
             "dependsOn": [
                 "storageAccountSetup",
-                "[concat('networkInterfaceSetup',copyIndex(1))]",
+                "[concat('networkInterfaceSetup',copyIndex())]",
                 "availabilitySetSetup"
             ],
             "copy": {
@@ -359,7 +362,7 @@
                         "value": "[parameters('location')]"
                     },
                     "vmName": {
-                        "value": "[concat(parameters('clusterNamePrefix'),'-VM',copyIndex(1))]"
+                        "value": "[concat(parameters('clusterNamePrefix'),'-VM',copyIndex())]"
                     },
                     "storageAccountName": {
                         "value": "[variables('storageAccName')]"
@@ -389,7 +392,7 @@
                         "value": "[variables('availabilitySetName')]"
                     },
                     "networkInterfaceName": {
-                        "value": "[concat(variables('nicNamePrefix'),copyIndex(1))]"
+                        "value": "[concat(variables('nicNamePrefix'),copyIndex())]"
                     },
                     "computeApiVersion": {
                         "value": "[variables('virtualMachines-api-version')]"

@@ -65,6 +65,9 @@
             "metadata": {
                 "description": "Tag Values"
             }
+        },
+        "nodeCount":{
+            "type": "int"
         }
     },
     "variables": {},
@@ -74,6 +77,10 @@
             "name": "[parameters('loadBalancerName')]",
             "type": "Microsoft.Network/loadBalancers",
             "location": "[parameters('location')]",
+            "copy": {
+                "name": "lbloop",
+                "count": "[parameters('nodeCount')]"
+            },
             "tags": {
                 "[parameters('tag').key1]": "[parameters('tag').value1]"
             },
