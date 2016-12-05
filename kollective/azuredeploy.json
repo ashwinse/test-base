@@ -16,7 +16,7 @@
         },
         "clusterNamePrefix": {
             "type": "string",
-            "defaultValue": "kollective",
+            "defaultValue": "koll",
             "metadata": {
                 "description": "Prefix for the three VMs, IpAddresses, NICs, and Vnet"
             }
@@ -87,15 +87,16 @@
         }
     },
     "variables": {
-        "arm-baseUrl": "https://raw.githubusercontent.com/sysgain/arm-base/staging/",
+        "suffix":"[substring(uniqueString('resourceGroup().id'), 0, 7)]"
+        "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/kollective/nested/",
         "arm-componentsUrl": "https://raw.githubusercontent.com/sysgain/arm-components/staging/kollective/nested/",
         "nicNamePrefix": "[concat(parameters('clusterNamePrefix'),'-nic')]",
         "vnetName": "[concat(parameters('clusterNamePrefix'),'-vnet')]",
         "availabilitySetName": "[concat(parameters('clusterNamePrefix'),'-avset')]",
         "loadBalancerName": "[concat(parameters('clusterNamePrefix'),'-lb')]",
         "publicIPAddressName": "[concat(parameters('clusterNamePrefix'),'-pip')]",
-        "dnsName": "[concat(parameters('dnsNameForPublicIP'),uniqueString('resourceGroup().id'))]",
-        "storageAccName":"[concat(parameters('storageAccountName'),uniqueString('resourceGroup().id'))]",
+        "dnsName": "[concat(parameters('dnsNameForPublicIP'),variables('suffix'))]",
+        "storageAccName":"[concat(parameters('storageAccountName'),variables('suffix'))]",
         "vmSize": "Standard_D2",
         "imagePublisher": "kollective",
         "imageOffer": "sd-ecdn-test-flight-vm",
@@ -110,13 +111,13 @@
         "networkApiVersion": "2015-06-15",
         "storageApiVersion": "2015-06-15",
         "virtualMachines-api-version": "2015-06-15",
-        "storageAccountSetupURL": "[concat(variables('arm-baseUrl'),'storage/storage.json?token=AT3nUBu909P5IOsNCtIzW3nW7oOly2cOks5X_1DfwA%3D%3D')]",
-        "availabilitySetSetupURL": "[concat(variables('arm-baseUrl'),'availability-sets/availability-set.json?token=AT3nUD_x1-eQz6won2rrOb5q2PQy9e6Iks5X_082wA%3D%3D')]",
-        "virtualNetworkSetupURL": "[concat(variables('arm-baseUrl'),'vnet-subnet/vnet-subnet.json?token=AT3nUEzgGtM27u_f7MecXPzBw2aoDgkZks5X_1FUwA%3D%3D')]",
-        "publicIpSetupURL": "[concat(variables('arm-baseUrl'),'public-ip/public-ip.json?token=AT3nUB2r5m2T1_DzXnsEX7jc3hnBG_hqks5X_1GNwA%3D%3D')]",
-        "loadBalancerSetupURL": "[concat(variables('arm-componentsUrl'),'koll-loadbalancer.json?token=AT3nUJRFBlstOxYifggNmtMh6XECHeAhks5X_1JswA%3D%3D')]",
-        "networkInterfaceSetupURL": "[concat(variables('arm-baseUrl'),'network-interface/nic-with-loadbalancer.json?token=AT3nUIBZ0c8Zyphea7KzQ7jGN7_A9n-Hks5X_1HBwA%3D%3D')]",
-        "virtualMachineSetupURL": "[concat(variables('arm-baseUrl'),'virtual-machine/vm-withavset.json?token=AT3nUAd5wFzrG889ALlabkziwQQt7kkOks5X_1IUwA%3D%3D')]",
+        "storageAccountSetupURL": "[concat(variables('baseUrl'),'storage.json?token=AT3nUBu909P5IOsNCtIzW3nW7oOly2cOks5X_1DfwA%3D%3D')]",
+        "availabilitySetSetupURL": "[concat(variables('baseUrl'),'availability-set.json?token=AT3nUD_x1-eQz6won2rrOb5q2PQy9e6Iks5X_082wA%3D%3D')]",
+        "virtualNetworkSetupURL": "[concat(variables('baseUrl'),'vnet-subnet.json?token=AT3nUEzgGtM27u_f7MecXPzBw2aoDgkZks5X_1FUwA%3D%3D')]",
+        "publicIpSetupURL": "[concat(variables('baseUrl'),'public-ip.json?token=AT3nUB2r5m2T1_DzXnsEX7jc3hnBG_hqks5X_1GNwA%3D%3D')]",
+        "loadBalancerSetupURL": "[concat(variables('baseUrl'),'koll-loadbalancer.json?token=AT3nUJRFBlstOxYifggNmtMh6XECHeAhks5X_1JswA%3D%3D')]",
+        "networkInterfaceSetupURL": "[concat(variables('baseUrl'),'nic-with-loadbalancer.json?token=AT3nUIBZ0c8Zyphea7KzQ7jGN7_A9n-Hks5X_1HBwA%3D%3D')]",
+        "virtualMachineSetupURL": "[concat(variables('baseUrl'),'vm-withavset.json?token=AT3nUAd5wFzrG889ALlabkziwQQt7kkOks5X_1IUwA%3D%3D')]",
         "loadBalancerInboundNatRef": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')),'/inboundNatRules/RDP-VM')]",
         "subnetRef": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')),'/subnets/',variables('subnetName'))]",
         "loadBalancerBkpoolRef": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')),'/backendAddressPools/LBBAP')]"
