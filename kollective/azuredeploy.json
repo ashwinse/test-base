@@ -418,19 +418,7 @@
         },
         "DnsName": {
             "type": "string",
-            "value":"[concat(variables('dnsName'),'.',parameters('location'),'.cloudapp.azure.com')]"
-        },
-        "VM1_RDP_Address": {
-            "type": "string",
-            "value": "[concat(variables('dnsName'),'.',parameters('location'),'.cloudapp.azure.com:50001')]"
-        },
-        "VM2-RDP_Address": {
-            "type": "string",
-            "value": "[concat(variables('dnsName'),'.',parameters('location'),'.cloudapp.azure.com:50002')]"
-        },
-        "VM3-RDP_Address": {
-            "type": "string",
-            "value": "[concat(variables('dnsName'),'.',parameters('location'),'.cloudapp.azure.com:50003')]"
+            "value":"[reference('publicIPSetup').outputs.fqdn]"
         }
     }
 }
