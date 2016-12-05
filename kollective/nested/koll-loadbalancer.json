@@ -70,17 +70,16 @@
             "type": "int"
         }
     },
-    "variables": {},
+    "variables": {
+        "lbIpConfigId":"[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancerName')),'/frontendIPConfigurations/LBFE')]",
+        "loadBalancerbId": "[resourceId('Microsoft.Network/loadBalancers',parameters('loadBalancerName'))]"
+    },
     "resources": [
         {
             "apiVersion": "[parameters('loadBalancersApiVersion')]",
             "name": "[parameters('loadBalancerName')]",
             "type": "Microsoft.Network/loadBalancers",
             "location": "[parameters('location')]",
-            "copy": {
-                "name": "lbloop",
-                "count": "[parameters('nodeCount')]"
-            },
             "tags": {
                 "[parameters('tag').key1]": "[parameters('tag').value1]"
             },
@@ -99,21 +98,29 @@
                     {
                         "name": "LBBAP"
                     }
-                ],
-                "inboundNatRules": [
-                    {
-                        "name": "[concat('RDP-VM',copyIndex())]",
-                        "properties": {
-                            "frontendIPConfiguration": {
-                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancerName')),'/frontendIPConfigurations/LBFE')]"
-                            },
-                            "protocol": "tcp",
-                            "frontendPort": "copyIndex(50000)",
-                            "backendPort": 3389,
-                            "enableFloatingIP": false
-                        }
-                    }
                 ]
+            }
+        },
+        {
+            "apiVersion": "[parameters('loadBalancersApiVersion')]",
+            "type": "Microsoft.Network/loadBalancers/inboundNatRules",
+            "name": "[concat(parameters('loadBalancerName'), '/', 'RDP-VM',copyIndex())]",
+            "location": "[parameters('location')]",
+            "copy": {
+                "name": "lbNatLoop",
+                "count": "[parameters('nodeCount')]"
+            },
+            "dependsOn": [
+                "[variables('loadBalancerbId')]"
+            ],
+            "properties": {
+                "frontendIPConfiguration": {
+                    "id": "[variables('lbIpConfigId')]"
+                },
+                "protocol": "Tcp",
+                "frontendPort": "[copyIndex(50000)]",
+                "backendPort": 3389,
+                "enableFloatingIP": false
             }
         }
     ]
