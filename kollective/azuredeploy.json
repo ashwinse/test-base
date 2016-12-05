@@ -23,20 +23,8 @@
                 "description": "Prefix for the three VMs, IpAddresses, NICs, and Vnet"
             }
         },
-        "storageAccountName": {
-            "type": "string",
-            "defaultValue": "kollsa",
-            "metadata": {
-                "description": "Storage Account Name"
-            }
-        },
-        "dnsNameForPublicIP": {
-            "defaultValue": "ashkoll",
-            "type": "string",
-            "metadata": {
-                "description": "DNS name used for FQDN."
-            }
-        },
+      
+       
         "nodeCount": {
             "type": "int",
             "defaultValue": 2,
@@ -97,12 +85,14 @@
         "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/kollective/nested/",
         "arm-componentsUrl": "https://raw.githubusercontent.com/sysgain/arm-components/staging/kollective/nested/",
         "nicNamePrefix": "[concat(parameters('clusterNamePrefix'),'-nic')]",
+        "storageAccountName":"kollsa",
+        "dnsNameForPublicIP":"koll-",
         "vnetName": "[concat(parameters('clusterNamePrefix'),'-vnet')]",
         "availabilitySetName": "[concat(parameters('clusterNamePrefix'),'-avset')]",
         "loadBalancerName": "[concat(parameters('clusterNamePrefix'),'-lb')]",
         "publicIPAddressName": "[concat(parameters('clusterNamePrefix'),'-pip')]",
-        "dnsName": "[concat(parameters('dnsNameForPublicIP'),variables('suffix'))]",
-        "storageAccName":"[concat(parameters('storageAccountName'),variables('suffix'))]",
+        "dnsName": "[concat(variables('dnsNameForPublicIP'),variables('suffix'))]",
+        "storageAccName":"[concat(variables('storageAccountName'),variables('suffix'))]",
         "vmSize": "Standard_D2",
         "imagePublisher": "kollective",
         "imageOffer": "sd-ecdn-test-flight-vm",
