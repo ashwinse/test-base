@@ -83,7 +83,7 @@
     "variables": {
         "suffix":"[substring(uniqueString('resourceGroup().id'), 0, 7)]",
         "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/kollective/nested/",
-        "arm-componentsUrl": "https://raw.githubusercontent.com/sysgain/arm-components/staging/kollective/nested/",
+        
         "nicNamePrefix": "[concat(parameters('clusterNamePrefix'),'-nic')]",
         "storageAccountName":"kollsa",
         "dnsNameForPublicIP":"koll-",
