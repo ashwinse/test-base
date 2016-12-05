@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "value": "sysgain_ash"
+        },
+        "adminPassword": {
+            "value": "GEN-PASSWORD"
+        },
+        "clusterNamePrefix": {
+            "value": "kollective"
+        },
+        
+        "storageAccountName": {
+            "value": "GEN-UNIQUE"
+        },
+        "dnsNameForPublicIP": {
+            "value": "GEN-UNIQUE"
+        },
+        "nodeCount": {
+            "value": 3
+        },
+        "location": {
+            "value": "westus"
+        },
+        "tag": {
+            "value": {
+                "value1": "Kollective"
+            }
+        }
+    }
+}
