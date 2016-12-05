@@ -39,10 +39,12 @@
         },
         "nodeCount": {
             "type": "int",
-            "defaultValue": 3,
-            "allowedValues": [
+            "defaultValue": 2,
+            "allowedValues": [ 
+                2,
                 3,
-                4
+                4,
+                5
             ]
         },
         "location": {
