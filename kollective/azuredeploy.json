@@ -38,7 +38,8 @@
             "type": "int",
             "defaultValue": 3,
             "allowedValues": [
-                3
+                3,
+                4
             ]
         },
         "location": {
@@ -87,7 +88,7 @@
         }
     },
     "variables": {
-        "suffix":"[substring(uniqueString('resourceGroup().id'), 0, 7)]"
+        "suffix":"[substring(uniqueString('resourceGroup().id'), 0, 7)]",
         "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/kollective/nested/",
         "arm-componentsUrl": "https://raw.githubusercontent.com/sysgain/arm-components/staging/kollective/nested/",
         "nicNamePrefix": "[concat(parameters('clusterNamePrefix'),'-nic')]",
