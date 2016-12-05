@@ -23,8 +23,6 @@
                 "description": "Prefix for the three VMs, IpAddresses, NICs, and Vnet"
             }
         },
-      
-       
         "nodeCount": {
             "type": "int",
             "defaultValue": 2,
@@ -85,8 +83,8 @@
         "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/kollective/nested/",
         
         "nicNamePrefix": "[concat(parameters('clusterNamePrefix'),'-nic')]",
-        "storageAccountName":"kollsa",
-        "dnsNameForPublicIP":"koll-",
+        "storageAccountName":"[concat(parameters('clusterNamePrefix'),'sa')]",
+        "dnsNameForPublicIP":"[parameters('clusterNamePrefix')]",
         "vnetName": "[concat(parameters('clusterNamePrefix'),'-vnet')]",
         "availabilitySetName": "[concat(parameters('clusterNamePrefix'),'-avset')]",
         "loadBalancerName": "[concat(parameters('clusterNamePrefix'),'-lb')]",
