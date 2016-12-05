@@ -4,12 +4,14 @@
     "parameters": {
         "adminUsername": {
             "type": "string",
+            "defaultValue": "ashuser",
             "metadata": {
                 "description": "The name of the administrator of the new VMs."
             }
         },
         "adminPassword": {
             "type": "securestring",
+            "defaultValue": "Ashpassword123",
             "metadata": {
                 "description": "The password must contain one uppercase, one lowercase and numericals, lenght must be 8-12."
             }
@@ -29,6 +31,7 @@
             }
         },
         "dnsNameForPublicIP": {
+            "defaultValue": "ashkoll",
             "type": "string",
             "metadata": {
                 "description": "DNS name used for FQDN."
