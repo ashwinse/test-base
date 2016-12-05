@@ -407,7 +407,7 @@
         },
         "dnsName": {
             "type": "string",
-            "value": "[reference('publicIPSetup').outputs.fqdn]"
+            "value": "[reference('publicIPSetup').outputs.fqdn.value]"
         }
     }
 }
