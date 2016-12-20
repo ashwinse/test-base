@@ -118,7 +118,7 @@
                     "id": "[variables('lbIpConfigId')]"
                 },
                 "protocol": "Tcp",
-                "frontendPort": "[copyIndex(50000)]",
+                "frontendPort": "[copyIndex(50001)]",
                 "backendPort": 3389,
                 "enableFloatingIP": false
             }

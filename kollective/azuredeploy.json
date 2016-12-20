@@ -4,7 +4,7 @@
     "parameters": {
         "adminUsername": {
             "type": "string",
-            "defaultValue": "ashuser",
+            "defaultValue": "kuser-root",
             "metadata": {
                 "description": "The name of the administrator of the new VMs."
             }
@@ -16,15 +16,7 @@
                 "description": "The password must contain one uppercase, one lowercase and numericals, lenght must be 8-12."
             }
         },
-        "nodeCount": {
-            "type": "int",
-            "defaultValue": 3,
-            "allowedValues": [
-                2,
-                3,
-                4
-            ]
-        },
+        
         "location": {
             "type": "string",
             "defaultValue": "westus",
@@ -71,7 +63,8 @@
         }
     },
     "variables": {
-        "clusterNamePrefix":"TestFlight",
+        "nodeCount":3,
+        "clusterNamePrefix":"Testflight",
         "prefix":"Koll",
         "suffix": "[substring(uniqueString('resourceGroup().id'), 0, 7)]",
         "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/kollective/nested",
@@ -107,7 +100,11 @@
         "virtualMachineSetupURL": "[concat(variables('baseUrl'),'/vm-withavset.json')]",
         "loadBalancerInboundNatRef": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')),'/inboundNatRules/RDP-VM')]",
         "subnetRef": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')),'/subnets/',variables('subnetName'))]",
-        "loadBalancerBkpoolRef": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')),'/backendAddressPools/LBBAP')]"
+        "loadBalancerBkpoolRef": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')),'/backendAddressPools/LBBAP')]",
+        "50000":"50000",
+        "50001":"50001",
+        "50002":"50002",
+        "50003":"50003"
     },
     "resources": [
         {
@@ -274,7 +271,7 @@
                         }
                     },
                     "nodeCount": {
-                        "value": "[parameters('nodeCount')]"
+                        "value": "[variables('nodeCount')]"
                     }
                 }
             }
@@ -289,7 +286,7 @@
             ],
             "copy": {
                 "name": "networkInterfaceLoop",
-                "count": "[parameters('nodeCount')]"
+                "count": "[variables('nodeCount')]"
             },
             "properties": {
                 "mode": "Incremental",
@@ -336,7 +333,7 @@
             ],
             "copy": {
                 "name": "virtualMachineLoop",
-                "count": "[parameters('nodeCount')]"
+                "count": "[variables('nodeCount')]"
             },
             "properties": {
                 "mode": "Incremental",
@@ -402,6 +399,18 @@
         "dnsName": {
             "type": "string",
             "value": "[reference('publicIPSetup').outputs.fqdn.value]"
+        },
+        "RDP-VM1":{
+            "type": "string",
+            "value": "[concat(reference('publicIPSetup').outputs.fqdn.value,':50001')]"
+        },
+        "RDP-VM2":{
+            "type": "string",
+            "value": "[concat(reference('publicIPSetup').outputs.fqdn.value,':50002')]"
+        },
+        "RDP-VM3":{
+            "type": "string",
+            "value": "[concat(reference('publicIPSetup').outputs.fqdn.value,':50003')]"
         }
     }
 }
