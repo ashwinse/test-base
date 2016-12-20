@@ -65,7 +65,7 @@
     "variables": {
         "nodeCount":3,
         "clusterNamePrefix":"Testflight",
-        "prefix":"Koll",
+        "prefix":"koll",
         "suffix": "[substring(uniqueString('resourceGroup().id'), 0, 7)]",
         "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/kollective/nested",
         "nicNamePrefix": "[concat(variables('prefix'),'-nic')]",
