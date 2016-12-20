@@ -396,15 +396,15 @@
             "type": "string",
             "value": "[reference('publicIPSetup').outputs.fqdn.value]"
         },
-        "RDP-VM1":{
+        "VM1_RDP_ADDRESS":{
             "type": "string",
             "value": "[concat(reference('publicIPSetup').outputs.fqdn.value,':50001')]"
         },
-        "RDP-VM2":{
+        "VM2_RDP_ADDRESS":{
             "type": "string",
             "value": "[concat(reference('publicIPSetup').outputs.fqdn.value,':50002')]"
         },
-        "RDP-VM3":{
+        "VM3_RDP_ADDRESS":{
             "type": "string",
             "value": "[concat(reference('publicIPSetup').outputs.fqdn.value,':50003')]"
         }
