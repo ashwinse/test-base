@@ -95,7 +95,7 @@
     ],
     "outputs": {
         "fqdn": {
-            "value": "[concat('http://', reference(parameters('publicIPAddressName')).dnsSettings.fqdn)]",
+            "value": "[concat(reference(parameters('publicIPAddressName')).dnsSettings.fqdn)]",
             "type": "string"
         }
     }
