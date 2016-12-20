@@ -3,23 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "adminUsername": {
-            "value": "sysgain_ash"
+            "value": "kuser-root"
         },
         "adminPassword": {
             "value": "GEN-PASSWORD"
-        },
-        "clusterNamePrefix": {
-            "value": "kollective"
-        },
-        
-        "storageAccountName": {
-            "value": "GEN-UNIQUE"
-        },
-        "dnsNameForPublicIP": {
-            "value": "GEN-UNIQUE"
-        },
-        "nodeCount": {
-            "value": 3
         },
         "location": {
             "value": "westus"
