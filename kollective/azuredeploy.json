@@ -100,11 +100,7 @@
         "virtualMachineSetupURL": "[concat(variables('baseUrl'),'/vm-withavset.json')]",
         "loadBalancerInboundNatRef": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')),'/inboundNatRules/RDP-VM')]",
         "subnetRef": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')),'/subnets/',variables('subnetName'))]",
-        "loadBalancerBkpoolRef": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')),'/backendAddressPools/LBBAP')]",
-        "50000":"50000",
-        "50001":"50001",
-        "50002":"50002",
-        "50003":"50003"
+        "loadBalancerBkpoolRef": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')),'/backendAddressPools/LBBAP')]"
     },
     "resources": [
         {
