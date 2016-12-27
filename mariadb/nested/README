@@ -1,0 +1,13 @@
+It contains MariaDB Enterprise Cluster and MaxScale specific arm components.
+
+    FILENAME                                                             DESCRIPTION
+===================================================================================================
+1. mariadb-loadbalancer.json                                This json file is specific to this
+                                                            custom deployment. This provision 
+                                                            contains 3 load balancing rules
+                                                            and 2 NAT rules.
+                                                            
+2. mariadb-network-security-group.json                      This json file is specific to this
+                                                            custom deployment. This provision
+                                                            contains 2 Inbound security rules.
+                                                            

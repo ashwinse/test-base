@@ -1,0 +1,14 @@
+This folder contains MariaDB Enterprise Cluster and MaxScale related scripts 
+   
+      FILENAME                                                                    DESCRIPTION
+=====================================================================================================
+1. azuremaxscale.sh                                            This script is used as an extension to
+                                                               maxscale virtual machines (2 vms).
+                                                               
+2. azuremdbec.sh                                               This script is used as an extension to
+                                                               database virtual machines (3 vms).
+                                                               
+3. maxscale.cnf.template                                       Maxscale config template
+
+4. my.cnf.template                                             Database config template
+                                                               

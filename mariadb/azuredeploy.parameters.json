@@ -1,0 +1,47 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmNamePrefix": {
+            "value": "mdbec"
+        },
+        "clusterName": {
+            "value": "aocluster"
+        },
+        "adminUsername": {
+            "value": ""
+        },
+        "appUserName": {
+            "value": "myapp"
+        },
+        "appPassword": {
+            "value": "mypassword"
+        },
+        "appDatabase": {
+            "value": "mydb"
+        },
+        "mdbeToken": {
+            "value": "h76a-d33s"
+        },
+        "location": {
+            "value": "East US"
+        },
+        "tag": {
+            "value": {
+                "value1": "MariaDB Enterprise Cluster & Maxscale"
+            }
+        },
+        "armBaseURL": {
+            "value": "https://raw.githubusercontent.com/sysgain/arm-base/"
+        },
+        "armComponentURL": {
+            "value": "https://raw.githubusercontent.com/sysgain/arm-components/staging/mariadb//"
+        },
+        "sshKey": {
+            "value": ""
+        },
+        "publicIPdnsPrefix": {
+            "value": "mariadns"
+        }
+    }
+}
