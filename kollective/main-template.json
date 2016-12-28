@@ -105,7 +105,7 @@
     "resources": [
         {
             "name": "storageAccountSetup",
-            "apiVersion": "2015-01-01",
+            "apiVersion": "2016-02-01",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -137,7 +137,7 @@
         },
         {
             "name": "availabilitySetSetup",
-            "apiVersion": "2015-01-01",
+            "apiVersion": "2016-02-01",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -166,7 +166,7 @@
         },
         {
             "name": "virtualNetworkSetup",
-            "apiVersion": "2015-01-01",
+            "apiVersion": "2016-02-01",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -204,7 +204,7 @@
         },
         {
             "name": "publicIPSetup",
-            "apiVersion": "2015-01-01",
+            "apiVersion": "2016-02-01",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -236,7 +236,7 @@
         },
         {
             "name": "loadBalancerSetup",
-            "apiVersion": "2015-01-01",
+            "apiVersion": "2016-02-01",
             "type": "Microsoft.Resources/deployments",
             "dependsOn": [
                 "publicIPSetup"
@@ -274,7 +274,7 @@
         },
         {
             "name": "[concat('networkInterfaceSetup',copyIndex())]",
-            "apiVersion": "2015-01-01",
+            "apiVersion": "2016-02-01",
             "type": "Microsoft.Resources/deployments",
             "dependsOn": [
                 "virtualNetworkSetup",
@@ -320,7 +320,7 @@
         },
         {
             "name": "[concat('virtualMachineSetup',copyIndex())]",
-            "apiVersion": "2015-01-01",
+            "apiVersion": "2016-02-01",
             "type": "Microsoft.Resources/deployments",
             "dependsOn": [
                 "storageAccountSetup",
