@@ -43,7 +43,7 @@
             "allowedValues": [
                 "2015-05-01-preview",
                 "2015-06-15",
-                "2016-03-30"
+                "2016-06-01"
             ],
             "metadata": {
                 "description": "API Version for the Network Resources"
