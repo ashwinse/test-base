@@ -67,7 +67,7 @@
         "clusterNamePrefix":"Testflight",
         "prefix":"koll",
         "suffix": "[substring(uniqueString('resourceGroup().id'), 0, 7)]",
-        "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/kollective/nested",
+        "baseUrl": "https://aztdrepo.blob.core.windows.net/kollective/kollective/nested",
         "nicNamePrefix": "[concat(variables('prefix'),'-nic')]",
         "storageAccountName": "[concat(variables('prefix'),'sa')]",
         "dnsNameForPublicIP": "[variables('prefix')]",
