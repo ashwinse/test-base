@@ -20,7 +20,7 @@ It deploys quickly and is less expensive than traditional hardware solutions.
 
 ### Deployment Architecture
 ---------------------------
-![Architecture image](https://raw.githubusercontent.com/sysgain/arm-components/staging/kollective/architecture-diagram/arch-diag.png?token=AT3nUKIzbMPIGSeVlauFYx_Janp0d1avks5YCaB9wA%3D%3D)
+![Architecture image](https://aztdrepo.blob.core.windows.net/kollective/kollective/architecture-diagram/arch-diag.png)
 
 ### Description
 ---------------
