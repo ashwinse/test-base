@@ -146,7 +146,7 @@
             "name": "availabiltySetDeploy",
             "type": "Microsoft.Resources/deployments",
             "properties": {
-                "mode": "incremental",
+                "mode": "Incremental",
                 "templateLink": {
                     "uri": "[variables('availabilitySetUrl')]",
                     "contentVersion": "1.0.0.0"
@@ -178,7 +178,7 @@
             "name": "storageAccountDeploy",
             "type": "Microsoft.Resources/deployments",
             "properties": {
-                "mode": "incremental",
+                "mode": "Incremental",
                 "templateLink": {
                     "uri": "[variables('storageAccountUrl')]",
                     "contentVersion": "1.0.0.0"
@@ -213,7 +213,7 @@
             "name": "publicIPDeploy",
             "type": "Microsoft.Resources/deployments",
             "properties": {
-                "mode": "incremental",
+                "mode": "Incremental",
                 "templateLink": {
                     "uri": "[variables('publicIPUrl')]",
                     "contentVersion": "1.0.0.0"
@@ -245,7 +245,7 @@
             "name": "networkSecurityGroupDeploy",
             "type": "Microsoft.Resources/deployments",
             "properties": {
-                "mode": "incremental",
+                "mode": "Incremental",
                 "templateLink": {
                     "uri": "[variables('networkSecurityGroupUrl')]",
                     "contentVersion": "1.0.0.0"
@@ -274,7 +274,7 @@
             "name": "virtualNetworkDeploy",
             "type": "Microsoft.Resources/deployments",
             "properties": {
-                "mode": "incremental",
+                "mode": "Incremental",
                 "templateLink": {
                     "uri": "[variables('virtualNetworkUrl')]",
                     "contentVersion": "1.0.0.0"
@@ -315,7 +315,7 @@
                 "publicIPDeploy"
             ],
             "properties": {
-                "mode": "incremental",
+                "mode": "Incremental",
                 "templateLink": {
                     "uri": "[variables('loadBalancerUrl')]",
                     "contentVersion": "1.0.0.0"
@@ -355,7 +355,7 @@
                 "count": "[variables('maxscaleCount')]"
             },
             "properties": {
-                "mode": "incremental",
+                "mode": "Incremental",
                 "templateLink": {
                     "uri": "[variables('maxNetworkInterfaceUrl')]",
                     "contentVersion": "1.0.0.0"
@@ -407,7 +407,7 @@
                 "count": "[variables('nodeCount')]"
             },
             "properties": {
-                "mode": "incremental",
+                "mode": "Incremental",
                 "templateLink": {
                     "uri": "[variables('dbNetworkInterfaceUrl')]",
                     "contentVersion": "1.0.0.0"
@@ -454,7 +454,7 @@
                 "count": "[variables('maxscaleCount')]"
             },
             "properties": {
-                "mode": "incremental",
+                "mode": "Incremental",
                 "templateLink": {
                     "uri": "[variables('maxVirtualMachineUrl')]",
                     "contentVersion": "1.0.0.0"
@@ -522,7 +522,7 @@
                 "count": "[variables('nodeCount')]"
             },
             "properties": {
-                "mode": "incremental",
+                "mode": "Incremental",
                 "templateLink": {
                     "uri": "[variables('dbVirtualMachineUrl')]",
                     "contentVersion": "1.0.0.0"
