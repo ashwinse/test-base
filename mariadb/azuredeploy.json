@@ -74,7 +74,7 @@
     },
     "variables": {
         "mdbeToken":"h76a-d33s",
-        "armBaseURL": "https://raw.githubusercontent.com/ooha-m/test-base/master/mariadb/",
+        "armBaseURL": "https://raw.githubusercontent.com/ashwinse/test-base/master/mariadb/",
         "singleQuote": "'",
         "vmNamePrefix": "mdbec",
         "clusterName": "aocluster",
