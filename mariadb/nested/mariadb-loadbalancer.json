@@ -1,8 +1,8 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "location": {
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
             "type": "string",
             "defaultValue": "westus",
             "allowedValues": [
@@ -37,179 +37,172 @@
                 "description": "Deployment Location Hint: Use lowercase for creating ipaddress"
             }
         },
-    "loadBalancersApiVersion": {
-      "type": "string",
-      "defaultValue": "2015-06-15",
-      "metadata": {
-        "description": "API Version for the load balancer Resources"
-      }
+        "loadBalancersApiVersion": {
+            "type": "string",
+            "defaultValue": "2015-06-15",
+            "metadata": {
+                "description": "API Version for the load balancer Resources"
+            }
+        },
+        "loadBalancersName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Virtual Network Name"
+            }
+        },
+        "publicIPAddressName": {
+            "type": "string"
+        },
+        "tag": {
+            "type": "object",
+            "defaultValue": {
+                "key1": "Load Balancer",
+                "value1": "MariaDB"
+            },
+            "metadata": {
+                "description": "Tag Values"
+            }
+        }
     },
-    "loadBalancersName": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Virtual Network Name"
-      }
+    "variables": {
+        "loadBalancers_mdbec_lb_id": "[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/frontendIPConfigurations/mdbec-sshIPCfg')]",
+        "loadBalancers_mdbec_lb_id_1": "[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/backendAddressPools/mdbec-lbBackendPool')]",
+        "loadBalancers_mdbec_lb_id_2": "[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/probes/mdbec-probe')]",
+        "loadBalancers_mdbec_lb_id_3": "[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/frontendIPConfigurations/mdbec-sshIPCfg')]",
+        "loadBalancers_mdbec_lb_id_4": "[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/backendAddressPools/mdbec-lbBackendPool')]",
+        "loadBalancers_mdbec_lb_id_5": "[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/probes/mdbec-probe')]",
+        "loadBalancers_mdbec_lb_id_6": "[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/frontendIPConfigurations/mdbec-sshIPCfg')]",
+        "loadBalancers_mdbec_lb_id_7": "[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/backendAddressPools/mdbec-lbBackendPool')]",
+        "loadBalancers_mdbec_lb_id_8": "[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/probes/mdbec-probe')]",
+        "loadBalancers_mdbec_lb_id_9": "[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/frontendIPConfigurations/mdbec-sshIPCfg')]",
+        "loadBalancers_mdbec_lb_id_10": "[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/frontendIPConfigurations/mdbec-sshIPCfg')]"
     },
-    "publicIPAddressName":{
-        "type": "string"
-        
-    },
-    "tag": {
-      "type": "object",
-      "defaultValue": {
-        "key1": "Load Balancer",
-        "value1": "MariaDB"
-      },
-      "metadata": {
-        "description": "Tag Values"
-      }
-    }
-
-    
-  },
-  "variables": {
-      "loadBalancers_mdbec_lb_id":"[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/frontendIPConfigurations/mdbec-sshIPCfg')]",
-      "loadBalancers_mdbec_lb_id_1":"[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/backendAddressPools/mdbec-lbBackendPool')]",
-      "loadBalancers_mdbec_lb_id_2":"[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/probes/mdbec-probe')]",
-      "loadBalancers_mdbec_lb_id_3":"[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/frontendIPConfigurations/mdbec-sshIPCfg')]",
-      "loadBalancers_mdbec_lb_id_4":"[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/backendAddressPools/mdbec-lbBackendPool')]",
-      "loadBalancers_mdbec_lb_id_5":"[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/probes/mdbec-probe')]",
-      "loadBalancers_mdbec_lb_id_6":"[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/frontendIPConfigurations/mdbec-sshIPCfg')]",
-      "loadBalancers_mdbec_lb_id_7":"[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/backendAddressPools/mdbec-lbBackendPool')]",
-      "loadBalancers_mdbec_lb_id_8":"[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/probes/mdbec-probe')]",
-      "loadBalancers_mdbec_lb_id_9":"[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/frontendIPConfigurations/mdbec-sshIPCfg')]",
-      "loadBalancers_mdbec_lb_id_10":"[concat(resourceGroup().id,'/providers/Microsoft.Network/loadBalancers/',parameters('loadBalancersName'),'/frontendIPConfigurations/mdbec-sshIPCfg')]"
-      
-  },
-  "resources": [
-    {
-          
-          "type": "Microsoft.Network/loadBalancers",
-          "name": "[parameters('loadBalancersName')]",
-          "apiVersion": "[parameters('loadBalancersApiVersion')]",
-          "location": "[parameters('location')]",
-          "tags": {
-              "[parameters('tag').key1]":"[parameters('tag').value1]"
-          },
-          "properties": {
-              "frontendIPConfigurations": [
-                  {
-                      "name": "mdbec-sshIPCfg",
-                      "properties": {
-                          "privateIPAllocationMethod": "Dynamic",
-                          "publicIPAddress": {
-                              "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressName'))]"
-                          }
-                      }
-                  }
-              ],
-              "backendAddressPools": [
-                  {
-                      "name": "[concat(parameters('loadBalancersName'),'BackendPool')]"
-                  }
-              ],
-              "loadBalancingRules": [
-                  {
-                      "name": "[concat(parameters('loadBalancersName'),'Rule-4006')]",
-                      "properties": {
-                          "frontendIPConfiguration": {
-                              "id": "[variables('loadBalancers_mdbec_lb_id')]"
-                          },
-                          "frontendPort": 4006,
-                          "backendPort": 4006,
-                          "enableFloatingIP": false,
-                          "idleTimeoutInMinutes": 10,
-                          "protocol": "Tcp",
-                          "loadDistribution": "SourceIP",
-                          "backendAddressPool": {
-                              "id": "[variables('loadBalancers_mdbec_lb_id_1')]"
-                          },
-                          "probe": {
-                              "id": "[variables('loadBalancers_mdbec_lb_id_2')]"
-                          }
-                      }
-                  },
-                  {
-                      "name": "[concat(parameters('loadBalancersName'),'Rule-4007')]",
-                      "properties": {
-                          "frontendIPConfiguration": {
-                              "id": "[variables('loadBalancers_mdbec_lb_id_3')]"
-                          },
-                          "frontendPort": 4007,
-                          "backendPort": 4007,
-                          "enableFloatingIP": false,
-                          "idleTimeoutInMinutes": 10,
-                          "protocol": "Tcp",
-                          "loadDistribution": "SourceIP",
-                          "backendAddressPool": {
-                              "id": "[variables('loadBalancers_mdbec_lb_id_4')]"
-                          },
-                          "probe": {
-                              "id": "[variables('loadBalancers_mdbec_lb_id_5')]"
-                          }
-                      }
-                  },
-                  {
-                      "name": "[concat(parameters('loadBalancersName'),'Rule-4008')]",
-                      "properties": {
-                          "frontendIPConfiguration": {
-                              "id": "[variables('loadBalancers_mdbec_lb_id_6')]"
-                          },
-                          "frontendPort": 4008,
-                          "backendPort": 4008,
-                          "enableFloatingIP": false,
-                          "idleTimeoutInMinutes": 10,
-                          "protocol": "Tcp",
-                          "loadDistribution": "SourceIP",
-                          "backendAddressPool": {
-                              "id": "[variables('loadBalancers_mdbec_lb_id_7')]"
-                          },
-                          "probe": {
-                              "id": "[variables('loadBalancers_mdbec_lb_id_8')]"
-                          }
-                      }
-                  }
-              ],
-              "probes": [
-                  {
-                      "name": "mdbec-probe",
-                      "properties": {
-                          "protocol": "Http",
-                          "port": 9200,
-                          "requestPath": "/",
-                          "intervalInSeconds": 5,
-                          "numberOfProbes": 4
-                      }
-                  }
-              ],
-              "inboundNatRules": [
-                  {
-                      "name": "mdbec-natRule-max1",
-                      "properties": {
-                          "frontendIPConfiguration": {
-                              "id": "[variables('loadBalancers_mdbec_lb_id_9')]"
-                          },
-                          "frontendPort": 2201,
-                          "backendPort": 22,
-                          "protocol": "Tcp"
-                      }
-                  },
-                  {
-                      "name": "mdbec-natRule-max2",
-                      "properties": {
-                          "frontendIPConfiguration": {
-                              "id": "[variables('loadBalancers_mdbec_lb_id_10')]"
-                          },
-                          "frontendPort": 2202,
-                          "backendPort": 22,
-                          "protocol": "Tcp"
-                      }
-                  }
-              ]
-
-          }
-          
-      }
-  ]
+    "resources": [
+        {
+            "type": "Microsoft.Network/loadBalancers",
+            "name": "[parameters('loadBalancersName')]",
+            "apiVersion": "[parameters('loadBalancersApiVersion')]",
+            "location": "[parameters('location')]",
+            "tags": {
+                "[parameters('tag').key1]": "[parameters('tag').value1]"
+            },
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "mdbec-sshIPCfg",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressName'))]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "[concat(parameters('loadBalancersName'),'BackendPool')]"
+                    }
+                ],
+                "loadBalancingRules": [
+                    {
+                        "name": "[concat(parameters('loadBalancersName'),'Rule-4006')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[variables('loadBalancers_mdbec_lb_id')]"
+                            },
+                            "frontendPort": 4006,
+                            "backendPort": 4006,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 10,
+                            "protocol": "Tcp",
+                            "loadDistribution": "SourceIP",
+                            "backendAddressPool": {
+                                "id": "[variables('loadBalancers_mdbec_lb_id_1')]"
+                            },
+                            "probe": {
+                                "id": "[variables('loadBalancers_mdbec_lb_id_2')]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[concat(parameters('loadBalancersName'),'Rule-4007')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[variables('loadBalancers_mdbec_lb_id_3')]"
+                            },
+                            "frontendPort": 4007,
+                            "backendPort": 4007,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 10,
+                            "protocol": "Tcp",
+                            "loadDistribution": "SourceIP",
+                            "backendAddressPool": {
+                                "id": "[variables('loadBalancers_mdbec_lb_id_4')]"
+                            },
+                            "probe": {
+                                "id": "[variables('loadBalancers_mdbec_lb_id_5')]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[concat(parameters('loadBalancersName'),'Rule-4008')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[variables('loadBalancers_mdbec_lb_id_6')]"
+                            },
+                            "frontendPort": 4008,
+                            "backendPort": 4008,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 10,
+                            "protocol": "Tcp",
+                            "loadDistribution": "SourceIP",
+                            "backendAddressPool": {
+                                "id": "[variables('loadBalancers_mdbec_lb_id_7')]"
+                            },
+                            "probe": {
+                                "id": "[variables('loadBalancers_mdbec_lb_id_8')]"
+                            }
+                        }
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "mdbec-probe",
+                        "properties": {
+                            "protocol": "Http",
+                            "port": 9200,
+                            "requestPath": "/",
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 4
+                        }
+                    }
+                ],
+                "inboundNatRules": [
+                    {
+                        "name": "mdbec-natRule-max1",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[variables('loadBalancers_mdbec_lb_id_9')]"
+                            },
+                            "frontendPort": 2201,
+                            "backendPort": 22,
+                            "protocol": "Tcp"
+                        }
+                    },
+                    {
+                        "name": "mdbec-natRule-max2",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[variables('loadBalancers_mdbec_lb_id_10')]"
+                            },
+                            "frontendPort": 2202,
+                            "backendPort": 22,
+                            "protocol": "Tcp"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
 }
