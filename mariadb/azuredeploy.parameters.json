@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "adminUsername": {
-            "value": ""
+            "value": "testdriveuser"
         },
         "appUserName": {
             "value": "myapp"
@@ -23,7 +23,7 @@
             }
         },
         "sshKey": {
-            "value": ""
+            "value": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAq0ETnUia5TybBNkJZUwo1R1DRSPTqRtdZIG00130ZFdIOOZWln9rXdvICQlH19ZDp1GsJf0YPIyHYXZcA6M2iqewUsZ797hxybPgiO5J5dAIF7kbQ5UxYKp9Sy+DO5gvJc+bRBYOndl4QCMXmIw9eNFHr5pftblLxtPx/D72KOrDsCx0RJg5pAmzpe1eKkpm7ZFiT4XhTxqrkDN0XGuDDze126Vvvk9yw+V/c3MJUier6Z/1hj8xW3rYoyPdoZRau0+/B2Ju6PfWoajeZGEMTmW66yee+xLnWLtZPqQwFHRW5F6tO4JUPp4CZnpAO+C2siUJKiEWw75aOMIEZHSr8Q== rsa-key-20161229"
         },
         "lbvisibility": {
             "value": "private"

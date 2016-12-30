@@ -94,7 +94,7 @@
         "availabilitySetName": "[concat(variables('vmNamePrefix'), '-avset')]",
         "networkSecurityGroupName": "[concat(variables('vmNamePrefix'),'-nsg')]",
         "storageAccountName": "[concat(variables('vmNamePrefix'),'sa',uniqueString(resourceGroup().id))]",
-        "loadBalancersName": "[concat(variables('vmNamePrefix'),'-lb')]",
+       
         "publicIPAddressName": "[concat(variables('vmNamePrefix'),'-pip')]",
         "maxNetworkInterfaceName": "[concat(variables('vmNamePrefix'),'-max-nic')]",
         "dbNetworkInterfaceName": "[concat(variables('vmNamePrefix'),'-db-nic')]",
