@@ -51,13 +51,7 @@
                 "description": "Public SSH key to log into VMs"
             }
         },
-        "appIPRange": {
-            "type": "string",
-            "defaultValue": "127.0.0.1/32",
-            "metadata": {
-                "description": "CIDR block (or * for open access) for application using the cluster"
-            }
-        },
+        
         "appDatabase": {
             "type": "string",
             "defaultValue": "mydb",
@@ -81,6 +75,7 @@
         }
     },
     "variables": {
+        "appIPRange":"*",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 5)]",
         "lbVisibility": "public",
         "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/mariadb",
@@ -250,7 +245,7 @@
                             "protocol": "Tcp",
                             "sourcePortRange": "*",
                             "destinationPortRange": "4000-4010",
-                            "sourceAddressPrefix": "[parameters('appIPRange')]",
+                            "sourceAddressPrefix": "[variables('appIPRange')]",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
                             "priority": 1001,
