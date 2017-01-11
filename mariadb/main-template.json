@@ -1,0 +1,671 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "location to deploy resources"
+      }
+    },
+    "mdbeToken": {
+      "type": "string",
+      "metadata": {
+        "description": "MariaDB Enterprise Download Token"
+      }
+    },
+    "publicIPAddressName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of Public IP to use"
+      }
+    },
+    "lbVisibility": {
+      "type": "string",
+      "metadata": {
+        "description": "Is load balancer public or internal"
+      }
+    },
+    "sshKey": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Public SSH key to log into VMs"
+      }
+    },
+    "clusterName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the cluster"
+      }
+    },
+    "dnsName": {
+      "type": "string",
+      "metadata": {
+        "description": "Connect to your cluster using <dnsName>.<location>.cloudapp.azure.com"
+      }
+    },
+    "appIPRange": {
+      "type": "string",
+      "defaultValue": "127.0.0.1/32",
+      "metadata": {
+        "description": "CIDR block (or * for open access) for application using the cluster"
+      }
+    },
+    "appDatabase": {
+      "type": "string",
+      "defaultValue": "mydb",
+      "metadata": {
+        "description": "Database name for application to use"
+      }
+    },
+    "appUserName": {
+      "type": "string",
+      "defaultValue": "myapp",
+      "metadata": {
+        "description": "Username for application to use"
+      }
+    },
+    "appPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Password for application to use"
+      }
+    },
+    "VmSize": {
+      "type": "string",
+      "defaultValue": "Standard_DS2",
+      "metadata": {
+        "description": "size for the data node VMs"
+      }
+    },
+    "diskSize": {
+      "type": "string",
+      "defaultValue": "1023",
+      "metadata": {
+        "description": "Disk size for the data node VMs"
+      }
+    },
+    "storageAccountPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Storage account name for the data nodes"
+      }
+    },
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "metadata": {
+        "description": "Storage account type for the cluster"
+      }
+    },
+    "maxscaleVmSize": {
+      "type": "string",
+      "defaultValue": "Standard_A2",
+      "metadata": {
+        "description": "size for the MaxScale VM"
+      }
+    },
+    "vmNamePrefix": {
+      "type": "string",
+      "defaultValue": "mdbec",
+      "metadata": {
+        "description": "host name prefix for the VMs"
+      }
+    },
+    "adminUserName": {
+      "type": "string",
+      "defaultValue": "mdbe",
+      "metadata": {
+        "description": "user name to ssh to the VMs"
+      }
+    },
+    "artifactsBaseUrl": {
+      "type": "string",
+      "defaultValue": "https://gallery.azure.com/artifact/20151001/mariadb.cluster-maxscale.1.0.5/Artifacts",
+      "metadata": {
+        "artifactsBaseUrl": "Base URL of the Publisher Template gallery package"
+      }
+    },
+    "resourceSubdir": {
+      "type": "string",
+      "defaultValue": "mdbec-ha",
+      "metadata": {
+        "artifactsBaseUrl": "Subdirectory of resource files"
+      }
+    }
+  },
+  "variables": {
+    "apiVer": "2015-06-15",
+    "imageReference": {
+      "publisher": "mariadb",
+      "offer": "mdbec-ha-node",
+      "sku": "mdbec-data-node",
+      "version": "latest"
+    },
+    "vmPlan": {
+      "publisher": "[variables('imageReference').publisher]",
+      "product": "[variables('imageReference').offer]",
+      "name": "[variables('imageReference').sku]"
+    },
+    "singleQuote": "'",
+    "virtualNetworkName": "[concat(parameters('vmNamePrefix'),'-vnet')]",
+    "dbSubnetName": "dbsubnet",
+    "publicSubnetName": "publicsubnet",
+    "vnetAddressPrefix": "10.0.0.0/16",
+    "dbSubnetAddressPrefix": "10.0.1.0/24",
+    "publicSubnetAddressPrefix": "10.0.2.0/24",
+    "resourceRoot": "[concat('http://downloads.mariadb.com/enterprise/',parameters('mdbeToken'),'/generate/azure/',parameters('resourceSubdir'),'/')]",
+    "mariadbConfigFilePath": "[concat(variables('resourceRoot'),'/my.cnf.template')]",
+    "maxscaleConfigFilePath": "[concat(variables('resourceRoot'),'/maxscale.cnf.template')]",
+    "customScriptFilePath": "[concat(variables('resourceRoot'),'/azuremdbec.sh')]",
+    "maxscaleScriptFilePath": "[concat(variables('resourceRoot'),'/azuremaxscale.sh')]",
+    "mysqlBackEndPort": 3306,
+    "customScriptCommandToExecute": "bash azuremdbec.sh",
+    "maxscaleScriptCommandToExecute": "bash azuremaxscale.sh",
+    "sshNatRuleBackEndPort": 22,
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
+    "dbSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('dbSubnetName'))]",
+    "publicSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('publicSubnetName'))]",
+    "lbSetupURL": "[concat(variables('resourceRoot'),'/loadBalancer-',parameters('lbVisibility'),'.json')]",
+    "lbTemplateName": "[concat(parameters('vmNamePrefix'),'-LoadBalancerTemplate')]",
+    "lbName": "[concat(parameters('vmNamePrefix'),'-lb')]",
+    "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
+    "lbPublicIPName": "[parameters('publicIPAddressName')]",
+    "lbPublicIPRef": "[resourceId('Microsoft.Network/publicIPAddresses',variables('lbPublicIPName'))]",
+    "lbBackendAddressPoolName": "[concat(parameters('vmNamePrefix'), '-lbBackendPool')]",
+    "lbBackendAddressPoolID": "[concat(variables('lbID'),'/backendAddressPools/', variables('lbBackendAddressPoolName'))]",
+    "sshIPConfigName": "[concat(parameters('vmNamePrefix'), '-sshIPCfg')]",
+    "sshIPConfig": "[concat(variables('lbID'),'/frontendIPConfigurations/',variables('sshIPConfigName'))]",
+    "ipDb1": "10.0.1.4",
+    "ipDb2": "10.0.1.5",
+    "ipDb3": "10.0.1.6",
+    "ipMax1": "10.0.1.11",
+    "ipMax2": "10.0.1.12",
+    "storageAccountName": "[concat(parameters('storageAccountPrefix'),'1')]",
+    "maxscaleStorageAccount": "[concat(parameters('storageAccountPrefix'),'2')]",
+    "nicName": "[concat(parameters('vmNamePrefix'), '-nic')]",
+    "nsgName": "[concat(parameters('vmNamePrefix'),'-public-nsg')]",
+    "nodeCount": 3,
+    "maxscaleCount": 2,
+    "numDisks": 3,
+    "vmName1": "[concat(parameters('vmNamePrefix'), '-db1')]",
+    "vmMax1": "[concat(parameters('vmNamePrefix'), '-max1')]",
+    "dbAvailabilitySetName": "[concat(parameters('vmNamePrefix'), '-dbset')]",
+    "maxAvailabilitySetName": "[concat(parameters('vmNamePrefix'), '-maxset')]",
+    "vmExtensionName": "[concat(parameters('vmNamePrefix'), '-ext')]",
+    "mdbecClusterAddress": "[concat(variables('ipDb1'), ',', variables('ipdb2'), ',', variables('ipdb3'))]",
+    "customScriptCommandCommon": "[concat(variables('customScriptCommandToExecute'), ' --clusteraddress ', variables('mdbecClusterAddress'), ' --cluster-name ', parameters('clusterName') ,' --token ', parameters('mdbeToken'),' --mycnftemplate ', variables('mariadbConfigFilePath'), ' --osuser ', parameters('adminUserName'), ' --storagetype=', parameters('storageAccountType'))]",
+    "serverList": "[concat(' --db ', variables('ipDb1'), ':', variables('mysqlBackEndPort'), ' --db ', variables('ipDb2'), ':', variables('mysqlBackEndPort'), ' --db ', variables('ipDb3'), ':', variables('mysqlBackEndPort' ))]",
+    "vhdContainer1": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/',parameters('vmNamePrefix'),'-db1vhds/')]",
+    "dataDisk1VhdName1": "[concat(variables('vhdContainer1'),variables('vmName1'),'dataDisk1.vhd')]",
+    "vmExtensionName1": "[concat(variables('vmName1'),'/', variables('vmExtensionName'))]",
+    "customScriptParamVm1": "[concat(' --nodeaddress ', variables('ipDb1'), ' --startupcmd bootstrap --appuser=', parameters('appUserName'), ' --apppassword=', variables('singleQuote'), parameters('appPassword'), variables('singleQuote'), ' --appdatabase=', parameters('appDatabase'), ' ')]"
+  },
+  "resources": [
+    {
+      "name": "[variables('lbTemplateName')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-11-01",
+      "dependsOn": [
+        "[variables('vnetID')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('lbSetupURL')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "dnsName": {
+            "value": "[parameters('dnsName')]"
+          },
+          "vmNamePrefix": {
+            "value": "[parameters('vmNamePrefix')]"
+          },
+          "lbPublicIPName": {
+            "value": "[variables('lbPublicIPName')]"
+          },
+          "dbSubnetRef": {
+            "value": "[variables('dbSubnetRef')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "apiVersion": "[variables('apiVer')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "accountType": "[parameters('storageAccountType')]"
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('maxscaleStorageAccount')]",
+      "apiVersion": "[variables('apiVer')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "accountType": "Standard_LRS"
+      }
+    },
+    {
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('dbAvailabilitySetName')]",
+      "apiVersion": "[variables('apiVer')]",
+      "location": "[parameters('location')]",
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('maxAvailabilitySetName')]",
+      "apiVersion": "[variables('apiVer')]",
+      "location": "[parameters('location')]",
+      "properties": {}
+    },
+    {
+      "apiVersion": "[variables('apiVer')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('nsgName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "allow-ssh",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "22",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 1000,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "allow-maxscale",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "4000-4010",
+              "sourceAddressPrefix": "[parameters('appIPRange')]",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 1001,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVer')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('virtualNetworkName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('vnetAddressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('dbSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('dbSubnetAddressPrefix')]"
+            }
+          },
+          {
+            "name": "[variables('publicSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('publicSubnetAddressPrefix')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVer')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('nicName'), '-db', copyIndex(1))]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "nicLoop",
+        "count": "[variables('nodeCount')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "[concat('ipconfig', copyIndex(1))]",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[variables(concat('ipDb', copyIndex(1)))]",
+              "subnet": {
+                "id": "[variables('dbSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVer')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('nicName'), '-max', copyIndex(1))]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "nicLoop",
+        "count": "[variables('maxscaleCount')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+        "[concat('Microsoft.Resources/deployments/', variables('lbTemplateName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "[concat('ipconfig', copyIndex(1))]",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[variables(concat('ipMax', copyIndex(1)))]",
+              "subnet": {
+                "id": "[variables('dbSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[reference(variables('lbTemplateName'),'2015-01-01').outputs.lbBackendAddressPoolID.value]"
+                }
+              ],
+              "loadBalancerInboundNatRules": [
+                {
+                  "id": "[concat(reference(variables('lbTemplateName'),'2015-01-01').outputs.lbID.value,'/inboundNatRules/',parameters('vmNamePrefix'),'-natRule-max',copyIndex(1))]"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('vmName1')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "[variables('apiVer')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/availabilitySets/', variables('dbAvailabilitySetName'))]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'), '-db1')]"
+      ],
+      "plan": "[variables('vmPlan')]",
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('dbAvailabilitySetName'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computername": "[variables('vmName1')]",
+          "adminUsername": "[parameters('adminUserName')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": true,
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[concat('/home/',parameters('adminUserName'),'/.ssh/authorized_keys')]",
+                  "keyData": "[parameters('sshKey')]"
+                }
+              ]
+            }
+          }
+        },
+        "storageProfile": {
+          "imageReference": "[variables('imageReference')]",
+          "osDisk": {
+            "name": "osdisk",
+            "vhd": {
+              "uri": "[concat(variables('vhdContainer1'), 'osdisk.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          },
+          "dataDisks": [
+            {
+              "name": "datadisk1",
+              "diskSizeGB": "[parameters('diskSize')]",
+              "lun": 0,
+              "vhd": {
+                "Uri": "[variables('dataDisk1VhdName1')]"
+              },
+              "createOption": "Empty"
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('nicName'),'-db1'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[variables('vmExtensionName1')]",
+      "apiVersion": "[variables('apiVer')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName1'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.4",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[variables('customScriptFilePath')]"
+          ],
+          "commandToExecute": "[concat(variables('customScriptCommandCommon'), variables('customScriptParamVm1'))]"
+        },
+        "protectedSettings": {
+          "Items": {
+            "appPassword": "[parameters('appPassword')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "[concat(parameters('vmNamePrefix'), '-db', copyIndex(2))]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "[variables('apiVer')]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "vmLoop",
+        "count": "[sub(variables('nodeCount'),1)]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Compute/availabilitySets/', variables('dbAvailabilitySetName'))]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'), '-db', copyIndex(2))]"
+      ],
+      "plan": "[variables('vmPlan')]",
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('dbAvailabilitySetName'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computername": "[concat(parameters('vmNamePrefix'), '-db', copyIndex(2)) ]",
+          "adminUsername": "[parameters('adminUserName')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": true,
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[concat('/home/',parameters('adminUserName'),'/.ssh/authorized_keys')]",
+                  "keyData": "[parameters('sshKey')]"
+                }
+              ]
+            }
+          }
+        },
+        "storageProfile": {
+          "imageReference": "[variables('imageReference')]",
+          "osDisk": {
+            "name": "osdisk",
+            "vhd": {
+              "uri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/',parameters('vmNamePrefix'),'-db',copyIndex(2),'vhds/','osdisk.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          },
+          "dataDisks": [
+            {
+              "name": "datadisk1",
+              "diskSizeGB": "[parameters('diskSize')]",
+              "lun": 0,
+              "vhd": {
+                "Uri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/',parameters('vmNamePrefix'),'-db',copyIndex(2),'vhds/','dataDisk1.vhd')]"
+              },
+              "createOption": "Empty"
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('nicName'),'-db',copyIndex(2)))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('vmNamePrefix'),'-db',copyIndex(2),'/', variables('vmExtensionName'))]",
+      "apiVersion": "[variables('apiVer')]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "vmExtLoop",
+        "count": "[sub(variables('nodeCount'),1)]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNamePrefix'),'-db',copyIndex(2))]",
+        "[concat('Microsoft.Compute/virtualMachines/',variables('vmName1'),'/extensions/',variables('vmExtensionName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.4",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[variables('customScriptFilePath')]"
+          ],
+          "commandToExecute": "[concat(variables('customScriptCommandCommon'), ' --nodeaddress ', variables(concat('ipDb',copyIndex(2))), ' --startupcmd start ')]"
+        },
+        "protectedSettings": {
+          "items": {
+            "appPassword": "[parameters('appPassword')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "[concat(parameters('vmNamePrefix'), '-max', copyIndex(1))]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "[variables('apiVer')]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "vmLoop",
+        "count": "[variables('maxscaleCount')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Compute/availabilitySets/', variables('maxAvailabilitySetName'))]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('maxscaleStorageAccount'))]",
+        "[concat(variables('nicName'), '-max', copyIndex(1))]"
+      ],
+      "plan": "[variables('vmPlan')]",
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('maxAvailabilitySetName'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('maxscaleVmSize')]"
+        },
+        "osProfile": {
+          "computername": "[concat(parameters('vmNamePrefix'), '-max', copyIndex(1)) ]",
+          "adminUsername": "[parameters('adminUserName')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": true,
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[concat('/home/',parameters('adminUserName'),'/.ssh/authorized_keys')]",
+                  "keyData": "[parameters('sshKey')]"
+                }
+              ]
+            }
+          }
+        },
+        "storageProfile": {
+          "imageReference": "[variables('imageReference')]",
+          "osDisk": {
+            "name": "osdisk",
+            "vhd": {
+              "uri": "[concat('http://',variables('maxscaleStorageAccount'),'.blob.core.windows.net/',parameters('vmNamePrefix'),'-max',copyIndex(1),'vhds/','osdisk.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('nicName'),'-max',copyIndex(1)))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('vmNamePrefix'),'-max',copyIndex(1),'/', variables('vmExtensionName'))]",
+      "apiVersion": "[variables('apiVer')]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "maxExtLoop",
+        "count": "[variables('maxscaleCount')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNamePrefix'), '-db2','/extensions/',variables('vmExtensionName'))]",
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNamePrefix'), '-max',copyIndex(1))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.4",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[variables('maxscaleScriptFilePath')]"
+          ],
+          "commandToExecute": "[concat(variables('maxscaleScriptCommandToExecute'), variables('serverList'), ' --cnftemplate ', variables('maxscaleConfigFilePath'), ' --osuser ', parameters('adminUserName'), ' --token ', parameters('mdbeToken'), ' --maxscaleip ', variables('ipMax1'), ' --maxscaleip ', variables('ipMax2'), ' --mynodeid ', copyIndex(1))]"
+        }
+      }
+    }
+  ]
+}
