@@ -158,7 +158,7 @@
         {
             "name": "mdbec-loadbalancerDeploy",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2015-11-01",
+            "apiVersion": "2015-01-01",
             "dependsOn": [
                 "[variables('vnetID')]"
             ],
@@ -622,12 +622,15 @@
     ],
     "outputs": {
         "ssh_to_MaxScaleVM1": {
+            "type": "string",
             "value": "[concat(reference('mdbec-loadbalancerDeploy').outputs.fqdn.value,':2201')]"
         },
         "ssh_to_MaxScaleVM2": {
+            "type": "string",
             "value": "[concat(reference('mdbec-loadbalancerDeploy').outputs.fqdn.value,':2202')]"
         },
         "adminUserName": {
+            "type": "string",
             "value": "[parameters('adminUserName')]"
         }
     }
