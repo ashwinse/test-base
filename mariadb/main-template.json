@@ -119,7 +119,7 @@
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
         "dbSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('dbSubnetName'))]",
         "publicSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('publicSubnetName'))]",
-        "lbSetupURL": "[concat(variables('baseUrl'),'/nested/loadBalancer-',variables('lbVisibility'),'.json')]",
+        "lbSetupURL": "[concat(variables('baseUrl'),'/nested/loadbalancer-',variables('lbVisibility'),'.json')]",
         "lbName": "[concat(variables('vmNamePrefix'),'-lb')]",
         "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
         "lbPublicIPName": "[variables('publicIPAddressName')]",
