@@ -632,6 +632,10 @@
         "adminUserName": {
             "type": "string",
             "value": "[parameters('adminUserName')]"
+        },
+        "command_to_open_mariadb":{
+            "type": "string",
+            "value": "[concat('mysql -h ',reference('mdbec-loadbalancerDeploy').outputs.fqdn.value,' -P 4006 -u ',parameters('appUserName'),' -p',parameters('appPassword'),' ',parameters('appDatabase'))]"
         }
     }
 }
