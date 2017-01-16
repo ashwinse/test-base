@@ -42,8 +42,8 @@
                     "computerName": "[variables('virtualMachineName')]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]",
-                    "windowsConfiguration": {
-                        "provisionVmAgent": "true"
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false
                     }
                 },
                 "hardwareProfile": {
@@ -51,9 +51,9 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "MicrosoftWindowsServer",
-                        "offer": "WindowsServer",
-                        "sku": "2012-R2-Datacenter",
+                        "publisher": "OpenLogic",
+                        "offer": "CentOS",
+                        "sku": "7.1",
                         "version": "latest"
                     },
                     "osDisk": {
