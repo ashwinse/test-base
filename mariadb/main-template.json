@@ -51,7 +51,6 @@
                 "description": "Public SSH key to log into VMs"
             }
         },
-        
         "appDatabase": {
             "type": "string",
             "defaultValue": "mydb",
@@ -72,10 +71,24 @@
             "metadata": {
                 "description": "Password for application to use"
             }
+        },
+        "clientVmUsername": {
+            "defaultValue": "wpuser",
+            "type": "securestring",
+            "metadata": {
+                "description": "Username for password"
+            }
+        },
+        "clientVmPassword": {
+            "defaultValue": "Wpassword123",
+            "type": "securestring",
+            "metadata": {
+                "description": "Password for Wordpress"
+            }
         }
     },
     "variables": {
-        "appIPRange":"*",
+        "appIPRange": "*",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 5)]",
         "lbVisibility": "public",
         "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/mariadb",
@@ -120,6 +133,7 @@
         "dbSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('dbSubnetName'))]",
         "publicSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('publicSubnetName'))]",
         "lbSetupURL": "[concat(variables('baseUrl'),'/nested/loadbalancer-',variables('lbVisibility'),'.json')]",
+        "linuxVmSetupUrl": "[concat(variables('baseUrl'),'/nested/linuxVM.json')]",
         "lbName": "[concat(variables('vmNamePrefix'),'-lb')]",
         "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
         "lbPublicIPName": "[variables('publicIPAddressName')]",
@@ -618,6 +632,32 @@
                     "commandToExecute": "[concat(variables('maxscaleScriptCommandToExecute'), variables('serverList'), ' --cnftemplate ', variables('maxscaleConfigFilePath'), ' --osuser ', parameters('adminUserName'), ' --token ', variables('mdbeToken'), ' --maxscaleip ', variables('ipMax1'), ' --maxscaleip ', variables('ipMax2'), ' --mynodeid ', copyIndex(1))]"
                 }
             }
+        },
+        {
+            "name": "windowsVmSetup",
+            "apiVersion": "2016-02-01",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('linuxVmSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[resourceGroup().location]"
+                    },
+                    "adminUsername": {
+                        "value": "[parameters('clientVmUsername')]"
+                    },
+                    "adminPassword": {
+                        "value": "[parameters('clientVmPassword')]"
+                    },
+                    "subnetRef": {
+                        "value": "[variables('publicSubnetRef')]"
+                    }
+                }
+            }
         }
     ],
     "outputs": {
@@ -633,7 +673,7 @@
             "type": "string",
             "value": "[parameters('adminUserName')]"
         },
-        "command_to_open_mariadb":{
+        "command_to_open_mariadb": {
             "type": "string",
             "value": "[concat('mysql -h ',reference('mdbec-loadbalancerDeploy').outputs.fqdn.value,' -P 4006 -u ',parameters('appUserName'),' -p',parameters('appPassword'),' ',parameters('appDatabase'))]"
         }
