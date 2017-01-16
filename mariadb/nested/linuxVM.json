@@ -13,9 +13,6 @@
         },
         "subnetRef": {
             "type": "string"
-        },
-        "virtualNetworkName": {
-            "type": "string"
         }
     },
     "variables": {

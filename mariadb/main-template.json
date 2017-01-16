@@ -658,9 +658,6 @@
                     },
                     "subnetRef": {
                         "value": "[variables('publicSubnetRef')]"
-                    },
-                    "virtualNetworkName": {
-                        "value": "[variables('virtualNetworkName')]"
                     }
                 }
             }
