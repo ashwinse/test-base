@@ -637,6 +637,9 @@
             "name": "windowsVmSetup",
             "apiVersion": "2016-02-01",
             "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "[variables('vnetID')]"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
