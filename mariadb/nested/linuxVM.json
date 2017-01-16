@@ -13,13 +13,15 @@
         },
         "subnetRef": {
             "type": "string"
+        },
+        "virtualNetworkName": {
+            "type": "string"
         }
     },
     "variables": {
-        "virtualMachineName": "desktop",
+        "virtualMachineName": "wp",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 5)]",
         "storageAccountName": "[concat(variables('virtualMachineName'),variables('suffix'))]",
-        "virtualNetworkName": "[concat(variables('virtualMachineName'),'-vnet')]",
         "networkInterfaceName": "[concat(variables('virtualMachineName'),'-nic')]",
         "networkSecurityGroupName": "[concat(variables('virtualMachineName'),'-nsg')]",
         "storageAccountType": "Standard_LRS",
@@ -89,7 +91,7 @@
             "apiVersion": "2016-09-01",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]",
                 "[concat('Microsoft.Network/publicIpAddresses/', variables('publicIpAddressName'))]",
                 "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]"
             ],
