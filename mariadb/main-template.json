@@ -645,7 +645,7 @@
                 },
                 "parameters": {
                     "location": {
-                        "value": "[resourceGroup().location]"
+                        "value": "[parameters('location')]"
                     },
                     "adminUsername": {
                         "value": "[parameters('clientVmUsername')]"
