@@ -163,7 +163,7 @@
         }
     ],
     "outputs": {
-        "windowsVmFqdn": {
+        "clientVmFqdn": {
             "type": "string",
             "value": "[concat(reference(variables('publicIpAddressName')).dnsSettings.fqdn)]"
         }
