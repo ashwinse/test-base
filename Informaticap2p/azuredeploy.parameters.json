@@ -1,0 +1,89 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "eastus"
+        },
+        "sqlDWDBAdminName": {
+            "value": "sqladmin"
+        },
+        "sqlDWAdminPassword": {
+            "value": "Sysgain@#123"
+        },
+        "jobId": {
+            "value": "ee49c573-8fbc-4a53-9d04-834fe4ddf40b"
+        },
+        "jobIdSignup": {
+            "value": "7c643900-af40-4243-8f44-85de8ceef11f"
+        },
+        "jobIdWorkflow": {
+            "value": "413c1df8-edf7-4522-affd-f23be937f487"
+        },
+        "jobIdCont": {
+            "value": "1fde571c-762d-4170-a9bd-7ee74cf0fd30"
+        },
+        "start": {
+            "value": "2016-10-28T09:00:00"
+        },
+        "end": {
+            "value": "2016-10-28T10:00:00"
+        },
+        "tag": {
+            "value": {
+                "value1": "Informatica"
+            }
+        },
+        "adminUsernameInformaticaVm": {
+            "value": "vmuser"
+        },
+        "adminPasswordInformaticaVm": {
+            "value": "Sysgain@#123"
+        },
+        "publicIPdnsPrefix": {
+            "value": "infodns"
+        },
+        "userEmail": {
+            "value": "trevor12@gmail.com"
+        },
+        "informaticaUserName": {
+            "value": "trevor11@gmail.com"
+        },
+        "informaticaUserPassword": {
+            "value": "Sysgain@#"
+        },
+        "userFirstname": {
+            "value": "Trevor"
+        },
+        "userLastname": {
+            "value": "Sebastian"
+        },
+        "userTitle": {
+            "value": "Mr"
+        },
+        "userPhone": {
+            "value": "9000840469"
+        },
+        "orgName": {
+            "value": "Sysgain"
+        },
+        "orgAddress": {
+            "value": "MainSt"
+        },
+        "orgCity": {
+            "value": "Seattle"
+        },
+        "orgState": {
+            "value": "NY"
+        },
+        "orgZipcode": {
+            "value": "98102"
+        },
+        "orgCountry": {
+            "value": "US"
+        },
+        "orgEmployees": {
+            "value": "5001_"
+        }
+    }
+}
