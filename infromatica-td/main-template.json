@@ -44,18 +44,7 @@
                 "description": "Job Id of the create table automation Job, use https://www.guidgenerator.com to generate unique jobid Ex:5f32ff4e-a5c5-47af-8b70-981c896a9163"
             }
         },
-        "jobIdSignup": {
-            "type": "string",
-            "metadata": {
-                "description": "Job Id of the sign-up automation Job, use https://www.guidgenerator.com to generate unique jobid Ex:5f32ff4e-a5c5-47af-8b70-981c896a9163"
-            }
-        },
-        "jobIdWorkflow": {
-            "type": "string",
-            "metadata": {
-                "description": "Job Id of the workflow automation Job, use https://www.guidgenerator.com to generate unique jobid Ex:5f32ff4e-a5c5-47af-8b70-981c896a9163"
-            }
-        },
+        
         "jobIdCont": {
             "type": "string",
             "metadata": {
@@ -300,7 +289,7 @@
         "clusterSize": 1,
         "timeToLive": "00:45:00",
         "frequency": "Hour",
-        "armBaseUrl": "https://raw.githubusercontent.com/sysgain/informatica-p2p/master",
+        "armBaseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/infromatica-td",
         "interval": 1,
         "writeBatchSize": 0,
         "writeBatchTimeout": "00:00:00",
@@ -630,176 +619,7 @@
                 }
             }
         },
-        {
-            "name": "informaticaCredentialsAutomationSetup",
-            "apiVersion": "2015-01-01",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('credentialsAutomationSetupURL')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "jobIdSignup": {
-                        "value": "[parameters('jobIdSignup')]"
-                    },
-                    "automationAccountName": {
-                        "value": "[variables('automationAccName')]"
-                    },
-                    "credential1Name": {
-                        "value": "[variables('credential1Name')]"
-                    },
-                    "cred1Username": {
-                        "value": "[variables('azure_Rm_Username')]"
-                    },
-                    "cred1Password": {
-                        "value": "[variables('azure_Rm_Password')]"
-                    },
-                    "runbookName": {
-                        "value": "[variables('credSetupRunbookName')]"
-                    },
-                    "location": {
-                        "value": "[variables('automation_Location')]"
-                    },
-                    "runbookUrl": {
-                        "value": "[variables('credsrunbookUrl')]"
-                    },
-                    "sku": {
-                        "value": "[variables('sku')]"
-                    },
-                    "ip": {
-                        "value": "[variables('ip')]"
-                    },
-                    "sysgain_ms_email": {
-                        "value": "[variables('sysgain_ms_email')]"
-                    },
-                    "sysgain_ms_password": {
-                        "value": "[variables('sysgain_ms_password')]"
-                    },
-                    "user_email": {
-                        "value": "[parameters('userEmail')]"
-                    },
-                    "informatica_user_name": {
-                        "value": "[parameters('informaticaUserName')]"
-                    },
-                    "informatica_user_password": {
-                        "value": "[parameters('informaticaUserPassword')]"
-                    },
-                    "user_firstname": {
-                        "value": "[parameters('userFirstname')]"
-                    },
-                    "user_lastname": {
-                        "value": "[parameters('userLastname')]"
-                    },
-                    "user_title": {
-                        "value": "[parameters('userTitle')]"
-                    },
-                    "user_phone": {
-                        "value": "[parameters('userPhone')]"
-                    },
-                    "org_name": {
-                        "value": "[parameters('orgName')]"
-                    },
-                    "org_address": {
-                        "value": "[parameters('orgAddress')]"
-                    },
-                    "org_city": {
-                        "value": "[parameters('orgCity')]"
-                    },
-                    "org_state": {
-                        "value": "[parameters('orgState')]"
-                    },
-                    "org_zipcode": {
-                        "value": "[parameters('orgZipcode')]"
-                    },
-                    "org_country": {
-                        "value": "[parameters('orgCountry')]"
-                    },
-                    "org_employees": {
-                        "value": "[parameters('orgEmployees')]"
-                    },
-                    "client_id": {
-                        "value": "[variables('clientId')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "workflowAutomationSetup",
-            "apiVersion": "2015-01-01",
-            "type": "Microsoft.Resources/deployments",
-            "dependsOn": [
-                "informaticaCredentialsAutomationSetup",
-                "virtualMachineExtDeploy",
-                "sqlDataWarehoueSetup",
-                "adfstorageAccountDeploy",
-                "createContainerAutomationSetup"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('workflowAutomationSetupURL')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "jobIdWorkflow": {
-                        "value": "[parameters('jobIdWorkflow')]"
-                    },
-                    "automationAccountName": {
-                        "value": "[variables('wfaAtomationAccountName')]"
-                    },
-                    "credential1Name": {
-                        "value": "[variables('credential1Name')]"
-                    },
-                    "cred1Username": {
-                        "value": "[variables('azure_Rm_Username')]"
-                    },
-                    "cred1Password": {
-                        "value": "[variables('azure_Rm_Password')]"
-                    },
-                    "runbookName": {
-                        "value": "[variables('wfrunbookName')]"
-                    },
-                    "location": {
-                        "value": "[variables('automation_Location')]"
-                    },
-                    "runbookUrl": {
-                        "value": "[variables('wfrunbookUrl')]"
-                    },
-                    "sku": {
-                        "value": "[variables('sku')]"
-                    },
-                    "ip": {
-                        "value": "[variables('ip')]"
-                    },
-                    "sysgain_ms_email": {
-                        "value": "[variables('sysgain_ms_email')]"
-                    },
-                    "sysgain_ms_password": {
-                        "value": "[variables('sysgain_ms_password')]"
-                    },
-                    "informatica_user_name": {
-                        "value": "[parameters('informaticaUserName')]"
-                    },
-                    "informatica_user_password": {
-                        "value": "[parameters('informaticaUserPassword')]"
-                    },
-                    "informatica_csa_vmname": {
-                        "value": "[variables('vmName')]"
-                    },
-                    "client_id": {
-                        "value": "[variables('clientId')]"
-                    },
-                    "adfStorageAccName": {
-                        "value": "[variables('adfstorageAccName')]"
-                    },
-                    "adfStorageAccKey": {
-                        "value": "[reference('adfstorageAccountDeploy').outputs.primaryKey.value]"
-                    }
-                }
-            }
-        },
+        
         {
             "name": "sqlDataWarehoueSetup",
             "apiVersion": "2015-01-01",
