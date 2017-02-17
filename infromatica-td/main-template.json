@@ -1,15 +1,7 @@
 {
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
-    "parameters": {
-        "artifactsBaseUrl": {
-            "type": "string",
-            "metadata": {
-                "artifactsBaseUrl": "Base URL of the Publisher Template gallery package"
-            },
-            "defaultValue": "https://gallery.azure.com/artifact/20151001/informatica.informatica-cloud-servicesics.1.0.1/Artifacts"
-        }
-    },
+    "parameters": {},
     "variables": {
         "location": "centralus",
         "suffix": "[substring(uniqueString('resourceGroup().id'), 0, 7)]",
@@ -25,7 +17,7 @@
         "orgName": "Microtest",
         "country": "US",
         "phone": "9000840469",
-        "cloudConnector1": "",
+        "cloudConnector1": "0db52dc0-49c5-11e4-916c-0800200c9a66",
         "cloudConnector2": "",
         "vnetName": "icspaygvnet",
         "vnetAddressPrefix": "10.4.0.0/16",
@@ -33,7 +25,9 @@
         "vnetSubnetAddressPrefix": "10.4.0.0/24",
         "artifactsBaseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/infromatica-td",
         "scriptsUri": "[concat(variables('artifactsBaseUrl'),'/scripts/')]",
-        "storageAccountName": "[concat('icspayg', uniqueString(resourceGroup().id))]",
+        "storageAccountName": "[concat('icspayg', variables('suffix'))]",
+        "sourceStorageAccountName":"[concat('src',variables('suffix'))]",
+        "destStorageAccountName":"[concat('dest',variables('suffix'))]"
         "storageAccountType": "Standard_LRS",
         "nicName": "IcsPaygNic",
         "vmName": "icspayg",
@@ -50,6 +44,32 @@
         }
     },
     "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('sourceStorageAccountName')]",
+            "apiVersion": "2016-01-01",
+            "location": "[variables('location')]",
+            "properties": {},
+            "sku": {
+                "name": "[variables('storageAccountType')]"
+            },
+            "kind": "Storage"
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('destStorageAccountName')]",
+            "apiVersion": "2016-01-01",
+            "location": "[variables('location')]",
+            "tags": {
+                "displayName": "icsStorage",
+                "provider": "[toUpper(variables('informaticaTags').provider)]"
+            },
+            "properties": {},
+            "sku": {
+                "name": "[variables('storageAccountType')]"
+            },
+            "kind": "Storage"
+        },
         {
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[variables('storageAccountName')]",
