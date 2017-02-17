@@ -27,7 +27,7 @@
         "scriptsUri": "[concat(variables('artifactsBaseUrl'),'/scripts/')]",
         "storageAccountName": "[concat('icspayg', variables('suffix'))]",
         "sourceStorageAccountName":"[concat('src',variables('suffix'))]",
-        "destStorageAccountName":"[concat('dest',variables('suffix'))]"
+        "destStorageAccountName":"[concat('dest',variables('suffix'))]",
         "storageAccountType": "Standard_LRS",
         "nicName": "IcsPaygNic",
         "vmName": "icspayg",
