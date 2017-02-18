@@ -64,9 +64,17 @@ workflow container3 {
 
     
 
-    $storageCtx = New-AzureStorageContext -StorageAccountName $adfStorageAccName -StorageAccountKey $adfStorageAccKey
+    $src1StorageCtx = New-AzureStorageContext -StorageAccountName $source1StorageAccountName -StorageAccountKey $source1StorageAccountKey
 	
-    New-AzureStorageContainer -Name "adfgetstarted" -Context $storageCtx
+    New-AzureStorageContainer -Name $src1Container -Context $src1StorageCtx
+
+    $src2StorageCtx = New-AzureStorageContext -StorageAccountName $source2StorageAccountName -StorageAccountKey $source2StorageAccountKey
+	
+    New-AzureStorageContainer -Name $src1Container -Context $src2StorageCtx
+
+    $destStorageCtx = New-AzureStorageContext -StorageAccountName $destStorageAccountName -StorageAccountKey $destStorageAccountKey
+	
+    New-AzureStorageContainer -Name $src1Container -Context $destStorageCtx
 
     }
     
