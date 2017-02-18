@@ -34,16 +34,20 @@
         "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/infromatica-td",
         "scriptsUri": "[concat(variables('baseUrl'),'/scripts/')]",
         "storageAccountName": "[concat('icspayg', variables('suffix'))]",
-        "sourceStorageAccountName":"[concat('src',variables('suffix'))]",
-        "destStorageAccountName":"[concat('dest',variables('suffix'))]",
+        "source1StorageAccountName": "[concat('src1',variables('suffix'))]",
+        "source2StorageAccountName": "[concat('src2',variables('suffix'))]",
+        "destStorageAccountName": "[concat('dest',variables('suffix'))]",
         "storageAccountType": "Standard_LRS",
         "nicName": "IcsPaygNic",
         "vmName": "icspayg",
-        "automationSku":"Free",
-        "automationLocation":"eastus2",
-        "automationAccountName":"containerCreate",
-        "runbookName": "container1",
-        "runbookUri":"[concat(variables('baseUrl'),'/scripts/info-container-crt.ps1')]",
+        "automationSku": "Free",
+        "automationLocation": "eastus2",
+        "automationAccountName": "containerCreate",
+        "runbookName": "container3",
+        "runbookUri": "[concat(variables('baseUrl'),'/scripts/info-container-crt.ps1')]",
+        "src1Container": "source1",
+        "src2Container": "source2",
+        "destContainer": "destination",
         "publicIPAddressName": "[concat(variables('vmName'), '-pip')]",
         "IPAddressType": "Dynamic",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('vnetName'))]",
@@ -54,13 +58,23 @@
         "vnetUrl": "[concat(variables('baseUrl'),'/nested/vnet.json' )]",
         "informaticaTags": {
             "provider": "AACF690D-C725-4C78-9B1E-E586595B369F"
-        },
-        "createContainerAutomationSetupUrl":""
+        }
     },
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('sourceStorageAccountName')]",
+            "name": "[variables('source1StorageAccountName')]",
+            "apiVersion": "2016-01-01",
+            "location": "[variables('location')]",
+            "properties": {},
+            "sku": {
+                "name": "[variables('storageAccountType')]"
+            },
+            "kind": "Storage"
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('source2StorageAccountName')]",
             "apiVersion": "2016-01-01",
             "location": "[variables('location')]",
             "properties": {},
@@ -99,11 +113,16 @@
             },
             "kind": "Storage"
         },
-           {
+        {
             "name": "[variables('automationAccountName')]",
             "type": "Microsoft.Automation/automationAccounts",
             "apiVersion": "2015-01-01-preview",
             "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('source1StorageAccountName'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', variables('source2StorageAccountName'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', variables('destStorageAccountName'))]"
+            ],
             "properties": {
                 "sku": {
                     "name": "[variables('automationSku')]"
@@ -118,7 +137,6 @@
                     "dependsOn": [
                         "[concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]"
                     ],
-                    
                     "properties": {
                         "runbookType": "Script",
                         "logProgress": "false",
@@ -135,25 +153,23 @@
                     "type": "Microsoft.Automation/automationAccounts/jobs",
                     "apiVersion": "2015-10-31",
                     "location": "[variables('automationLocation')]",
-                    
                     "properties": {
                         "runbook": {
                             "name": "[variables('runbookName')]"
                         },
                         "parameters": {
-                           
-                            "adfStorageAccName": "[parameters('adfStorageAccName')]",
-                            "adfStorageAccKey": "[parameters('adfStorageAccKey')]"
+                            "src1Container": "[variables('src1Container')]",
+                            "src2Container": "[variables('src2Container')]",
+                            "destContainer": "[variables('destContainer')]"
                         }
                     },
                     "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))]",
-                        "[resourceId('Microsoft.Automation/automationAccounts/runbooks', parameters('automationAccountName'), parameters('runbookName'))]",
-                        "[resourceId('Microsoft.Automation/automationAccounts/credentials', parameters('automationAccountName'), parameters('credential1Name'))]"
+                        "[concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/runbooks', variables('automationAccountName'), variables('runbookName'))]"
                     ]
                 }
             ]
-        }
+        },
         {
             "apiVersion": "2016-06-01",
             "type": "Microsoft.Network/publicIPAddresses",
