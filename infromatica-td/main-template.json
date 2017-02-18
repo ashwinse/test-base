@@ -44,7 +44,7 @@
         "automationLocation": "eastus2",
         "automationAccountName": "containerCreate",
         "runbookName": "container3",
-        "runbookUri": "[concat(variables('baseUrl'),'/scripts/info-container-crt.ps1')]",
+        "runbookUri": "[concat(variables('baseUrl'),'/scripts/container3Create.ps1')]",
         "src1Container": "source1",
         "src2Container": "source2",
         "destContainer": "destination",
