@@ -31,8 +31,10 @@
         "vnetAddressPrefix": "10.4.0.0/16",
         "vnetSubnetName": "icspaygsubnet1",
         "vnetSubnetAddressPrefix": "10.4.0.0/24",
+        "artifactsBaseUrl":"https://gallery.azure.com/artifact/20151001/informatica.informatica-cloud-servicesics.1.0.1/Artifacts/",
         "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/infromatica-td",
         "scriptsUri": "[concat(variables('baseUrl'),'/scripts/')]",
+ 
         "storageAccountName": "[concat('icspayg', uniqueString('resourceGroup().id'))]",
         "source1StorageAccountName": "[concat('src1',uniqueString('resourceGroup().id'))]",
         "source2StorageAccountName": "[concat('src2',uniqueString('resourceGroup().id'))]",
@@ -44,7 +46,7 @@
         "automationLocation": "eastus2",
         "automationAccountName": "containerCreate",
         "runbookName": "container3",
-        "runbookUri": "[concat(variables('baseUrl'),'/scripts/container3Create.ps1')]",
+        "runbookUri": "[concat(variables('scriptsUri'),'container3Create.ps1')]",
         "src1Container": "source1",
         "src2Container": "source2",
         "destContainer": "destination",
@@ -368,7 +370,7 @@
                         "value": "[variables('connectorUUIDList')]"
                     },
                     "scriptsUri": {
-                        "value": "[variables('scriptsUri')]"
+                        "value": "[variables('artifactsBaseUrl')]"
                     },
                     "location": {
                         "value": "[variables('location')]"
