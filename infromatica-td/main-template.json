@@ -160,7 +160,17 @@
                         "parameters": {
                             "src1Container": "[variables('src1Container')]",
                             "src2Container": "[variables('src2Container')]",
-                            "destContainer": "[variables('destContainer')]"
+                            "destContainer": "[variables('destContainer')]",
+                            "source1StorageAccountName":"[variables('source1StorageAccountName')]",
+                            "source1StorageAccountKey":"",
+
+                            "source2StorageAccountName":"[variables('source2StorageAccountName')]",
+                            "source2StorageAccountKey":"",
+
+                            "destStorageAccountName":"[variables('destStorageAccountName')]",
+                            "destStorageAccountKey":"",
+
+
                         }
                     },
                     "dependsOn": [
