@@ -107,7 +107,7 @@
             "name": "[variables('automationAccountName')]",
             "type": "Microsoft.Automation/automationAccounts",
             "apiVersion": "2015-01-01-preview",
-            "location": "[variables('location')]",
+            "location": "[variables('automationLocation')]",
             "dependsOn": [
                 "[concat('Microsoft.Storage/storageAccounts/', variables('source1StorageAccountName'))]",
                 "[concat('Microsoft.Storage/storageAccounts/', variables('source2StorageAccountName'))]",
