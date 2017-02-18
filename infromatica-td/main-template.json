@@ -1,7 +1,15 @@
 {
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
-    "parameters": {},
+    "parameters": {
+        "sessionId": {
+            "type": "string",
+            "metadata": {
+                "type": "sessionid",
+                "description": "The GUID Prefix for the runbook job to be started."
+            }
+        }
+    },
     "variables": {
         "location": "centralus",
         "suffix": "[substring(uniqueString('resourceGroup().id'), 0, 7)]",
@@ -31,6 +39,11 @@
         "storageAccountType": "Standard_LRS",
         "nicName": "IcsPaygNic",
         "vmName": "icspayg",
+        "automationSku":"Free",
+        "automationLocation":"eastus2",
+        "automationAccountName":"containerCreate",
+        "runbookName": "container1",
+        "runbookUri":""
         "publicIPAddressName": "[concat(variables('vmName'), '-pip')]",
         "IPAddressType": "Dynamic",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('vnetName'))]",
@@ -41,7 +54,8 @@
         "vnetUrl": "[concat(variables('artifactsBaseUrl'),'/nested/vnet.json' )]",
         "informaticaTags": {
             "provider": "AACF690D-C725-4C78-9B1E-E586595B369F"
-        }
+        },
+        "createContainerAutomationSetupUrl":""
     },
     "resources": [
         {
@@ -85,6 +99,61 @@
             },
             "kind": "Storage"
         },
+           {
+            "name": "[variables('automationAccountName')]",
+            "type": "Microsoft.Automation/automationAccounts",
+            "apiVersion": "2015-01-01-preview",
+            "location": "[variables('location')]",
+            "properties": {
+                "sku": {
+                    "name": "[variables('automationSku')]"
+                }
+            },
+            "resources": [
+                {
+                    "name": "[variables('runbookName')]",
+                    "type": "runbooks",
+                    "apiVersion": "2015-01-01-preview",
+                    "location": "[variables('automationLocation')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]"
+                    ],
+                    
+                    "properties": {
+                        "runbookType": "Script",
+                        "logProgress": "false",
+                        "logVerbose": "false",
+                        "description": null,
+                        "publishContentLink": {
+                            "uri": "[variables('runbookUri')]",
+                            "version": "1.0.0.0"
+                        }
+                    }
+                },
+                {
+                    "name": "[concat(variables('automationAccountName'), '/', parameters('sessionId'))]",
+                    "type": "Microsoft.Automation/automationAccounts/jobs",
+                    "apiVersion": "2015-10-31",
+                    "location": "[variables('automationLocation')]",
+                    
+                    "properties": {
+                        "runbook": {
+                            "name": "[variables('runbookName')]"
+                        },
+                        "parameters": {
+                           
+                            "adfStorageAccName": "[parameters('adfStorageAccName')]",
+                            "adfStorageAccKey": "[parameters('adfStorageAccKey')]"
+                        }
+                    },
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/runbooks', parameters('automationAccountName'), parameters('runbookName'))]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/credentials', parameters('automationAccountName'), parameters('credential1Name'))]"
+                    ]
+                }
+            ]
+        }
         {
             "apiVersion": "2016-06-01",
             "type": "Microsoft.Network/publicIPAddresses",
