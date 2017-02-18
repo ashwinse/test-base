@@ -12,7 +12,7 @@
     },
     "variables": {
         "location": "centralus",
-        "suffix": "[substring(uniqueString('resourceGroup().id'), 0, 7)]",
+        "suffix": "[substring(uniqueString('subscription().id'), 0, 7)]",
         "adminUsername": "testdrive",
         "adminPassword": "TestDriveUser123",
         "vmSize": "Standard_D12_v2",
