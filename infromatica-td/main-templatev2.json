@@ -1,0 +1,385 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sessionId": {
+            "type": "string",
+            "metadata": {
+                "type": "sessionid",
+                "description": "The GUID Prefix for the runbook job to be started."
+            }
+        }
+    },
+    "variables": {
+        "location": "centralus",
+        "suffix": "[substring(uniqueString('resourceGroup().id'), 0, 7)]",
+        "adminUsername": "testdrive",
+        "adminPassword": "TestDriveUser123",
+        "vmSize": "Standard_D12_v2",
+        "cloudUsername": "[concat('testdriveuser',variables('suffix'),'@gmail.com.azure')]",
+        "cloudEmail": "[concat('testdriveuser',variables('suffix'),'@gmail.com')]",
+        "cloudPassword": "TestDriveUser123",
+        "firstName": "Test",
+        "lastName": "Drive",
+        "title": "Mr.",
+        "orgName": "Microtest",
+        "country": "US",
+        "phone": "7416546166",
+        "cloudConnector1": "0db52dc0-49c5-11e4-916c-0800200c9a66",
+        "cloudConnector2": "",
+        "vnetName": "icspaygvnet",
+        "vnetAddressPrefix": "10.4.0.0/16",
+        "vnetSubnetName": "icspaygsubnet1",
+        "vnetSubnetAddressPrefix": "10.4.0.0/24",
+        "artifactsBaseUrl":"https://gallery.azure.com/artifact/20151001/informatica.informatica-cloud-servicesics.1.0.1/Artifacts/",
+        "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/infromatica-td",
+        "scriptsUri": "[concat(variables('baseUrl'),'/scripts/')]",
+ 
+        "storageAccountName": "[concat('icspayg', uniqueString('resourceGroup().id'))]",
+        "source1StorageAccountName": "[concat('src1',uniqueString('resourceGroup().id'))]",
+        "source2StorageAccountName": "[concat('src2',uniqueString('resourceGroup().id'))]",
+        "destStorageAccountName": "[concat('dest',uniqueString('resourceGroup().id'))]",
+        "storageAccountType": "Standard_LRS",
+        "nicName": "IcsPaygNic",
+        "vmName": "icspayg",
+        "automationSku": "Free",
+        "automationLocation": "eastus2",
+        "automationAccountName": "containerCreate",
+        "runbookName": "container3",
+        "runbookUri": "[concat(variables('scriptsUri'),'container3Create.ps1')]",
+        "src1Container": "source1",
+        "src2Container": "source2",
+        "destContainer": "destination",
+        "publicIPAddressName": "[concat(variables('vmName'), '-pip')]",
+        "IPAddressType": "Dynamic",
+        "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('vnetName'))]",
+        "nsgName": "icspayg-nsg",
+        "state": "CA",
+        "connectorUUIDList": "[concat(variables('cloudConnector1'),'|',variables('cloudConnector2'))]",
+        "vmSetupURL": "[concat(variables('baseUrl'),'/nested/vm_script_windows_password.json' )]",
+        "vnetUrl": "[concat(variables('baseUrl'),'/nested/vnet.json' )]",
+        "informaticaTags": {
+            "provider": "AACF690D-C725-4C78-9B1E-E586595B369F"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('source1StorageAccountName')]",
+            "apiVersion": "2015-06-15",
+            "location": "[variables('location')]",
+            "properties": {
+                "accountType": "[variables('storageAccountType')]"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('source2StorageAccountName')]",
+            "apiVersion": "2015-06-15",
+            "location": "[variables('location')]",
+            "properties": {
+                "accountType": "[variables('storageAccountType')]"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('destStorageAccountName')]",
+            "apiVersion": "2015-06-15",
+            "location": "[variables('location')]",
+            "properties": {
+                "accountType": "[variables('storageAccountType')]"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('storageAccountName')]",
+            "apiVersion": "2016-01-01",
+            "location": "[variables('location')]",
+            "tags": {
+                "displayName": "icsStorage",
+                "provider": "[toUpper(variables('informaticaTags').provider)]"
+            },
+            "properties": {},
+            "sku": {
+                "name": "[variables('storageAccountType')]"
+            },
+            "kind": "Storage"
+        },
+        {
+            "name": "[variables('automationAccountName')]",
+            "type": "Microsoft.Automation/automationAccounts",
+            "apiVersion": "2015-01-01-preview",
+            "location": "[variables('automationLocation')]",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('source1StorageAccountName'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', variables('source2StorageAccountName'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', variables('destStorageAccountName'))]"
+            ],
+            "properties": {
+                "sku": {
+                    "name": "[variables('automationSku')]"
+                }
+            },
+            "resources": [
+                {
+                    "name": "[variables('runbookName')]",
+                    "type": "runbooks",
+                    "apiVersion": "2015-01-01-preview",
+                    "location": "[variables('automationLocation')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]"
+                    ],
+                    "properties": {
+                        "runbookType": "Script",
+                        "logProgress": "false",
+                        "logVerbose": "false",
+                        "description": null,
+                        "publishContentLink": {
+                            "uri": "[variables('runbookUri')]",
+                            "version": "1.0.0.0"
+                        }
+                    }
+                },
+                {
+                    "name": "[concat(variables('automationAccountName'), '/', parameters('sessionId'))]",
+                    "type": "Microsoft.Automation/automationAccounts/jobs",
+                    "apiVersion": "2015-10-31",
+                    "location": "[variables('automationLocation')]",
+                    "properties": {
+                        "runbook": {
+                            "name": "[variables('runbookName')]"
+                        },
+                        "parameters": {
+                            "src1Container": "[variables('src1Container')]",
+                            "src2Container": "[variables('src2Container')]",
+                            "destContainer": "[variables('destContainer')]",
+                            "source1StorageAccountName": "[variables('source1StorageAccountName')]",
+                            "source1StorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('source1StorageAccountName')), '2015-06-15').key1]",
+                            "source2StorageAccountName": "[variables('source2StorageAccountName')]",
+                            "source2StorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('source2StorageAccountName')), '2015-06-15').key1]",
+                            "destStorageAccountName": "[variables('destStorageAccountName')]",
+                            "destStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]"
+                        }
+                    },
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/runbooks', variables('automationAccountName'), variables('runbookName'))]"
+                    ]
+                }
+            ]
+        },
+        {
+            "apiVersion": "2016-06-01",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('publicIPAddressName')]",
+            "location": "[variables('location')]",
+            "properties": {
+                "publicIPAllocationMethod": "[variables('IPAddressType')]"
+            },
+            "tags": {
+                "displayName": "icsPIP",
+                "provider": "[toUpper(variables('informaticaTags').provider)]"
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "[concat(variables('vmName'), '-vnet')]",
+            "apiVersion": "2016-06-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vnetUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vnetName": {
+                        "value": "[variables('vnetName')]"
+                    },
+                    "vnetAddressPrefix": {
+                        "value": "[variables('vnetAddressPrefix')]"
+                    },
+                    "vnetSubnetName": {
+                        "value": "[variables('vnetSubnetName')]"
+                    },
+                    "vnetSubnetAddressPrefix": {
+                        "value": "[variables('vnetSubnetAddressPrefix')]"
+                    },
+                    "location": {
+                        "value": "[variables('location')]"
+                    },
+                    "provider": {
+                        "value": "[toUpper(variables('informaticaTags').provider)]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('nsgName')]",
+            "apiVersion": "2016-06-01",
+            "location": "[variables('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "rdp-rule-win",
+                        "properties": {
+                            "description": "Allow RDP for Windows",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "3389",
+                            "sourceAddressPrefix": "Internet",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1000,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "ssh-rule-linux",
+                        "properties": {
+                            "description": "Allow SSH for Linux",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "Internet",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1100,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "infa-secure-agent-rule",
+                        "properties": {
+                            "description": "Allow secure agent connection to Informatica Cloud",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "Internet",
+                            "access": "Allow",
+                            "priority": 1200,
+                            "direction": "Outbound"
+                        }
+                    }
+                ]
+            },
+            "tags": {
+                "displayName": "icsNSG",
+                "provider": "[toUpper(variables('informaticaTags').provider)]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('nicName')]",
+            "apiVersion": "2016-06-01",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
+                "[concat('Microsoft.Resources/deployments/', variables('vmName'), '-vnet')]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
+            ],
+            "properties": {
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
+                },
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "[variables('IPAddressType')]",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
+                            },
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), '/subnets/', variables('vnetSubnetName'))]"
+                            }
+                        }
+                    }
+                ]
+            },
+            "tags": {
+                "displayName": "icsNIC",
+                "provider": "[toUpper(variables('informaticaTags').provider)]"
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "[concat(variables('vmName'),'-vm')]",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+                "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmSetupURL')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vmName": {
+                        "value": "[variables('vmName')]"
+                    },
+                    "adminUsername": {
+                        "value": "[variables('adminUsername')]"
+                    },
+                    "adminPassword": {
+                        "value": "[variables('adminPassword')]"
+                    },
+                    "vmSize": {
+                        "value": "[variables('vmSize')]"
+                    },
+                    "nicName": {
+                        "value": "[variables('nicName')]"
+                    },
+                    "vhdStorageAccountName": {
+                        "value": "[variables('storageAccountName')]"
+                    },
+                    "cloudUsername": {
+                        "value": "[variables('cloudUsername')]"
+                    },
+                    "cloudEmail": {
+                        "value": "[variables('cloudEmail')]"
+                    },
+                    "cloudPassword": {
+                        "value": "[variables('cloudPassword')]"
+                    },
+                    "firstName": {
+                        "value": "[variables('firstName')]"
+                    },
+                    "lastName": {
+                        "value": "[variables('lastName')]"
+                    },
+                    "title": {
+                        "value": "[variables('title')]"
+                    },
+                    "orgName": {
+                        "value": "[variables('orgName')]"
+                    },
+                    "phone": {
+                        "value": "[variables('phone')]"
+                    },
+                    "country": {
+                        "value": "[variables('country')]"
+                    },
+                    "state": {
+                        "value": "[variables('state')]"
+                    },
+                    "connectorUUIDList": {
+                        "value": "[variables('connectorUUIDList')]"
+                    },
+                    "scriptsUri": {
+                        "value": "[variables('artifactsBaseUrl')]"
+                    },
+                    "location": {
+                        "value": "[variables('location')]"
+                    },
+                    "provider": {
+                        "value": "[toUpper(variables('informaticaTags').provider)]"
+                    }
+                }
+            }
+        }
+    ]
+}
