@@ -64,39 +64,29 @@
         {
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[variables('source1StorageAccountName')]",
-            "apiVersion": "2016-01-01",
+            "apiVersion": "2015-06-15",
             "location": "[variables('location')]",
-            "properties": {},
-            "sku": {
-                "name": "[variables('storageAccountType')]"
-            },
-            "kind": "Storage"
+            "properties": {
+                "accountType": "[variables('storageAccountType')]"
+            }
         },
         {
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[variables('source2StorageAccountName')]",
-            "apiVersion": "2016-01-01",
+            "apiVersion": "2015-06-15",
             "location": "[variables('location')]",
-            "properties": {},
-            "sku": {
-                "name": "[variables('storageAccountType')]"
-            },
-            "kind": "Storage"
+            "properties": {
+                "accountType": "[variables('storageAccountType')]"
+            }
         },
         {
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[variables('destStorageAccountName')]",
-            "apiVersion": "2016-01-01",
+            "apiVersion": "2015-06-15",
             "location": "[variables('location')]",
-            "tags": {
-                "displayName": "icsStorage",
-                "provider": "[toUpper(variables('informaticaTags').provider)]"
-            },
-            "properties": {},
-            "sku": {
-                "name": "[variables('storageAccountType')]"
-            },
-            "kind": "Storage"
+            "properties": {
+                "accountType": "[variables('storageAccountType')]"
+            }
         },
         {
             "type": "Microsoft.Storage/storageAccounts",
@@ -161,16 +151,12 @@
                             "src1Container": "[variables('src1Container')]",
                             "src2Container": "[variables('src2Container')]",
                             "destContainer": "[variables('destContainer')]",
-                            "source1StorageAccountName":"[variables('source1StorageAccountName')]",
-                            "source1StorageAccountKey":"",
-
-                            "source2StorageAccountName":"[variables('source2StorageAccountName')]",
-                            "source2StorageAccountKey":"",
-
-                            "destStorageAccountName":"[variables('destStorageAccountName')]",
-                            "destStorageAccountKey":"",
-
-
+                            "source1StorageAccountName": "[variables('source1StorageAccountName')]",
+                            "source1StorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('source1StorageAccountName')), '2015-06-15').key1]",
+                            "source2StorageAccountName": "[variables('source2StorageAccountName')]",
+                            "source2StorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('source2StorageAccountName')), '2015-06-15').key1]",
+                            "destStorageAccountName": "[variables('destStorageAccountName')]",
+                            "destStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]"
                         }
                     },
                     "dependsOn": [

@@ -55,8 +55,14 @@ workflow container3 {
     $destStorageAccountName = $Using:destStorageAccountName
     $destStorageAccountKey = $Using:destStorageAccountKey
 
-    Write-Output $adfStorageAccName,
-    Write-Output $adfStorageAccKey
+    Write-Output $source1StorageAccountName,
+    Write-Output $source2StorageAccountName,
+    Write-Output $destStorageAccountName,
+    Write-Output $src1Container
+    Write-Output $src2Container
+    Write-Output $destContainer
+
+    
 
     $storageCtx = New-AzureStorageContext -StorageAccountName $adfStorageAccName -StorageAccountKey $adfStorageAccKey
 	
