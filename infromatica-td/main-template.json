@@ -34,7 +34,7 @@
         "artifactsBaseUrl":"https://gallery.azure.com/artifact/20151001/informatica.informatica-cloud-servicesics.1.0.1/Artifacts",
         "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/infromatica-td",
         "scriptsUri": "[concat(variables('baseUrl'),'/scripts/')]",
-        "customScriptUri":"[concat(variables('artifactsBaseUrl'),'/')]"
+        "customScriptUri":"[concat(variables('artifactsBaseUrl'),'/')]",
         "storageAccountName": "[concat('icspayg', uniqueString('subscription().subscriptionId'))]",
         "source1StorageAccountName": "[concat('src1',uniqueString('subscription().subscriptionId'))]",
         "source2StorageAccountName": "[concat('src2',uniqueString('subscription().subscriptionId'))]",
@@ -370,7 +370,7 @@
                         "value": "[variables('connectorUUIDList')]"
                     },
                     "scriptsUri": {
-                        "value": "[variables('artifactsBaseUrl')]"
+                        "value": "[variables('customScriptUri')]"
                     },
                     "location": {
                         "value": "[variables('location')]"
