@@ -11,7 +11,7 @@
         }
     },
     "variables": {
-        "location": "centralus",
+        "location": "[resourceGroup().location]",
         "suffix": "[substring(uniqueString('resourceGroup().id'), 0, 7)]",
         "adminUsername": "testdrive",
         "adminPassword": "TestDriveUser123",
