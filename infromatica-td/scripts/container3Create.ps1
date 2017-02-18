@@ -20,7 +20,7 @@ workflow container3 {
         $source1StorageAccountName,
 
         [Parameter(Mandatory=$true)]
-        [string]
+        [securestring]
         $source1StorageAccountKey,
 
         [Parameter(Mandatory=$true)]
@@ -28,7 +28,7 @@ workflow container3 {
         $source2StorageAccountName,
 
         [Parameter(Mandatory=$true)]
-        [string]
+        [securestring]
         $source2StorageAccountKey,
 
         [Parameter(Mandatory=$true)]
@@ -36,7 +36,7 @@ workflow container3 {
         $destStorageAccountName,
 
         [Parameter(Mandatory=$true)]
-        [string]
+        [securestring]
         $destStorageAccountKey
 
         
