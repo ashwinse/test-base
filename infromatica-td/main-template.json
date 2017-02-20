@@ -43,7 +43,7 @@
         "automationLocation": "eastus2",
         "automationAccountName": "containerCreate",
         "runbookName": "container",
-        "runbookUri": "[concat(variables('scriptsUri'),'container3Create.ps1')]",
+        "runbookUri": "[concat(variables('scriptsUri'),'containerCreate.ps1')]",
         "src1Container": "source1",
         "src2Container": "source2",
         "destContainer": "destination",
@@ -358,6 +358,8 @@
     "outputs": {
         "informaticaCloudUrl":"https://app.informaticaondemand.com/ma/",
         "informaticaCloudUsername":"[variables('cloudUsername')]",
-        "inforamticaCloudPassword":"[variables('cloudPassword')]"
+        "inforamticaCloudPassword":"[variables('cloudPassword')]",
+        "destinationStorageAccountName":"[variables('destStorageAccountName')]",
+        "destinationStorageAccountKey":"[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]"
     }
 }
