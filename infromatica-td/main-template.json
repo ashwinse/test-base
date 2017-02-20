@@ -127,6 +127,7 @@
                             "name": "[variables('runbookName')]"
                         },
                         "parameters": {
+                            "destStorageAccountName":"[variables('destStorageAccountName')]",
                             "destContainer": "[variables('destContainer')]",
                             "destStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]"
                         }
@@ -357,10 +358,13 @@
         "informaticaCloudUsername": "[variables('cloudUsername')]",
         "inforamticaCloudPassword": "[variables('cloudPassword')]",
         "destinationStorageAccountName": "[variables('destStorageAccountName')]",
+        "destinationContainerName":"[variables('destContainer')]",
         "destinationStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]",
         "source1StorageAccountName": "informaticasrc12",
+        "source1Container":"source1",
         "source1StorageAccountKey": "+WGnEgdlWbbpaepYVDI/RFFQTeFQ/S19Kj98jT05CfZfrKSvsb4yiqfjy35PJLzeLq8YA+QsdB70LAFfSS1GPw==",
-        "source2StorageAccountName": "utSnc4OrBKS7tAjel1sczszXwXJ2xRyOr7zq7GEwv4Z6mblgBCAf5S2JYtMUwlXAW0vbse446HjDal6AyrSHqQ==",
-        "source2StorageAccountKey": "informaticasrc12"
+        "source2StorageAccountName": "informaticasrc22",
+        "source2Container":"source2",
+        "source2StorageAccountKey": "utSnc4OrBKS7tAjel1sczszXwXJ2xRyOr7zq7GEwv4Z6mblgBCAf5S2JYtMUwlXAW0vbse446HjDal6AyrSHqQ=="
     }
 }
