@@ -14,5 +14,6 @@ if($msg -eq "UserAlreadyExists") {Write-Error "Error Code: 195"}
 ElseIf ($msg -eq "ConnectorActivationFailed") {Write-Error "Error Code: 196"}
 Else {Write-Error "Error Code: 200"}
 Remove-Item "C:\Program Files\Informatica Cloud Secure Agent\InfaCloudExtProvision.jar"
-exit 0
+exit 519
+cmd.exe /C exit
 }
