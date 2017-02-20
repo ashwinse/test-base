@@ -48,13 +48,21 @@
         "IPAddressType": "Dynamic",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('vnetName'))]",
         "nsgName": "icspayg-nsg",
+        "sqlVmName":"sqlserver",
+        "sqlVmPipName":"sql-pip",
+        "sqlVmNsgName":"sql-nsg",
+        "sqlVmSize":"Standard_DS2_v2",
+        "sqlDnsPrefix":"[concat('sqldns',variables('suffix'))]",
         "state": "CA",
+        "sqlVmNic":"sqlvmnic",
         "connectorUUIDList": "[concat(variables('cloudConnector1'),'|',variables('cloudConnector2'))]",
         "vmSetupURL": "[concat(variables('baseUrl'),'/nested/vm_script_windows_password.json' )]",
         "vnetUrl": "[concat(variables('baseUrl'),'/nested/vnet.json' )]",
         "informaticaTags": {
             "provider": "AACF690D-C725-4C78-9B1E-E586595B369F"
-        }
+        },
+        "sqlAuthenticationLogin":"sqluser",
+        "sqlAuthenticationPassword":"TestDriveUser123"
     },
     "resources": [
         {
@@ -269,6 +277,182 @@
             "tags": {
                 "displayName": "icsNIC",
                 "provider": "[toUpper(variables('informaticaTags').provider)]"
+            }
+        },
+        {
+            "name": "[variables('sqlVmNic')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2016-09-01",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/', variables('vmName'), '-vnet')]",
+                "[concat('Microsoft.Network/publicIpAddresses/', variables('sqlVmPipName'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('sqlVmNsgName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), '/subnets/', variables('vnetSubnetName'))]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIpAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIpAddresses', variables('sqlVmPipName'))]"
+                            }
+                        }
+                    }
+                ],
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('sqlVmNsgName'))]"
+                }
+            }
+        },
+        {
+            "name": "[variables('sqlVmPipName')]",
+            "type": "Microsoft.Network/publicIpAddresses",
+            "apiVersion": "2016-09-01",
+            "location": "[variables('location')]",
+            "properties": {
+                "publicIpAllocationMethod": "Dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[variables('sqlDnsPrefix')]"
+                }
+            }
+        },
+        {
+            "name": "[variables('sqlVmNsgName')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2016-09-01",
+            "location": "[variables('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-rdp",
+                        "properties": {
+                            "priority": 1000,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "TCP",
+                            "destinationPortRange": "3389",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "default-allow-sql",
+                        "properties": {
+                            "priority": 1001,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "TCP",
+                            "destinationPortRange": "1433",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[variables('sqlVmName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2016-04-30-preview",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', variables('sqlVmNic'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
+            ],
+            "properties": {
+                "osProfile": {
+                    "computerName": "[variables('sqlVmName')]",
+                    "adminUsername": "[variables('adminUsername')]",
+                    "adminPassword": "[variables('adminPassword')]",
+                    "windowsConfiguration": {
+                        "provisionVmAgent": "true"
+                    }
+                },
+                "hardwareProfile": {
+                    "vmSize": "[variables('sqlVmSize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftSQLServer",
+                        "offer": "SQL2012SP3-WS2012R2",
+                        "sku": "Standard",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[variables('sqlVmName')]",
+                        "createOption": "fromImage",
+                        "vhd": {
+                            "uri": "[concat(concat(reference(resourceId('ashrg', 'Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2015-06-15').primaryEndpoints['blob'], 'vhds/'), variables('sqlVmName'), '20170220175831.vhd')]"
+                        }
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('sqlVmNic'))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "apiVersion": "2015-06-15",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('sqlVmName'), '/SqlIaasExtension')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', variables('sqlVmName'))]"
+            ],
+            "properties": {
+                "type": "SqlIaaSAgent",
+                "publisher": "Microsoft.SqlServer.Management",
+                "typeHandlerVersion": "1.2",
+                "autoUpgradeMinorVersion": "true",
+                "settings": {
+                    "AutoTelemetrySettings": {
+                        "Region": "[variables('location')]"
+                    },
+                    "AutoPatchingSettings": {
+                        "PatchCategory": "WindowsMandatoryUpdates",
+                        "Enable": false,
+                        "DayOfWeek": "Sunday",
+                        "MaintenanceWindowStartingHour": 2,
+                        "MaintenanceWindowDuration": 60
+                    },
+                    "KeyVaultCredentialSettings": {
+                        "Enable": false,
+                        "CredentialName": ""
+                    },
+                    "ServerConfigurationsManagementSettings": {
+                        "SQLConnectivityUpdateSettings": {
+                            "ConnectivityType": "Private",
+                            "Port": "1433"
+                        },
+                        "SQLWorkloadTypeUpdateSettings": {
+                            "SQLWorkloadType": "GENERAL"
+                        },
+                        "SQLStorageUpdateSettings": {
+                            "DiskCount": "1",
+                            "NumberOfColumns": "1",
+                            "StartingDeviceID": "2",
+                            "DiskConfigurationType": "NEW"
+                        },
+                        "AdditionalFeaturesServerConfigurations": {
+                            "IsRServicesEnabled": false
+                        }
+                    }
+                },
+                "protectedSettings": {
+                    "SQLAuthUpdateUserName": "[variables('sqlAuthenticationLogin')]",
+                    "SQLAuthUpdatePassword": "[variables('sqlAuthenticationPassword')]"
+                }
             }
         },
         {
