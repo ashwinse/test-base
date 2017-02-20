@@ -42,7 +42,7 @@
         "automationSku": "Free",
         "automationLocation": "eastus2",
         "automationAccountName": "containerCreate",
-        "runbookName": "container3",
+        "runbookName": "container",
         "runbookUri": "[concat(variables('scriptsUri'),'container3Create.ps1')]",
         "src1Container": "source1",
         "src2Container": "source2",
