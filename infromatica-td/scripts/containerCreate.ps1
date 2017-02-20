@@ -1,6 +1,5 @@
-workflow container3 {
+workflow container {
     param(
-       
        
         [Parameter(Mandatory=$true)]
         [string]
@@ -22,7 +21,6 @@ workflow container3 {
         $destContainer = $Using:destContainer
         $destStorageAccountName = $Using:destStorageAccountName
         $destStorageAccountKey = $Using:destStorageAccountKey
-
         
         Write-Output $destStorageAccountName,
       
@@ -30,7 +28,7 @@ workflow container3 {
 
         $destStorageCtx = New-AzureStorageContext -StorageAccountName $destStorageAccountName -StorageAccountKey $destStorageAccountKey
 	
-        New-AzureStorageContainer -Name $src1Container -Context $destStorageCtx
+        New-AzureStorageContainer -Name $destContainer -Context $destStorageCtx
 
     }
     
