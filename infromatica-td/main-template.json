@@ -370,7 +370,7 @@
                         "value": "[variables('connectorUUIDList')]"
                     },
                     "scriptsUri": {
-                        "value": "[variables('customScriptUri')]"
+                        "value": "[variables('scriptsUri')]"
                     },
                     "location": {
                         "value": "[variables('location')]"
