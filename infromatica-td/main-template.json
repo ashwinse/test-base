@@ -88,8 +88,6 @@
             "apiVersion": "2015-01-01-preview",
             "location": "[variables('automationLocation')]",
             "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', variables('source1StorageAccountName'))]",
-                "[concat('Microsoft.Storage/storageAccounts/', variables('source2StorageAccountName'))]",
                 "[concat('Microsoft.Storage/storageAccounts/', variables('destStorageAccountName'))]"
             ],
             "properties": {
