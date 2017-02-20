@@ -64,6 +64,8 @@ workflow container3 {
 	
         New-AzureStorageContainer -Name $src1Container -Context $src1StorageCtx
 
+        Set-AzureStorageBlobContent -Name $src1Container -File "https://raw.githubusercontent.com/ashwinse/test-base/master/infromatica-td/sample_data/BDMAccount.csv"
+
         $src2StorageCtx = New-AzureStorageContext -StorageAccountName $source2StorageAccountName -StorageAccountKey $source2StorageAccountKey
 	
         New-AzureStorageContainer -Name $src1Container -Context $src2StorageCtx
