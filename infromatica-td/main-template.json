@@ -33,7 +33,7 @@
         "vnetSubnetAddressPrefix": "10.4.0.0/24",
         "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/infromatica-td",
         "scriptsUri": "[concat(variables('baseUrl'),'/scripts/')]",
-        "customScriptUri":"[concat(variables('artifactsBaseUrl'),'/')]",
+        "customScriptUri": "[concat(variables('artifactsBaseUrl'),'/')]",
         "storageAccountName": "[concat('icspayg', variables('suffix'))]",
         "destStorageAccountName": "[concat('dest',variables('suffix'))]",
         "storageAccountType": "Standard_LRS",
@@ -127,7 +127,6 @@
                             "name": "[variables('runbookName')]"
                         },
                         "parameters": {
-                            
                             "destContainer": "[variables('destContainer')]",
                             "destStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]"
                         }
@@ -354,11 +353,14 @@
         }
     ],
     "outputs": {
-        "informaticaCloudUrl":"https://app.informaticaondemand.com/ma/",
-        "informaticaCloudUsername":"[variables('cloudUsername')]",
-        "inforamticaCloudPassword":"[variables('cloudPassword')]",
-        "destinationStorageAccountName":"[variables('destStorageAccountName')]",
-        "destinationStorageAccountKey":"[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]"
-        
+        "informaticaCloudUrl": "https://app.informaticaondemand.com/ma/",
+        "informaticaCloudUsername": "[variables('cloudUsername')]",
+        "inforamticaCloudPassword": "[variables('cloudPassword')]",
+        "destinationStorageAccountName": "[variables('destStorageAccountName')]",
+        "destinationStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]",
+        "source1StorageAccountName": "informaticasrc12",
+        "source1StorageAccountKey": "+WGnEgdlWbbpaepYVDI/RFFQTeFQ/S19Kj98jT05CfZfrKSvsb4yiqfjy35PJLzeLq8YA+QsdB70LAFfSS1GPw==",
+        "source2StorageAccountName": "utSnc4OrBKS7tAjel1sczszXwXJ2xRyOr7zq7GEwv4Z6mblgBCAf5S2JYtMUwlXAW0vbse446HjDal6AyrSHqQ==",
+        "source2StorageAccountKey": "informaticasrc12"
     }
 }
