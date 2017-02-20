@@ -359,5 +359,6 @@
         "inforamticaCloudPassword":"[variables('cloudPassword')]",
         "destinationStorageAccountName":"[variables('destStorageAccountName')]",
         "destinationStorageAccountKey":"[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]"
+        
     }
 }
