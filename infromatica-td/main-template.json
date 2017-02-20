@@ -33,7 +33,7 @@
         "vnetSubnetAddressPrefix": "10.4.0.0/24",
         "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/infromatica-td",
         "scriptsUri": "[concat(variables('baseUrl'),'/scripts/')]",
-        "customScriptUri": "[concat(variables('artifactsBaseUrl'),'/')]",
+        
         "storageAccountName": "[concat('icspayg', variables('suffix'))]",
         "destStorageAccountName": "[concat('dest',variables('suffix'))]",
         "storageAccountType": "Standard_LRS",
@@ -354,17 +354,53 @@
         }
     ],
     "outputs": {
-        "informaticaCloudUrl": "https://app.informaticaondemand.com/ma/",
-        "informaticaCloudUsername": "[variables('cloudUsername')]",
-        "inforamticaCloudPassword": "[variables('cloudPassword')]",
-        "destinationStorageAccountName": "[variables('destStorageAccountName')]",
-        "destinationContainerName":"[variables('destContainer')]",
-        "destinationStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]",
-        "source1StorageAccountName": "informaticasrc12",
-        "source1Container":"source1",
-        "source1StorageAccountKey": "+WGnEgdlWbbpaepYVDI/RFFQTeFQ/S19Kj98jT05CfZfrKSvsb4yiqfjy35PJLzeLq8YA+QsdB70LAFfSS1GPw==",
-        "source2StorageAccountName": "informaticasrc22",
-        "source2Container":"source2",
-        "source2StorageAccountKey": "utSnc4OrBKS7tAjel1sczszXwXJ2xRyOr7zq7GEwv4Z6mblgBCAf5S2JYtMUwlXAW0vbse446HjDal6AyrSHqQ=="
+        "informaticaCloudUrl": {
+            "type": "string",
+            "value": "https://app.informaticaondemand.com/ma/"
+        },
+        "informaticaCloudUsername": {
+            "type": "string",
+            "value": "[variables('cloudUsername')]"
+        },
+        "inforamticaCloudPassword":{
+            "type": "string",
+            "value": "[variables('cloudPassword')]"
+        },
+        "destinationStorageAccountName": {
+            "type":"string",
+            "value":"[variables('destStorageAccountName')]"
+        },
+        "destinationContainerName":{
+            "type": "string",
+            "value": "[variables('destContainer')]"
+        },
+        "destinationStorageAccountKey": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]"
+        },
+        "source1StorageAccountName":{
+            "type": "string",
+            "value": "informaticasrc12"
+        },
+        "source1Container":{
+            "type": "string",
+            "value": "source1"
+        },
+        "source1StorageAccountKey": {
+            "type": "string",
+            "value": "+WGnEgdlWbbpaepYVDI/RFFQTeFQ/S19Kj98jT05CfZfrKSvsb4yiqfjy35PJLzeLq8YA+QsdB70LAFfSS1GPw=="
+        },
+        "source2StorageAccountName":{
+            "type": "string",
+            "value":"informaticasrc22"
+        },
+        "source2Container":{
+            "type": "string",
+            "value": "source2"
+        },
+        "source2StorageAccountKey": {
+            "type": "string",
+            "value": "utSnc4OrBKS7tAjel1sczszXwXJ2xRyOr7zq7GEwv4Z6mblgBCAf5S2JYtMUwlXAW0vbse446HjDal6AyrSHqQ=="
+        }
     }
 }
