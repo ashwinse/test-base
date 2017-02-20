@@ -31,13 +31,10 @@
         "vnetAddressPrefix": "10.4.0.0/16",
         "vnetSubnetName": "icspaygsubnet1",
         "vnetSubnetAddressPrefix": "10.4.0.0/24",
-        "artifactsBaseUrl":"https://gallery.azure.com/artifact/20151001/informatica.informatica-cloud-servicesics.1.0.1/Artifacts",
         "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/infromatica-td",
         "scriptsUri": "[concat(variables('baseUrl'),'/scripts/')]",
         "customScriptUri":"[concat(variables('artifactsBaseUrl'),'/')]",
         "storageAccountName": "[concat('icspayg', variables('suffix'))]",
-        "source1StorageAccountName": "[concat('src1',variables('suffix'))]",
-        "source2StorageAccountName": "[concat('src2',variables('suffix'))]",
         "destStorageAccountName": "[concat('dest',variables('suffix'))]",
         "storageAccountType": "Standard_LRS",
         "nicName": "IcsPaygNic",
@@ -63,24 +60,6 @@
         }
     },
     "resources": [
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('source1StorageAccountName')]",
-            "apiVersion": "2015-06-15",
-            "location": "[variables('location')]",
-            "properties": {
-                "accountType": "[variables('storageAccountType')]"
-            }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('source2StorageAccountName')]",
-            "apiVersion": "2015-06-15",
-            "location": "[variables('location')]",
-            "properties": {
-                "accountType": "[variables('storageAccountType')]"
-            }
-        },
         {
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[variables('destStorageAccountName')]",
@@ -150,14 +129,8 @@
                             "name": "[variables('runbookName')]"
                         },
                         "parameters": {
-                            "src1Container": "[variables('src1Container')]",
-                            "src2Container": "[variables('src2Container')]",
+                            
                             "destContainer": "[variables('destContainer')]",
-                            "source1StorageAccountName": "[variables('source1StorageAccountName')]",
-                            "source1StorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('source1StorageAccountName')), '2015-06-15').key1]",
-                            "source2StorageAccountName": "[variables('source2StorageAccountName')]",
-                            "source2StorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('source2StorageAccountName')), '2015-06-15').key1]",
-                            "destStorageAccountName": "[variables('destStorageAccountName')]",
                             "destStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]"
                         }
                     },
@@ -381,5 +354,10 @@
                 }
             }
         }
-    ]
+    ],
+    "outputs": {
+        "informaticaCloudUrl":"https://app.informaticaondemand.com/ma/",
+        "informaticaCloudUsername":"[variables('cloudUsername')]",
+        "inforamticaCloudPassword":"[variables('cloudPassword')]"
+    }
 }
