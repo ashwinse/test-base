@@ -33,7 +33,6 @@
         "vnetSubnetAddressPrefix": "10.4.0.0/24",
         "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/infromatica-td",
         "scriptsUri": "[concat(variables('baseUrl'),'/scripts/')]",
-        
         "storageAccountName": "[concat('icspayg', variables('suffix'))]",
         "destStorageAccountName": "[concat('dest',variables('suffix'))]",
         "storageAccountType": "Standard_LRS",
@@ -125,7 +124,7 @@
                             "name": "[variables('runbookName')]"
                         },
                         "parameters": {
-                            "destStorageAccountName":"[variables('destStorageAccountName')]",
+                            "destStorageAccountName": "[variables('destStorageAccountName')]",
                             "destContainer": "[variables('destContainer')]",
                             "destStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]"
                         }
@@ -360,15 +359,15 @@
             "type": "string",
             "value": "[variables('cloudUsername')]"
         },
-        "inforamticaCloudPassword":{
+        "inforamticaCloudPassword": {
             "type": "string",
             "value": "[variables('cloudPassword')]"
         },
         "destinationStorageAccountName": {
-            "type":"string",
-            "value":"[variables('destStorageAccountName')]"
+            "type": "string",
+            "value": "[variables('destStorageAccountName')]"
         },
-        "destinationContainerName":{
+        "destinationContainerName": {
             "type": "string",
             "value": "[variables('destContainer')]"
         },
@@ -376,11 +375,11 @@
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]"
         },
-        "source1StorageAccountName":{
+        "source1StorageAccountName": {
             "type": "string",
             "value": "informaticasrc12"
         },
-        "source1Container":{
+        "source1Container": {
             "type": "string",
             "value": "source1"
         },
@@ -388,11 +387,11 @@
             "type": "string",
             "value": "+WGnEgdlWbbpaepYVDI/RFFQTeFQ/S19Kj98jT05CfZfrKSvsb4yiqfjy35PJLzeLq8YA+QsdB70LAFfSS1GPw=="
         },
-        "source2StorageAccountName":{
+        "source2StorageAccountName": {
             "type": "string",
-            "value":"informaticasrc22"
+            "value": "informaticasrc22"
         },
-        "source2Container":{
+        "source2Container": {
             "type": "string",
             "value": "source2"
         },
