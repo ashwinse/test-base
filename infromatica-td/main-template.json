@@ -311,11 +311,11 @@
         },
         {
             "name": "[variables('sqlVmPipName')]",
-            "type": "Microsoft.Network/publicIpAddresses",
+            "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2016-09-01",
             "location": "[variables('location')]",
             "properties": {
-                "publicIpAllocationMethod": "Dynamic",
+                "publicIPAllocationMethod": "Dynamic",
                 "dnsSettings": {
                     "domainNameLabel": "[variables('sqlDnsPrefix')]"
                 }
@@ -439,7 +439,7 @@
                             "SQLWorkloadType": "GENERAL"
                         },
                         "SQLStorageUpdateSettings": {
-                            "DiskCount": "1",
+                            "DiskCount": "0",
                             "NumberOfColumns": "1",
                             "StartingDeviceID": "2",
                             "DiskConfigurationType": "NEW"
