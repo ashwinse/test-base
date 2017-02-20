@@ -44,8 +44,6 @@
         "automationAccountName": "containerCreate",
         "runbookName": "container",
         "runbookUri": "[concat(variables('scriptsUri'),'containerCreate.ps1')]",
-        "src1Container": "source1",
-        "src2Container": "source2",
         "destContainer": "destination",
         "publicIPAddressName": "[concat(variables('vmName'), '-pip')]",
         "IPAddressType": "Dynamic",
