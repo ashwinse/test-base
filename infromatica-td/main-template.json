@@ -372,7 +372,8 @@
                     "adminUsername": "[variables('adminUsername')]",
                     "adminPassword": "[variables('adminPassword')]",
                     "windowsConfiguration": {
-                        "provisionVmAgent": "true"
+                        "provisionVmAgent": true,
+                        "enableAutomaticUpdates": true
                     }
                 },
                 "hardwareProfile": {
@@ -390,8 +391,21 @@
                         "createOption": "fromImage",
                         "vhd": {
                             "uri": "[concat(concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2015-06-15').primaryEndpoints['blob'], 'vhds/'), variables('sqlVmName'), '20170220175831.vhd')]"
+                        },
+                        "caching": "ReadWrite"
+                    },
+                    "dataDisks": [
+                        {
+                            "lun": 0,
+                            "name": "[concat(variables('sqlVmName'),'-disk-1')]",
+                            "createOption": "Empty",
+                            "vhd": {
+                                "uri": "[concat('https', '://', variables('storageAccountName'), '.blob.core.windows.net', concat('/vhds/', variables('sqlVmName'),'-disk-1-20170221120545.vhd'))]"
+                            },
+                            "caching": "ReadOnly",
+                            "diskSizeGB": 100
                         }
-                    }
+                    ]
                 },
                 "networkProfile": {
                     "networkInterfaces": [
@@ -421,15 +435,12 @@
                     },
                     "AutoPatchingSettings": {
                         "PatchCategory": "WindowsMandatoryUpdates",
-                        "Enable": false,
+                        "Enable": true,
                         "DayOfWeek": "Sunday",
                         "MaintenanceWindowStartingHour": 2,
                         "MaintenanceWindowDuration": 60
                     },
-                    "KeyVaultCredentialSettings": {
-                        "Enable": false,
-                        "CredentialName": ""
-                    },
+                    
                     "ServerConfigurationsManagementSettings": {
                         "SQLConnectivityUpdateSettings": {
                             "ConnectivityType": "Private",
@@ -439,7 +450,7 @@
                             "SQLWorkloadType": "GENERAL"
                         },
                         "SQLStorageUpdateSettings": {
-                            "DiskCount": "0",
+                            "DiskCount": "1",
                             "NumberOfColumns": "1",
                             "StartingDeviceID": "2",
                             "DiskConfigurationType": "NEW"
