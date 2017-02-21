@@ -333,7 +333,7 @@
                         "properties": {
                             "priority": 1000,
                             "sourceAddressPrefix": "*",
-                            "protocol": "TCP",
+                            "protocol": "Tcp",
                             "destinationPortRange": "3389",
                             "access": "Allow",
                             "direction": "Inbound",
@@ -346,7 +346,7 @@
                         "properties": {
                             "priority": 1001,
                             "sourceAddressPrefix": "*",
-                            "protocol": "TCP",
+                            "protocol": "Tcp",
                             "destinationPortRange": "1433",
                             "access": "Allow",
                             "direction": "Inbound",
