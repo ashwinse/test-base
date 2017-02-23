@@ -127,7 +127,7 @@
             "apiVersion": "2015-10-31",
             "location": "[variables('automationLocation')]",
             "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', variables('destStorageAccountName'))]"
+                "[concat('Microsoft.Resources/deployments/destStorageSetup')]"
             ],
             "properties": {
                 "sku": {
@@ -166,7 +166,7 @@
                         "parameters": {
                             "destStorageAccountName": "[variables('destStorageAccountName')]",
                             "destContainer": "[variables('destContainer')]",
-                            "destStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]"
+                            "destStorageAccountKey": "[reference('destStorageSetup').outputs.primaryKey.value]"
                         }
                     },
                     "dependsOn": [
@@ -488,8 +488,8 @@
             "name": "[concat(variables('vmName'),'-vm')]",
             "apiVersion": "2015-01-01",
             "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
-                "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+                "Microsoft.Resources/deployments/icNicSetup",
+                "[concat('Microsoft.Resources/deployments', variables('nicName'))]"
             ],
             "properties": {
                 "mode": "Incremental",

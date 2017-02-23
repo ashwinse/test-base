@@ -82,7 +82,6 @@
     "variables": {},
     "resources": [
         {
-            "comments": "Storage Account Resource",
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[parameters('storageAccountName')]",
             "apiVersion": "[parameters('storageApiVersion')]",
@@ -94,5 +93,15 @@
                 "accountType": "[parameters('storageAccountType')]"
             }
         }
-    ]
+    ],
+    "outputs": {
+        "primaryKey": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2015-06-15').key1]"
+        },
+        "secondaryKey": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2015-06-15').key2]"
+        }
+    }
 }
