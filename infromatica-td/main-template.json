@@ -68,6 +68,7 @@
         "icNicSetupUrl": "[concat(variables('baseUrl'),'/nested/network-interface.json' )]",
         "sqlNicSetupUrl": "[concat(variables('baseUrl'),'/nested/network-interface.json' )]",
         "sqlVmSetupUrl": "[concat(variables('baseUrl'),'/nested/vm-withoutplan-with-1disk.json' )]",
+        "sqlIaasSetupUrl": "[concat(variables('baseUrl'),'/nested/sqlIaasExtension.json' )]",
         "informaticaTags": {
             "provider": "AACF690D-C725-4C78-9B1E-E586595B369F"
         },
@@ -301,8 +302,8 @@
             "name": "icNicSetup",
             "apiVersion": "2015-01-01",
             "dependsOn": [
-                "[concat('Microsoft.Resources/deployments/icPipSetup')]",
-                "[concat('Microsoft.Resources/deployments/icVnetSetup')]",
+                "Microsoft.Resources/deployments/icPipSetup",
+                "Microsoft.Resources/deployments/icVnetSetup",
                 "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
             ],
             "properties": {
@@ -335,8 +336,8 @@
             "name": "sqlNicSetup",
             "apiVersion": "2015-01-01",
             "dependsOn": [
-                "[concat('Microsoft.Resources/deployments/sqlVmPipSetup')]",
-                "[concat('Microsoft.Resources/deployments/icVnetSetup')]",
+                "Microsoft.Resources/deployments/sqlVmPipSetup",
+                "Microsoft.Resources/deployments/icVnetSetup",
                 "[concat('Microsoft.Network/networkSecurityGroups/', variables('sqlVmNsgName'))]"
             ],
             "properties": {
@@ -405,8 +406,8 @@
             "name": "sqlVmSetup",
             "apiVersion": "2015-01-01",
             "dependsOn": [
-                "[concat('Microsoft.Resources/deployments/icStorageSetup')]",
-                "[concat('Microsoft.Resources/deployments/sqlNicSetup')]"
+                "Microsoft.Resources/deployments/icStorageSetup",
+                "Microsoft.Resources/deployments/sqlNicSetup"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -449,7 +450,7 @@
                         "value": "[variables('sqlVmNicName')]"
                     },
                     "dataDiskSizeGB": {
-                        "value": 100
+                        "value": "100"
                     }
                 }
             }
@@ -459,12 +460,12 @@
             "name": "sqlIaasExtension",
             "apiVersion": "2015-01-01",
             "dependsOn": [
-                "[concat('Microsoft.Resources/deployments/sqlVmSetup')]"
+                "Microsoft.Resources/deployments/sqlVmSetup"
             ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[variables('sqlVmSetupUrl')]",
+                    "uri": "[variables('sqlIaasSetupUrl')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -488,8 +489,8 @@
             "name": "[concat(variables('vmName'),'-vm')]",
             "apiVersion": "2015-01-01",
             "dependsOn": [
-                "Microsoft.Resources/deployments/icNicSetup",
-                "[concat('Microsoft.Resources/deployments', variables('nicName'))]"
+                "Microsoft.Resources/deployments/icStorageSetup",
+                "Microsoft.Resources/deployments/icNicSetup"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -581,7 +582,11 @@
         },
         "destinationStorageAccountKey": {
             "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]"
+            "value": "[reference('destStorageSetup').outputs.primaryKey.value]"
+        },
+        "sqlVM-Rdp-Ip": {
+            "type": "string",
+            "value": "[reference('sqlVmPipSetup').outputs.fqdn.value]"
         },
         "SQLVMUserName": {
             "type": "string",

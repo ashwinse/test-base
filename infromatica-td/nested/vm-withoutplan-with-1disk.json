@@ -121,13 +121,6 @@
                 "description": "Storage Account Name"
             }
         },
-        "vmStorageAccountContainerName": {
-            "type": "string",
-            "defaultValue": "vhds",
-            "metadata": {
-                "description": "Caintainer name in the storage account"
-            }
-        },
         "networkInterfaceName": {
             "type": "string",
             "defaultValue": "networkInterfaceName",
@@ -177,7 +170,7 @@
                     "osDisk": {
                         "name": "[concat(parameters('vmName'),'-osDisk')]",
                         "vhd": {
-                            "uri": "[concat('https://',parameters('storageAccountName'),'.blob.core.windows.net/',parameters('vmStorageAccountContainerName'),'/',parameters('vmName'),'-osdisk.vhd')]"
+                            "uri": "[concat('https://',parameters('storageAccountName'),'.blob.core.windows.net/vhds/', parameters('vmName'), uniquestring(resourceGroup().id), '-osDisk.vhd')]"
                         },
                         "caching": "ReadWrite",
                         "createOption": "FromImage"
@@ -188,9 +181,10 @@
                             "diskSizeGB": "[parameters('dataDiskSizeGB')]",
                             "lun": 0,
                             "vhd": {
-                                "Uri": "[concat('http://', parameters('storageAccountName'), '.blob.core.windows.net/',parameters('vmStorageAccountContainerName'),'0','/', parameters('vmName'),'-datadisk0.vhd')]"
+                                "uri": "[concat('https://',parameters('storageAccountName'),'.blob.core.windows.net/datavhds/', parameters('vmName'), uniquestring(resourceGroup().id), '-datadisk0.vhd')]"
                             },
-                            "createOption": "Empty"
+                            "createOption": "Empty",
+                            "caching": "ReadOnly"
                         }
                     ]
                 },
