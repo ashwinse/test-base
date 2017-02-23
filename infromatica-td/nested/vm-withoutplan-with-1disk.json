@@ -181,7 +181,7 @@
                             "diskSizeGB": "[parameters('dataDiskSizeGB')]",
                             "lun": 0,
                             "vhd": {
-                                "uri": "[concat('https://',parameters('storageAccountName'),'.blob.core.windows.net/datavhds/', parameters('vmName'), uniquestring(resourceGroup().id), '-datadisk0.vhd')]"
+                                "uri": "[concat('https://',parameters('storageAccountName'),'.blob.core.windows.net/data0vhd/', parameters('vmName'), uniquestring(resourceGroup().id), '-datadisk0.vhd')]"
                             },
                             "createOption": "Empty",
                             "caching": "ReadOnly"
