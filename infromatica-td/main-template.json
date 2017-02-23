@@ -31,16 +31,17 @@
         "vnetAddressPrefix": "10.4.0.0/16",
         "vnetSubnetName": "icspaygsubnet1",
         "vnetSubnetAddressPrefix": "10.4.0.0/24",
-        "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/infromatica-td",
+        "baseUrl": "https://aztdrepo.blob.core.windows.net/informatica",
         "scriptsUri": "[concat(variables('baseUrl'),'/scripts/')]",
+        "customScriptUri":"https://gallery.azure.com/artifact/20151001/informatica.informatica-cloud-servicesics.1.0.1/Artifacts/",
         "storageAccountName": "[concat('icspayg', variables('suffix'))]",
-        "destStorageAccountName": "[concat('dest',variables('suffix'))]",
+        "destStorageAccountName": "[concat('dest', variables('suffix'))]",
         "storageAccountType": "Standard_LRS",
         "nicName": "IcsPaygNic",
         "vmName": "icspaygwindows",
         "automationSku": "Free",
         "automationLocation": "eastus2",
-        "automationAccountName": "[concat('contCreate',variables('suffix'))]",
+        "automationAccountName": "[concat('contCreate', variables('suffix'))]",
         "runbookName": "container",
         "runbookUri": "[concat(variables('scriptsUri'),'containerCreate.ps1')]",
         "destContainer": "destination",
@@ -92,7 +93,7 @@
         {
             "name": "[variables('automationAccountName')]",
             "type": "Microsoft.Automation/automationAccounts",
-            "apiVersion": "2015-01-01-preview",
+            "apiVersion": "2015-10-31",
             "location": "[variables('automationLocation')]",
             "dependsOn": [
                 "[concat('Microsoft.Storage/storageAccounts/', variables('destStorageAccountName'))]"
@@ -106,7 +107,7 @@
                 {
                     "name": "[variables('runbookName')]",
                     "type": "runbooks",
-                    "apiVersion": "2015-01-01-preview",
+                    "apiVersion": "2015-10-31",
                     "location": "[variables('automationLocation')]",
                     "dependsOn": [
                         "[concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]"
@@ -533,7 +534,7 @@
                         "value": "[variables('connectorUUIDList')]"
                     },
                     "scriptsUri": {
-                        "value": "[variables('scriptsUri')]"
+                        "value": "[variables('customScriptUri')]"
                     },
                     "location": {
                         "value": "[variables('location')]"
@@ -554,7 +555,7 @@
             "type": "string",
             "value": "[variables('cloudUsername')]"
         },
-        "inforamticaCloudPassword": {
+        "informaticaCloudPassword": {
             "type": "string",
             "value": "[variables('cloudPassword')]"
         },
@@ -562,37 +563,26 @@
             "type": "string",
             "value": "[variables('destStorageAccountName')]"
         },
-        "destinationContainerName": {
-            "type": "string",
-            "value": "[variables('destContainer')]"
-        },
         "destinationStorageAccountKey": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]"
         },
-        "source1StorageAccountName": {
+        "SQLVMUserName":{
             "type": "string",
-            "value": "informaticasrc12"
+            "value": "[variables('adminUsername')]"
         },
-        "source1Container": {
+        "SQLVMPassword":{
             "type": "string",
-            "value": "source1"
+            "value": "[variables('adminPassword')]"
         },
-        "source1StorageAccountKey": {
+
+        "SQLAuthUserName":{
             "type": "string",
-            "value": "+WGnEgdlWbbpaepYVDI/RFFQTeFQ/S19Kj98jT05CfZfrKSvsb4yiqfjy35PJLzeLq8YA+QsdB70LAFfSS1GPw=="
+            "value": "[variables('sqlAuthenticationLogin')]"
         },
-        "source2StorageAccountName": {
+        "SQLAuthPassword":{
             "type": "string",
-            "value": "informaticasrc22"
-        },
-        "source2Container": {
-            "type": "string",
-            "value": "source2"
-        },
-        "source2StorageAccountKey": {
-            "type": "string",
-            "value": "utSnc4OrBKS7tAjel1sczszXwXJ2xRyOr7zq7GEwv4Z6mblgBCAf5S2JYtMUwlXAW0vbse446HjDal6AyrSHqQ=="
+            "value": "[variables('sqlAuthenticationPassword')]"
         }
     }
 }
