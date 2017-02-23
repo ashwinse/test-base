@@ -161,7 +161,11 @@
                 "osProfile": {
                     "computerName": "[parameters('vmName')]",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "windowsConfiguration": {
+                        "provisionVmAgent": true,
+                        "enableAutomaticUpdates": true
+                    }
                 },
                 "storageProfile": {
                     "imageReference": {

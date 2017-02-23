@@ -23,6 +23,7 @@
         "lastName": "Drive",
         "title": "Mr.",
         "orgName": "Microtest",
+        "state": "CA",
         "country": "US",
         "phone": "7416546166",
         "cloudConnector1": "0db52dc0-49c5-11e4-916c-0800200c9a66",
@@ -31,9 +32,9 @@
         "vnetAddressPrefix": "10.4.0.0/16",
         "vnetSubnetName": "icspaygsubnet1",
         "vnetSubnetAddressPrefix": "10.4.0.0/24",
-        "baseUrl": "https://aztdrepo.blob.core.windows.net/informatica",
+        "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/infromatica-td",
         "scriptsUri": "[concat(variables('baseUrl'),'/scripts/')]",
-        "customScriptUri":"https://gallery.azure.com/artifact/20151001/informatica.informatica-cloud-servicesics.1.0.1/Artifacts/",
+        "customScriptUri": "https://gallery.azure.com/artifact/20151001/informatica.informatica-cloud-servicesics.1.0.1/Artifacts/",
         "storageAccountName": "[concat('icspayg', variables('suffix'))]",
         "destStorageAccountName": "[concat('dest', variables('suffix'))]",
         "storageAccountType": "Standard_LRS",
@@ -48,47 +49,77 @@
         "publicIPAddressName": "[concat(variables('vmName'), '-pip')]",
         "IPAddressType": "Dynamic",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('vnetName'))]",
+        "subnetID": "[concat(variables('vnetID'),'/subnets/', variables('vnetSubnetName'))]",
         "nsgName": "icspayg-nsg",
-        "sqlVmName":"sqlserver",
-        "sqlVmPipName":"sql-pip",
-        "sqlVmNsgName":"sql-nsg",
-        "sqlVmSize":"Standard_DS2_v2",
-        "sqlDnsPrefix":"[concat('sqldns',variables('suffix'))]",
-        "state": "CA",
-        "sqlVmNic":"sqlvmnic",
+        "sqlVmName": "sqlserver",
+        "sqlVmPipName": "sql-pip",
+        "sqlVmNsgName": "sql-nsg",
+        "sqlVmSize": "Standard_DS2_v2",
+        "sqlDnsPrefix": "[concat('sqldns',variables('suffix'))]",
+        "icPipDns": "[concat('icdns',variables('suffix'))]",
+        "sqlVmNicName": "sqlvmnic",
         "connectorUUIDList": "[concat(variables('cloudConnector1'),'|',variables('cloudConnector2'))]",
         "vmSetupURL": "[concat(variables('baseUrl'),'/nested/vm_script_windows_password.json' )]",
+        "icStorageSetupUrl": "[concat(variables('baseUrl'),'/nested/storage.json' )]",
         "vnetUrl": "[concat(variables('baseUrl'),'/nested/vnet.json' )]",
+        "destStorageSetupUrl": "[concat(variables('baseUrl'),'/nested/storage.json' )]",
+        "icPipSetupUrl": "[concat(variables('baseUrl'),'/nested/public-ip.json' )]",
+        "sqlPipSetupUrl": "[concat(variables('baseUrl'),'/nested/public-ip.json' )]",
+        "icNicSetupUrl": "[concat(variables('baseUrl'),'/nested/network-interface.json' )]",
+        "sqlNicSetupUrl": "[concat(variables('baseUrl'),'/nested/network-interface.json' )]",
+        "sqlVmSetupUrl": "[concat(variables('baseUrl'),'/nested/vm-withoutplan-with-1disk.json' )]",
         "informaticaTags": {
             "provider": "AACF690D-C725-4C78-9B1E-E586595B369F"
         },
-        "sqlAuthenticationLogin":"sqluser",
-        "sqlAuthenticationPassword":"TestDriveUser123"
+        "sqlAuthenticationLogin": "sqluser",
+        "sqlAuthenticationPassword": "TestDriveUser123"
     },
     "resources": [
         {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('destStorageAccountName')]",
-            "apiVersion": "2015-06-15",
-            "location": "[variables('location')]",
+            "type": "Microsoft.Resources/deployments",
+            "name": "icStorageSetup",
+            "apiVersion": "2016-06-01",
             "properties": {
-                "accountType": "[variables('storageAccountType')]"
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('icStorageSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageAccountName": {
+                        "value": "[variables('storageAccountName')]"
+                    },
+                    "storageAccountType": {
+                        "value": "[variables('storageAccountType')]"
+                    },
+                    "location": {
+                        "value": "[variables('location')]"
+                    }
+                }
             }
         },
         {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('storageAccountName')]",
-            "apiVersion": "2016-01-01",
-            "location": "[variables('location')]",
-            "tags": {
-                "displayName": "icsStorage",
-                "provider": "[toUpper(variables('informaticaTags').provider)]"
-            },
-            "properties": {},
-            "sku": {
-                "name": "[variables('storageAccountType')]"
-            },
-            "kind": "Storage"
+            "type": "Microsoft.Resources/deployments",
+            "name": "destStorageSetup",
+            "apiVersion": "2016-06-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('destStorageSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageAccountName": {
+                        "value": "[variables('destStorageAccountName')]"
+                    },
+                    "storageAccountType": {
+                        "value": "[variables('storageAccountType')]"
+                    },
+                    "location": {
+                        "value": "[variables('location')]"
+                    }
+                }
+            }
         },
         {
             "name": "[variables('automationAccountName')]",
@@ -146,21 +177,54 @@
             ]
         },
         {
+            "type": "Microsoft.Resources/deployments",
+            "name": "icPipSetup",
             "apiVersion": "2016-06-01",
-            "type": "Microsoft.Network/publicIPAddresses",
-            "name": "[variables('publicIPAddressName')]",
-            "location": "[variables('location')]",
             "properties": {
-                "publicIPAllocationMethod": "[variables('IPAddressType')]"
-            },
-            "tags": {
-                "displayName": "icsPIP",
-                "provider": "[toUpper(variables('informaticaTags').provider)]"
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('icPipSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "publicIPAddressName": {
+                        "value": "[variables('publicIPAddressName')]"
+                    },
+                    "publicIPdnsPrefix": {
+                        "value": "[variables('icPipDns')]"
+                    },
+                    "location": {
+                        "value": "[variables('location')]"
+                    }
+                }
             }
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "name": "[concat(variables('vmName'), '-vnet')]",
+            "name": "sqlVmPipSetup",
+            "apiVersion": "2016-06-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('sqlPipSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "publicIPAddressName": {
+                        "value": "[variables('sqlVmPipName')]"
+                    },
+                    "publicIPdnsPrefix": {
+                        "value": "[variables('sqlDnsPrefix')]"
+                    },
+                    "location": {
+                        "value": "[variables('location')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "icVnetSetup",
             "apiVersion": "2016-06-01",
             "properties": {
                 "mode": "Incremental",
@@ -212,20 +276,6 @@
                         }
                     },
                     {
-                        "name": "ssh-rule-linux",
-                        "properties": {
-                            "description": "Allow SSH for Linux",
-                            "protocol": "Tcp",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "22",
-                            "sourceAddressPrefix": "Internet",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 1100,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
                         "name": "infa-secure-agent-rule",
                         "properties": {
                             "description": "Allow secure agent connection to Informatica Cloud",
@@ -247,78 +297,70 @@
             }
         },
         {
-            "type": "Microsoft.Network/networkInterfaces",
-            "name": "[variables('nicName')]",
-            "apiVersion": "2016-06-01",
-            "location": "[variables('location')]",
+            "type": "Microsoft.Resources/deployments",
+            "name": "icNicSetup",
+            "apiVersion": "2015-01-01",
             "dependsOn": [
-                "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
-                "[concat('Microsoft.Resources/deployments/', variables('vmName'), '-vnet')]",
+                "[concat('Microsoft.Resources/deployments/icPipSetup')]",
+                "[concat('Microsoft.Resources/deployments/icVnetSetup')]",
                 "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
             ],
             "properties": {
-                "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('icNicSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
                 },
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfig1",
-                        "properties": {
-                            "privateIPAllocationMethod": "[variables('IPAddressType')]",
-                            "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
-                            },
-                            "subnet": {
-                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), '/subnets/', variables('vnetSubnetName'))]"
-                            }
-                        }
+                "parameters": {
+                    "networkInterfaceName": {
+                        "value": "[variables('nicName')]"
+                    },
+                    "networkSecurityGroupName": {
+                        "value": "[variables('nsgName')]"
+                    },
+                    "publicIPAddressName": {
+                        "value": "[variables('publicIPAddressName')]"
+                    },
+                    "location": {
+                        "value": "[variables('location')]"
+                    },
+                    "subnetRef": {
+                        "value": "[variables('subnetID')]"
                     }
-                ]
-            },
-            "tags": {
-                "displayName": "icsNIC",
-                "provider": "[toUpper(variables('informaticaTags').provider)]"
-            }
-        },
-        {
-            "name": "[variables('sqlVmNic')]",
-            "type": "Microsoft.Network/networkInterfaces",
-            "apiVersion": "2016-09-01",
-            "location": "[variables('location')]",
-            "dependsOn": [
-                "[concat('Microsoft.Resources/deployments/', variables('vmName'), '-vnet')]",
-                "[concat('Microsoft.Network/publicIpAddresses/', variables('sqlVmPipName'))]",
-                "[concat('Microsoft.Network/networkSecurityGroups/', variables('sqlVmNsgName'))]"
-            ],
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfig1",
-                        "properties": {
-                            "subnet": {
-                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), '/subnets/', variables('vnetSubnetName'))]"
-                            },
-                            "privateIPAllocationMethod": "Dynamic",
-                            "publicIpAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIpAddresses', variables('sqlVmPipName'))]"
-                            }
-                        }
-                    }
-                ],
-                "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('sqlVmNsgName'))]"
                 }
             }
         },
         {
-            "name": "[variables('sqlVmPipName')]",
-            "type": "Microsoft.Network/publicIPAddresses",
-            "apiVersion": "2016-09-01",
-            "location": "[variables('location')]",
+            "type": "Microsoft.Resources/deployments",
+            "name": "sqlNicSetup",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/sqlVmPipSetup')]",
+                "[concat('Microsoft.Resources/deployments/icVnetSetup')]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('sqlVmNsgName'))]"
+            ],
             "properties": {
-                "publicIPAllocationMethod": "Dynamic",
-                "dnsSettings": {
-                    "domainNameLabel": "[variables('sqlDnsPrefix')]"
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('sqlNicSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "networkInterfaceName": {
+                        "value": "[variables('sqlVmNicName')]"
+                    },
+                    "networkSecurityGroupName": {
+                        "value": "[variables('sqlVmNsgName')]"
+                    },
+                    "publicIPAddressName": {
+                        "value": "[variables('sqlVmPipName')]"
+                    },
+                    "location": {
+                        "value": "[variables('location')]"
+                    },
+                    "subnetRef": {
+                        "value": "[variables('SubnetID')]"
+                    }
                 }
             }
         },
@@ -359,111 +401,85 @@
             }
         },
         {
-            "name": "[variables('sqlVmName')]",
-            "type": "Microsoft.Compute/virtualMachines",
-            "apiVersion": "2016-04-30-preview",
-            "location": "[variables('location')]",
+            "type": "Microsoft.Resources/deployments",
+            "name": "sqlVmSetup",
+            "apiVersion": "2015-01-01",
             "dependsOn": [
-                "[concat('Microsoft.Network/networkInterfaces/', variables('sqlVmNic'))]",
-                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
+                "[concat('Microsoft.Resources/deployments/icStorageSetup')]",
+                "[concat('Microsoft.Resources/deployments/sqlNicSetup')]"
             ],
             "properties": {
-                "osProfile": {
-                    "computerName": "[variables('sqlVmName')]",
-                    "adminUsername": "[variables('adminUsername')]",
-                    "adminPassword": "[variables('adminPassword')]",
-                    "windowsConfiguration": {
-                        "provisionVmAgent": true,
-                        "enableAutomaticUpdates": true
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('sqlVmSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vmName": {
+                        "value": "[variables('sqlVmName')]"
+                    },
+                    "vmSize": {
+                        "value": "[variables('sqlVmSize')]"
+                    },
+                    "adminUsername": {
+                        "value": "[variables('adminUsername')]"
+                    },
+                    "adminPassword": {
+                        "value": "[variables('adminPassword')]"
+                    },
+                    "location": {
+                        "value": "[variables('location')]"
+                    },
+                    "imagePublisher": {
+                        "value": "MicrosoftSQLServer"
+                    },
+                    "imageOffer": {
+                        "value": "SQL2012SP3-WS2012R2"
+                    },
+                    "imageSKU": {
+                        "value": "Standard"
+                    },
+                    "imageVersion": {
+                        "value": "latest"
+                    },
+                    "storageAccountName": {
+                        "value": "variables('storageAccountName')"
+                    },
+                    "networkInterfaceName": {
+                        "value": "[variables('sqlVmNicName')]"
+                    },
+                    "dataDiskSizeGB": {
+                        "value": 100
                     }
-                },
-                "hardwareProfile": {
-                    "vmSize": "[variables('sqlVmSize')]"
-                },
-                "storageProfile": {
-                    "imageReference": {
-                        "publisher": "MicrosoftSQLServer",
-                        "offer": "SQL2012SP3-WS2012R2",
-                        "sku": "Standard",
-                        "version": "latest"
-                    },
-                    "osDisk": {
-                        "name": "[variables('sqlVmName')]",
-                        "createOption": "fromImage",
-                        "vhd": {
-                            "uri": "[concat(concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2015-06-15').primaryEndpoints['blob'], 'vhds/'), variables('sqlVmName'), '20170220175831.vhd')]"
-                        },
-                        "caching": "ReadWrite"
-                    },
-                    "dataDisks": [
-                        {
-                            "lun": 0,
-                            "name": "[concat(variables('sqlVmName'),'-disk-1')]",
-                            "createOption": "Empty",
-                            "vhd": {
-                                "uri": "[concat('https', '://', variables('storageAccountName'), '.blob.core.windows.net', concat('/vhds/', variables('sqlVmName'),'-disk-1-20170221120545.vhd'))]"
-                            },
-                            "caching": "ReadOnly",
-                            "diskSizeGB": 100
-                        }
-                    ]
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('sqlVmNic'))]"
-                        }
-                    ]
                 }
             }
         },
         {
-            "apiVersion": "2015-06-15",
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('sqlVmName'), '/SqlIaasExtension')]",
-            "location": "[variables('location')]",
+            "type": "Microsoft.Resources/deployments",
+            "name": "sqlNicSetup",
+            "apiVersion": "2015-01-01",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('sqlVmName'))]"
+                "[concat('Microsoft.Resources/deployments/sqlVmSetup')]"
             ],
             "properties": {
-                "type": "SqlIaaSAgent",
-                "publisher": "Microsoft.SqlServer.Management",
-                "typeHandlerVersion": "1.2",
-                "autoUpgradeMinorVersion": "true",
-                "settings": {
-                    "AutoTelemetrySettings": {
-                        "Region": "[variables('location')]"
-                    },
-                    "AutoPatchingSettings": {
-                        "PatchCategory": "WindowsMandatoryUpdates",
-                        "Enable": true,
-                        "DayOfWeek": "Sunday",
-                        "MaintenanceWindowStartingHour": 2,
-                        "MaintenanceWindowDuration": 60
-                    },
-                    
-                    "ServerConfigurationsManagementSettings": {
-                        "SQLConnectivityUpdateSettings": {
-                            "ConnectivityType": "Private",
-                            "Port": "1433"
-                        },
-                        "SQLWorkloadTypeUpdateSettings": {
-                            "SQLWorkloadType": "GENERAL"
-                        },
-                        "SQLStorageUpdateSettings": {
-                            "DiskCount": "1",
-                            "NumberOfColumns": "1",
-                            "StartingDeviceID": "2",
-                            "DiskConfigurationType": "NEW"
-                        },
-                        "AdditionalFeaturesServerConfigurations": {
-                            "IsRServicesEnabled": false
-                        }
-                    }
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('sqlVmSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
                 },
-                "protectedSettings": {
-                    "SQLAuthUpdateUserName": "[variables('sqlAuthenticationLogin')]",
-                    "SQLAuthUpdatePassword": "[variables('sqlAuthenticationPassword')]"
+                "parameters": {
+                    "vmName": {
+                        "value": "[variables('sqlVmName')]"
+                    },
+                    "sqlAuthenticationUsername": {
+                        "value": "[variables('sqlAuthenticationLogin')]"
+                    },
+                    "sqlAuthenticationPassword": {
+                        "value": "[variables('sqlAuthenticationPassword')]"
+                    },
+                    "location": {
+                        "value": "[variables('location')]"
+                    }
                 }
             }
         },
@@ -567,20 +583,19 @@
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('destStorageAccountName')), '2015-06-15').key1]"
         },
-        "SQLVMUserName":{
+        "SQLVMUserName": {
             "type": "string",
             "value": "[variables('adminUsername')]"
         },
-        "SQLVMPassword":{
+        "SQLVMPassword": {
             "type": "string",
             "value": "[variables('adminPassword')]"
         },
-
-        "SQLAuthUserName":{
+        "SQLAuthUserName": {
             "type": "string",
             "value": "[variables('sqlAuthenticationLogin')]"
         },
-        "SQLAuthPassword":{
+        "SQLAuthPassword": {
             "type": "string",
             "value": "[variables('sqlAuthenticationPassword')]"
         }
