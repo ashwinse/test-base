@@ -28,7 +28,7 @@ workflow container {
 
         $destStorageCtx = New-AzureStorageContext -StorageAccountName $destStorageAccountName -StorageAccountKey $destStorageAccountKey
 	
-        New-AzureStorageContainer -Name $destContainer -Context $destStorageCtx
+        New-AzureStorageContainer -Name $destContainer -Context $destStorageCtx -Permission Container
 
     }
     

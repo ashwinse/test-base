@@ -47,7 +47,7 @@
         "runbookUri": "[concat(variables('scriptsUri'),'containerCreate.ps1')]",
         "destContainer": "destination",
         "publicIPAddressName": "[concat(variables('vmName'), '-pip')]",
-        "IPAddressType": "Dynamic",
+        
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('vnetName'))]",
         "subnetID": "[concat(variables('vnetID'),'/subnets/', variables('vnetSubnetName'))]",
         "nsgName": "icspayg-nsg",
