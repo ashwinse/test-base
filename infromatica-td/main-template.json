@@ -444,7 +444,7 @@
                         "value": "latest"
                     },
                     "storageAccountName": {
-                        "value": "variables('storageAccountName')"
+                        "value": "[variables('storageAccountName')]"
                     },
                     "networkInterfaceName": {
                         "value": "[variables('sqlVmNicName')]"
