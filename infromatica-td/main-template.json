@@ -456,7 +456,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "name": "sqlNicSetup",
+            "name": "sqlIaasExtension",
             "apiVersion": "2015-01-01",
             "dependsOn": [
                 "[concat('Microsoft.Resources/deployments/sqlVmSetup')]"
