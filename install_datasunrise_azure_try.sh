@@ -1,5 +1,8 @@
 #!/bin/bash
 
+pstatus=`ps -eaf | grep apt.systemd.daily | wc -l`
+while [ $pstatus -gt 1 ]; do sleep 180; pstatus=`ps -eaf | grep apt.systemd.daily | wc -l`; done
+
 datasunrise_pass=$1
 pg_pass=$2
 
