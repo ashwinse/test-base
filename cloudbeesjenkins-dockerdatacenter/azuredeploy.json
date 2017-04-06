@@ -56,21 +56,21 @@
         },
         "ucpControllerCount": {
             "type": "int",
-            "defaultValue": 3,
+            "defaultValue": 1,
             "metadata": {
                 "description": "Number of UCP Controller VMs"
             }
         },
         "ucpNodeCount": {
             "type": "int",
-            "defaultValue": 3,
+            "defaultValue": 1,
             "metadata": {
                 "description": "Number of UCP node VMs"
             }
         },
         "ucpDtrNodeCount": {
             "type": "int",
-            "defaultValue": 3,
+            "defaultValue": 1,
             "metadata": {
                 "description": "Number of DTR node VMs"
             }
@@ -129,7 +129,7 @@
                 "description": "Base URL for Artifacts",
                 "artifactsBaseUrl": ""
             },
-            "defaultValue": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/cloudbeesjenkins-dockerdatacenter"
+            "defaultValue": "https://raw.githubusercontent.com/ashwinse/test-base/master/cloudbeesjenkins-dockerdatacenter"
         }
     },
     "variables": {
