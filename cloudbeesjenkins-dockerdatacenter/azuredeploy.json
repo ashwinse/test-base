@@ -56,21 +56,21 @@
         },
         "ucpControllerCount": {
             "type": "int",
-            "defaultValue": 1,
+            "defaultValue": 3,
             "metadata": {
                 "description": "Number of UCP Controller VMs"
             }
         },
         "ucpNodeCount": {
             "type": "int",
-            "defaultValue": 1,
+            "defaultValue": 2,
             "metadata": {
                 "description": "Number of UCP node VMs"
             }
         },
         "ucpDtrNodeCount": {
             "type": "int",
-            "defaultValue": 1,
+            "defaultValue": 3,
             "metadata": {
                 "description": "Number of DTR node VMs"
             }
@@ -133,11 +133,12 @@
         }
     },
     "variables": {
+        "suffix": "[substring(uniqueString(resourceGroup().id), 0, 5)]",
         "deploymentApiVersion": "2015-01-01",
         "networkApiVersion": "2015-06-15",
-        "storageAccountNameCloudbees": "[concat('cbstor',variables('uniqueString'))]",
+        "storageAccountNameCloudbees": "[concat('cbstor','-',variables('suffix'))]",
         "storageAccountType": "Standard_LRS",
-        "virtualNetworkName": "MyVnet",
+        "virtualNetworkName": "vnet",
         "virtualNetworkAddressPrefix": "10.0.0.0/16",
         "jenkinsSubnetName": "jenkins-subnet",
         "jenkinsSubnetPrefix": "10.0.0.0/24",
@@ -147,7 +148,6 @@
         "ucpdtrNodeSubnetName": "ucp-node-subnet",
         "ucpdtrnodeSubnetPrefix": "10.0.2.0/24",
         "vmSize": "Standard_A2",
-        "uniqueString": "[uniquestring(resourceGroup().id)]",
         "dockerDataCenterClusterPrefix": "ucpclus",
         "ucpControllerSize": "Standard_DS2_v2",
         "ucpNodeSize": "Standard_DS2_v2",
@@ -160,11 +160,10 @@
         "vnetDeploymentURI": "[concat(parameters('baseUrl'), '/nested/newvnet.json')]",
         "cloubeesDeploymnetURI": "[concat(parameters('baseUrl'),'/nested/cloudbees-jenkins-deployment.json')]",
         "dockerDataCenterDeploymentURI": "[concat(parameters('baseUrl'),'/nested/docker-data-center-deployment.json')]",
-        "cloudbeesLocation": "[parameters('location')]",
         "jenkinsPublicIPName": "jenkinsPublicIP",
         "jenkinsPublicIPNewOrExisting": "new",
         "jenkinsTemplateBaseUrl": "https://gallery.azure.com/artifact/20151001/cloudbees.jenkins-platformjenkins-platform.1.0.10/Artifacts",
-        "jenkinsDnsNameForPublicIP": "[concat(parameters('jenkinsDnsNameForPublicIP'),variables('uniqueString'))]",
+        "jenkinsDnsNameForPublicIP": "[concat(parameters('jenkinsDnsNameForPublicIP'),'-',variables('suffix'))]",
         "jenkinsAuthenticationType": "password",
         "jenkinssshPublicKey": ""
     },
@@ -231,7 +230,7 @@
                         "value": "[variables('jenkinsTemplateBaseUrl')]"
                     },
                     "location": {
-                        "value": "[variables('cloudbeesLocation')]"
+                        "value": "[parameters('location')]"
                     },
                     "storageAccountName": {
                         "value": "[variables('storageAccountNameCloudbees')]"
@@ -341,19 +340,19 @@
                         "value": "[variables('controllerLbPublicIpAddress')]"
                     },
                     "controllerLbPublicIpDnsName": {
-                        "value": "[concat(parameters('controllerLbPublicIpDnsName'),variables('uniqueString'))]"
+                        "value": "[concat(parameters('controllerLbPublicIpDnsName'),'-',variables('suffix'))]"
                     },
                     "nodeLbPublicIpAddress": {
                         "value": "[variables('nodeLbPublicIpAddress')]"
                     },
                     "nodeLbPublicIpDnsName": {
-                        "value": "[concat(parameters('nodeLbPublicIpDnsName'),variables('uniqueString'))]"
+                        "value": "[concat(parameters('nodeLbPublicIpDnsName'),'-',variables('suffix'))]"
                     },
                     "nodeDtrLbPublicIpAddress": {
                         "value": "[variables('nodeDtrLbPublicIpAddress')]"
                     },
                     "nodeDtrLbPublicIpDnsName": {
-                        "value": "[concat(parameters('nodeDtrLbPublicIpDnsName'),variables('uniqueString'))]"
+                        "value": "[concat(parameters('nodeDtrLbPublicIpDnsName'),'-',variables('suffix'))]"
                     },
                     "ucpLicenseKey": {
                         "value": "[parameters('ucpLicenseKey')]"
