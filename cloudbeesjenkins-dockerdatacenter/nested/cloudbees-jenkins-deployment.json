@@ -445,7 +445,7 @@
             "name": "ocNic",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Resources/deployments/publicIPTemplate')]",
+                "Microsoft.Resources/deployments/publicIPTemplate",
                 "Microsoft.Network/networkSecurityGroups/jenkinsSecurityGroup"
             ],
             "properties": {
