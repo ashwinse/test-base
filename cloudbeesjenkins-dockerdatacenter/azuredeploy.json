@@ -138,7 +138,7 @@
         "networkApiVersion": "2015-06-15",
         "storageAccountNameCloudbees": "[concat('cbstor',variables('suffix'))]",
         "storageAccountType": "Standard_LRS",
-        "virtualNetworkName": "vnet",
+        "virtualNetworkName": "MyVnet",
         "virtualNetworkAddressPrefix": "10.0.0.0/16",
         "jenkinsSubnetName": "jenkins-subnet",
         "jenkinsSubnetPrefix": "10.0.0.0/24",
@@ -231,6 +231,9 @@
                     },
                     "location": {
                         "value": "[parameters('location')]"
+                    },
+                    "virtualNetworkName": {
+                        "value": "[variables('virtualNetworkName')]"
                     },
                     "storageAccountName": {
                         "value": "[variables('storageAccountNameCloudbees')]"
