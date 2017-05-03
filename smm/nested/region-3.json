@@ -19,18 +19,23 @@
         }
     },
     "variables": {
-        "prefix": "Chain",
+        "prefix": "Chain-reg3",
         "suffix": "[substring(uniqueString(resourceGroup().id) ,0, 5)]",
-        "availabilitySetsName": "[concat(variables('prefix'),'-reg3-avset')]",
-        "virtualNetworksName": "[concat(variables('prefix'),'-reg3-vnet')]",
-        "chainSignerVMIpName": "[concat(variables('prefix'),'-reg3-signer-pip')]",
-        "chainSignerNicName": "[concat(variables('prefix'),'-reg3-signer-nic')]",
-        "chainSignerNsgName": "[concat(variables('prefix'),'-reg3-signer-nsg')]",
-        "chainSignerVmName": "[concat(variables('prefix'),'-reg3-signer-vm')]",
+        "availabilitySetsName": "[concat(variables('prefix'),'-avset')]",
+        "virtualNetworksName": "[concat(variables('prefix'),'-vnet')]",
+        "chainSignerVMIpName": "[concat(variables('prefix'),'-signer-pip')]",
+        "chainSignerNicName": "[concat(variables('prefix'),'-signer-nic')]",
+        "chainSignerNsgName": "[concat(variables('prefix'),'-signer-nsg')]",
+        "chainSignerVmName": "[concat(variables('prefix'),'-signer-vm')]",
         "signerSubnetName": "signer-reg3-subnet",
+        "gatewayName": "[concat(variables('prefix'),'-vnet-gateway')]",
+        "gatewayIpName": "[concat(variables('prefix'),'-gateway-pip')]",
+        "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworksName'))]",
+        "gatewaySubnetID": "[concat(variables('vnetID'),'/subnets/GatewaySubnet')]",
+        "gatewayPipID": "[resourceId('Microsoft.Network/publicIPAddresses', variables('gatewayIpName'))]",
+        "gatewayIpConfig": "[concat(variables('prefix'),'-gateway-ipconfig')]",
         "signerScript1Url": "",
         "signerScript1FileName": "",
-        
         "signerScriptUrl2": "",
         "signerScript2FileName": ""
     },
@@ -259,8 +264,25 @@
                         "properties": {
                             "addressPrefix": "10.3.1.0/24"
                         }
+                    },
+                    {
+                        "name": "GatewaySubnet",
+                        "properties": {
+                            "addressPrefix": "10.3.20.0/24"
+                        }
                     }
                 ]
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('gatewayIpName')]",
+            "apiVersion": "2016-03-30",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4
             },
             "dependsOn": []
         }

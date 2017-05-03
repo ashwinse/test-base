@@ -2,23 +2,23 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "location-1":{
+        "location-1": {
             "type": "string",
             "defaultValue": "[resourceGroup().location]"
         },
-        "location-2":{
+        "location-2": {
             "type": "string",
             "defaultValue": "centralus"
         },
-        "location-3":{
+        "location-3": {
             "type": "string",
             "defaultValue": "eastus"
         },
-        "location-4":{
+        "location-4": {
             "type": "string",
             "defaultValue": "eastus2"
         },
-        "location-5":{
+        "location-5": {
             "type": "string",
             "defaultValue": "southcentralus"
         },
@@ -33,10 +33,14 @@
         "adminPassword": {
             "type": "string",
             "defaultValue": "Ashpassword123"
+        },
+        "objectId": {
+            "type": "string",
+            "defaultValue": "fd6c1923-5ea7-4b77-ae32-eca1a5445f9a"
         }
     },
     "variables": {
-        "baseUrl":"https://raw.githubusercontent.com/ashwinse/test-base/master/smm",
+        "baseUrl": "https://raw.githubusercontent.com/ashwinse/test-base/master/smm",
         "region-1-setupURL": "[concat(variables('baseUrl'),'/nested/region-1.json')]",
         "region-2-setupURL": "[concat(variables('baseUrl'),'/nested/region-2.json')]",
         "region-3-setupURL": "[concat(variables('baseUrl'),'/nested/region-3.json')]",
@@ -55,8 +59,11 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "objectId": {
+                        "value": "[parameters('objectId')]"
+                    },
                     "location": {
-                        "value":"[parameters('location-1')]"
+                        "value": "[parameters('location-1')]"
                     },
                     "signer_nodes_Count": {
                         "value": "[parameters('signer_nodes_Count')]"
@@ -82,7 +89,7 @@
                 },
                 "parameters": {
                     "location": {
-                        "value":"[parameters('location-2')]"
+                        "value": "[parameters('location-2')]"
                     },
                     "signer_nodes_Count": {
                         "value": "[parameters('signer_nodes_Count')]"
@@ -108,7 +115,7 @@
                 },
                 "parameters": {
                     "location": {
-                        "value":"[parameters('location-3')]"
+                        "value": "[parameters('location-3')]"
                     },
                     "signer_nodes_Count": {
                         "value": "[parameters('signer_nodes_Count')]"
@@ -134,7 +141,7 @@
                 },
                 "parameters": {
                     "location": {
-                        "value":"[parameters('location-4')]"
+                        "value": "[parameters('location-4')]"
                     },
                     "signer_nodes_Count": {
                         "value": "[parameters('signer_nodes_Count')]"
@@ -160,7 +167,7 @@
                 },
                 "parameters": {
                     "location": {
-                        "value":"[parameters('location-5')]"
+                        "value": "[parameters('location-5')]"
                     },
                     "signer_nodes_Count": {
                         "value": "[parameters('signer_nodes_Count')]"
