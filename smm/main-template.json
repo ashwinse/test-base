@@ -23,7 +23,7 @@
             "defaultValue": "southcentralus"
         },
         "signer_nodes_Count": {
-            "type": "string",
+            "type": "int",
             "defaultValue": 2
         },
         "adminUsername": {
