@@ -36,12 +36,12 @@
         }
     },
     "variables": {
-
-        "region-1-setupURL": "",
-        "region-2-setupURL": "",
-        "region-3-setupURL": "",
-        "region-4-setupURL": "",
-        "region-5-setupURL": ""
+        "baseUrl":"https://raw.githubusercontent.com/ashwinse/test-base/master/smm",
+        "region-1-setupURL": "[concat(variables('baseUrl'),'/nested/region-1.json')]",
+        "region-2-setupURL": "[concat(variables('baseUrl'),'/nested/region-2.json')]",
+        "region-3-setupURL": "[concat(variables('baseUrl'),'/nested/region-3.json')]",
+        "region-4-setupURL": "[concat(variables('baseUrl'),'/nested/region-4.json')]",
+        "region-5-setupURL": "[concat(variables('baseUrl'),'/nested/region-5.json')]"
     },
     "resources": [
         {
