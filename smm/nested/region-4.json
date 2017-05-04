@@ -16,6 +16,9 @@
         "adminPassword": {
             "type": "string",
             "defaultValue": "Ashpassword123"
+        },
+        "gatewayName": {
+            "type": "string"
         }
     },
     "variables": {
@@ -28,7 +31,6 @@
         "chainSignerNsgName": "[concat(variables('prefix'),'-signer-nsg')]",
         "chainSignerVmName": "[concat(variables('prefix'),'-signer-vm')]",
         "signerSubnetName": "signer-reg4-subnet",
-        "gatewayName": "[concat(variables('prefix'),'-vnet-gateway')]",
         "gatewayIpName": "[concat(variables('prefix'),'-gateway-pip')]",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworksName'))]",
         "gatewaySubnetID": "[concat(variables('vnetID'),'/subnets/GatewaySubnet')]",
@@ -285,6 +287,38 @@
                 "idleTimeoutInMinutes": 4
             },
             "dependsOn": []
+        },
+        {
+            "name": "[parameters('gatewayName')]",
+            "type": "Microsoft.Network/virtualNetworkGateways",
+            "apiVersion": "2016-09-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworksName'))]",
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('gatewayIpName'))]"
+            ],
+            "properties": {
+                "gatewayType": "Vpn",
+                "vpnType": "RouteBased",
+                "ipConfigurations": [
+                    {
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('gatewaySubnetID')]"
+                            },
+                            "publicIPAddress": {
+                                "id": "[variables('gatewayPipID')]"
+                            }
+                        },
+                        "name": "[variables('gatewayIpConfig')]"
+                    }
+                ],
+                "sku": {
+                    "name": "Standard",
+                    "tier": "Standard"
+                }
+            }
         }
     ]
 }
