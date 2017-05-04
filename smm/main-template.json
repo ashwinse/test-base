@@ -218,6 +218,7 @@
             ],
             "location": "[parameters('location-1')]",
             "properties": {
+                "publicIPAllocationMethod":"Dynamic",
                 "virtualNetworkGateway1": {
                     "id": "[resourceId('Microsoft.Network/virtualNetworkGateways', variables('gatewayNameReg1'))]"
                 },
@@ -237,6 +238,7 @@
             ],
             "location": "[parameters('location-2')]",
             "properties": {
+                "publicIPAllocationMethod":"Dynamic",
                 "virtualNetworkGateway1": {
                     "id": "[resourceId('Microsoft.Network/virtualNetworkGateways', variables('gatewayNameReg2'))]"
                 },
@@ -260,6 +262,7 @@
             ],
             "location": "[parameters('location-1')]",
             "properties": {
+                "publicIPAllocationMethod":"Dynamic",
                 "virtualNetworkGateway1": {
                     "id": "[resourceId('Microsoft.Network/virtualNetworkGateways', variables('gatewayNameReg1'))]"
                 },
@@ -279,6 +282,7 @@
             ],
             "location": "[parameters('location-3')]",
             "properties": {
+                "publicIPAllocationMethod":"Dynamic",
                 "virtualNetworkGateway1": {
                     "id": "[resourceId('Microsoft.Network/virtualNetworkGateways', variables('gatewayNameReg3'))]"
                 },
@@ -302,6 +306,7 @@
             ],
             "location": "[parameters('location-1')]",
             "properties": {
+                "publicIPAllocationMethod":"Dynamic",
                 "virtualNetworkGateway1": {
                     "id": "[resourceId('Microsoft.Network/virtualNetworkGateways', variables('gatewayNameReg1'))]"
                 },
@@ -321,6 +326,7 @@
             ],
             "location": "[parameters('location-4')]",
             "properties": {
+                "publicIPAllocationMethod":"Dynamic",
                 "virtualNetworkGateway1": {
                     "id": "[resourceId('Microsoft.Network/virtualNetworkGateways', variables('gatewayNameReg4'))]"
                 },
@@ -344,6 +350,7 @@
             ],
             "location": "[parameters('location-1')]",
             "properties": {
+                "publicIPAllocationMethod":"Dynamic",
                 "virtualNetworkGateway1": {
                     "id": "[resourceId('Microsoft.Network/virtualNetworkGateways', variables('gatewayNameReg1'))]"
                 },
@@ -363,6 +370,7 @@
             ],
             "location": "[parameters('location-5')]",
             "properties": {
+                "publicIPAllocationMethod":"Dynamic",
                 "virtualNetworkGateway1": {
                     "id": "[resourceId('Microsoft.Network/virtualNetworkGateways', variables('gatewayNameReg5'))]"
                 },
