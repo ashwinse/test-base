@@ -19,9 +19,9 @@ secretkey=$3
 tenatid=$4
 subscriptionid=$5
 keyvaultname=$6
-#signerclienttoken=$7
-clienttokenname=$7 
-az login --service-principal -u $serviceprincipal -p $secretkey --tenant $tenatid
+signerclienttoken=$7
+clienttokenname=$8 
+az login -u asebastian@sysgaininc.onmicrosoft.com -p Ashwinse2793
 az account set -s $subscriptionid
 
 generatornetworktoken=`az keyvault secret show --name networkToken --vault-name $keyvaultname | grep "value" | cut -d "\"" -f4`
@@ -46,4 +46,4 @@ docker exec  $containerId /usr/bin/chain/corectl config -t $generatornetworktoke
 
 sudo docker restart $containerId
 
-az keyvault secret set --name signerclienttoken1 --vault-name $keyvaultname --value $signerctoken
+az keyvault secret set --name $signerclienttoken --vault-name $keyvaultname --value $signerctoken
