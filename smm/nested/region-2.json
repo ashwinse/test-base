@@ -7,7 +7,7 @@
         },
         "signer_nodes_Count": {
             "type": "int",
-            "defaultValue": 2
+            "defaultValue": 3
         },
         "adminUsername": {
             "type": "string",
