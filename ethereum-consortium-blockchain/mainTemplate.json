@@ -138,7 +138,7 @@
                 "description": "The base URL for dependent assets",
                 "artifactsBaseUrl": ""
             },
-            "defaultValue": "https://raw.githubusercontent.com/ashwinse/test-base/master/ethereum-consortium-blockchain"
+            "defaultValue": "https://gallery.azure.com/artifact/20151001/microsoft-azure-blockchain.azure-blockchain-serviceethereum-consortium-blockchain.1.0.9/Artifacts"
         }
     },
     "variables": {
