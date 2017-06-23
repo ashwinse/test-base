@@ -1,0 +1,11 @@
+{
+    "provisioningState": "Succeeded",
+    "resourceGuid": "609b48e0-dfd2-4937-9a5b-8fb28a8e2350",
+    "publicIPAddressVersion": "IPv4",
+    "publicIPAllocationMethod": "Dynamic",
+    "idleTimeoutInMinutes": 4,
+    "dnsSettings": {
+        "domainNameLabel": "dns-dcja",
+        "fqdn": "dns-dcja.eastus.cloudapp.azure.com"
+    }
+}

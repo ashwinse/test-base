@@ -1,0 +1,21 @@
+{
+    "provisioningState": "Succeeded",
+    "resourceGuid": "0190c47a-f892-4701-ae92-d323a6571324",
+    "addressSpace": {
+        "addressPrefixes": [
+            "10.0.0.0/16"
+        ]
+    },
+    "subnets": [
+        {
+            "name": "Subnet",
+            "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ashtest11/providers/Microsoft.Network/virtualNetworks/eth-dcja-vnet/subnets/Subnet",
+            "etag": "W/\"df39286b-4c11-4dcb-8ffd-c6fd24515458\"",
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.0.0.0/24"
+            }
+        }
+    ],
+    "virtualNetworkPeerings": []
+}
