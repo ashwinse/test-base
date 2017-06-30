@@ -1,0 +1,131 @@
+[
+    {
+        "provisioningState": "Succeeded",
+        "resourceGuid": "89991956-4476-4544-946f-7fc95621617f",
+        "ipConfigurations": [
+            {
+                "name": "vmIpConfig",
+                "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ssh-vmss/providers/Microsoft.Compute/virtualMachineScaleSets/eth-wh53-vmss/virtualMachines/0/networkInterfaces/eth-wh53-nic/ipConfigurations/vmIpConfig",
+                "etag": "W/\"6f8fe1ea-a445-43ec-b9f5-6dc155306978\"",
+                "properties": {
+                    "provisioningState": "Succeeded",
+                    "privateIPAddress": "10.0.0.4",
+                    "privateIPAllocationMethod": "Dynamic",
+                    "subnet": {
+                        "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ssh-vmss/providers/Microsoft.Network/virtualNetworks/eth-wh53-vnet/subnets/Subnet"
+                    },
+                    "primary": true,
+                    "privateIPAddressVersion": "IPv4",
+                    "loadBalancerBackendAddressPools": [
+                        {
+                            "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ssh-vmss/providers/Microsoft.Network/loadBalancers/eth-wh53-lb/backendAddressPools/lbBePool"
+                        }
+                    ],
+                    "loadBalancerInboundNatRules": [
+                        {
+                            "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ssh-vmss/providers/Microsoft.Network/loadBalancers/eth-wh53-lb/inboundNatRules/ssh-vm.0"
+                        }
+                    ]
+                }
+            }
+        ],
+        "dnsSettings": {
+            "dnsServers": [],
+            "appliedDnsServers": [],
+            "internalDomainNameSuffix": "ibsgul4mp03ufhqsmh4jxy4o0f.dx.internal.cloudapp.net"
+        },
+        "macAddress": "00-0D-3A-35-F6-DE",
+        "enableAcceleratedNetworking": false,
+        "enableIPForwarding": false,
+        "primary": true,
+        "virtualMachine": {
+            "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ssh-vmss/providers/Microsoft.Compute/virtualMachineScaleSets/eth-wh53-vmss/virtualMachines/0"
+        }
+    },
+    {
+        "provisioningState": "Succeeded",
+        "resourceGuid": "bdcdf02c-e101-4c5f-84e8-efd0f1deed51",
+        "ipConfigurations": [
+            {
+                "name": "vmIpConfig",
+                "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ssh-vmss/providers/Microsoft.Compute/virtualMachineScaleSets/eth-wh53-vmss/virtualMachines/1/networkInterfaces/eth-wh53-nic/ipConfigurations/vmIpConfig",
+                "etag": "W/\"ccaeedfd-f7a3-43b4-ba0d-16c80c5d7440\"",
+                "properties": {
+                    "provisioningState": "Succeeded",
+                    "privateIPAddress": "10.0.0.5",
+                    "privateIPAllocationMethod": "Dynamic",
+                    "subnet": {
+                        "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ssh-vmss/providers/Microsoft.Network/virtualNetworks/eth-wh53-vnet/subnets/Subnet"
+                    },
+                    "primary": true,
+                    "privateIPAddressVersion": "IPv4",
+                    "loadBalancerBackendAddressPools": [
+                        {
+                            "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ssh-vmss/providers/Microsoft.Network/loadBalancers/eth-wh53-lb/backendAddressPools/lbBePool"
+                        }
+                    ],
+                    "loadBalancerInboundNatRules": [
+                        {
+                            "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ssh-vmss/providers/Microsoft.Network/loadBalancers/eth-wh53-lb/inboundNatRules/ssh-vm.1"
+                        }
+                    ]
+                }
+            }
+        ],
+        "dnsSettings": {
+            "dnsServers": [],
+            "appliedDnsServers": [],
+            "internalDomainNameSuffix": "ibsgul4mp03ufhqsmh4jxy4o0f.dx.internal.cloudapp.net"
+        },
+        "macAddress": "00-0D-3A-35-FD-1A",
+        "enableAcceleratedNetworking": false,
+        "enableIPForwarding": false,
+        "primary": true,
+        "virtualMachine": {
+            "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ssh-vmss/providers/Microsoft.Compute/virtualMachineScaleSets/eth-wh53-vmss/virtualMachines/1"
+        }
+    },
+    {
+        "provisioningState": "Succeeded",
+        "resourceGuid": "5600f744-3537-4902-98fe-7e651c4fe9cb",
+        "ipConfigurations": [
+            {
+                "name": "vmIpConfig",
+                "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ssh-vmss/providers/Microsoft.Compute/virtualMachineScaleSets/eth-wh53-vmss/virtualMachines/2/networkInterfaces/eth-wh53-nic/ipConfigurations/vmIpConfig",
+                "etag": "W/\"0ffbf623-ffcb-412a-a04c-a6d194a2d3f8\"",
+                "properties": {
+                    "provisioningState": "Succeeded",
+                    "privateIPAddress": "10.0.0.6",
+                    "privateIPAllocationMethod": "Dynamic",
+                    "subnet": {
+                        "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ssh-vmss/providers/Microsoft.Network/virtualNetworks/eth-wh53-vnet/subnets/Subnet"
+                    },
+                    "primary": true,
+                    "privateIPAddressVersion": "IPv4",
+                    "loadBalancerBackendAddressPools": [
+                        {
+                            "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ssh-vmss/providers/Microsoft.Network/loadBalancers/eth-wh53-lb/backendAddressPools/lbBePool"
+                        }
+                    ],
+                    "loadBalancerInboundNatRules": [
+                        {
+                            "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ssh-vmss/providers/Microsoft.Network/loadBalancers/eth-wh53-lb/inboundNatRules/ssh-vm.2"
+                        }
+                    ]
+                }
+            }
+        ],
+        "dnsSettings": {
+            "dnsServers": [],
+            "appliedDnsServers": [],
+            "internalDomainNameSuffix": "ibsgul4mp03ufhqsmh4jxy4o0f.dx.internal.cloudapp.net"
+        },
+        "macAddress": "00-0D-3A-35-F9-35",
+        "enableAcceleratedNetworking": false,
+        "enableIPForwarding": false,
+        "primary": true,
+        "virtualMachine": {
+            "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ssh-vmss/providers/Microsoft.Compute/virtualMachineScaleSets/eth-wh53-vmss/virtualMachines/2"
+        }
+    }
+]
