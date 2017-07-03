@@ -4,6 +4,7 @@
     "parameters": {
         "namePrefix": {
             "type": "string",
+            "defaultValue": "eth",
             "metadata": {
                 "description": "String used as a base for naming resources (6 alphanumeric characters or less).  A unique hash is prepended to the string for some resources, while resource-specific information is appended."
             },
@@ -11,6 +12,7 @@
         },
         "authType": {
             "type": "string",
+            "defaultValue": "password",
             "allowedValues": [
                 "password",
                 "sshPublicKey"
@@ -28,7 +30,7 @@
         },
         "adminPassword": {
             "type": "securestring",
-            "defaultValue": "",
+            "defaultValue": "Ashpassword123",
             "metadata": {
                 "description": "Administrator password for each deployed VM"
             }
@@ -42,12 +44,14 @@
         },
         "ethereumAccountPsswd": {
             "type": "securestring",
+            "defaultValue": "Ashpassword123",
             "metadata": {
                 "description": "Password used to secure the default Ethereum account that will be generated"
             }
         },
         "ethereumAccountPassphrase": {
             "type": "securestring",
+            "defaultValue": "Ashpassword123",
             "metadata": {
                 "description": "Password used to generate the private key associated with the default Ethereum account that is generated.  Consider a password with sufficient randomness to ensure a strong private key"
             }
@@ -133,13 +137,15 @@
             }
         },
         "connectionSharedKey": {
+            "defaultValue": "Ashpassword123",
             "type": "string",
             "metadata": {
                 "description": "Shared Key for the Gateway Connection"
             }
         },
         "location": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "eastus"
         },
         "baseUrl": {
             "type": "string",
@@ -169,7 +175,7 @@
         "loadBalancerName": "[concat(variables('namingInfix'), '-LB')]",
         "loadBalancerBackendAddressPoolName": "LoadBalancerBackend1",
         "loadBalancerInboundNatRuleNamePrefix": "SSH-VM",
-        "location": "[resourceGroup().location]",
+        "location": "[parameters('location')]",
         "numMNNodes": "[parameters('numMiningNodes')]",
         "maxVMsPerStorageAcct": 20,
         "mnStorageAcctCount": "[add(div(variables('numMNNodes'), variables('maxVMsPerStorageAcct')), 1)]",
@@ -400,7 +406,7 @@
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[variables('vNet').name]",
-            "location": "[resourceGroup().location]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Network/networkSecurityGroups/', variables('txNsgName'))]",
                 "[concat('Microsoft.Network/networkSecurityGroups/', variables('mnNsgName'))]"
@@ -419,7 +425,7 @@
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Network/publicIPAddresses",
             "name": "[variables('vNet').gatewayPublicIPName]",
-            "location": "[resourceGroup().location]",
+            "location": "[variables('location')]",
             "comments": "This is the public IP for vNet Gateway",
             "properties": {
                 "publicIPAllocationMethod": "Dynamic"
@@ -429,7 +435,7 @@
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Network/virtualNetworkGateways",
             "name": "[variables('vNet').gatewayName]",
-            "location": "[resourceGroup().location]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Network/publicIPAddresses/', variables('vNet').gatewayPublicIPName)]",
                 "[concat('Microsoft.Network/virtualNetworks/', variables('vNet').name)]"
@@ -466,7 +472,7 @@
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Network/connections",
             "name": "[variables('vNet').connectionName]",
-            "location": "[resourceGroup().location]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Network/virtualNetworkGateways/', variables('vNet').gatewayName)]"
             ],
