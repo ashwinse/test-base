@@ -1,0 +1,202 @@
+[
+    {
+        "provisioningState": "Succeeded",
+        "documentEndpoint": "https://eth-kco6y-registrar-region1.documents.azure.com:443/",
+        "ipRangeFilter": "",
+        "enableAutomaticFailover": true,
+        "databaseAccountOfferType": "Standard",
+        "consistencyPolicy": {
+            "defaultConsistencyLevel": "BoundedStaleness",
+            "maxIntervalInSeconds": 5,
+            "maxStalenessPrefix": 100
+        },
+        "configurationOverrides": {
+            "EnableBsonSchema": "True"
+        },
+        "writeLocations": [
+            {
+                "id": "eth-kco6y-registrar-region1-centralus",
+                "locationName": "Central US",
+                "documentEndpoint": "https://eth-kco6y-registrar-region1-centralus.documents.azure.com:443/",
+                "provisioningState": "Succeeded",
+                "failoverPriority": 0
+            }
+        ],
+        "readLocations": [
+            {
+                "id": "eth-kco6y-registrar-region1-centralus",
+                "locationName": "Central US",
+                "documentEndpoint": "https://eth-kco6y-registrar-region1-centralus.documents.azure.com:443/",
+                "provisioningState": "Succeeded",
+                "failoverPriority": 0
+            }
+        ],
+        "failoverPolicies": [
+            {
+                "id": "eth-kco6y-registrar-region1-centralus",
+                "locationName": "Central US",
+                "failoverPriority": 0
+            }
+        ]
+    },
+    {
+        "provisioningState": "Succeeded",
+        "documentEndpoint": "https://eth-kco6y-registrar-region2.documents.azure.com:443/",
+        "ipRangeFilter": "",
+        "enableAutomaticFailover": true,
+        "databaseAccountOfferType": "Standard",
+        "consistencyPolicy": {
+            "defaultConsistencyLevel": "BoundedStaleness",
+            "maxIntervalInSeconds": 5,
+            "maxStalenessPrefix": 100
+        },
+        "configurationOverrides": {
+            "EnableBsonSchema": "True"
+        },
+        "writeLocations": [
+            {
+                "id": "eth-kco6y-registrar-region2-centralus",
+                "locationName": "Central US",
+                "documentEndpoint": "https://eth-kco6y-registrar-region2-centralus.documents.azure.com:443/",
+                "provisioningState": "Succeeded",
+                "failoverPriority": 0
+            }
+        ],
+        "readLocations": [
+            {
+                "id": "eth-kco6y-registrar-region2-centralus",
+                "locationName": "Central US",
+                "documentEndpoint": "https://eth-kco6y-registrar-region2-centralus.documents.azure.com:443/",
+                "provisioningState": "Succeeded",
+                "failoverPriority": 0
+            }
+        ],
+        "failoverPolicies": [
+            {
+                "id": "eth-kco6y-registrar-region2-centralus",
+                "locationName": "Central US",
+                "failoverPriority": 0
+            }
+        ]
+    },
+    {
+        "provisioningState": "Succeeded",
+        "documentEndpoint": "https://eth-kco6y-registrar-region3.documents.azure.com:443/",
+        "ipRangeFilter": "",
+        "enableAutomaticFailover": true,
+        "databaseAccountOfferType": "Standard",
+        "consistencyPolicy": {
+            "defaultConsistencyLevel": "BoundedStaleness",
+            "maxIntervalInSeconds": 5,
+            "maxStalenessPrefix": 100
+        },
+        "configurationOverrides": {
+            "EnableBsonSchema": "True"
+        },
+        "writeLocations": [
+            {
+                "id": "eth-kco6y-registrar-region3-centralus",
+                "locationName": "Central US",
+                "documentEndpoint": "https://eth-kco6y-registrar-region3-centralus.documents.azure.com:443/",
+                "provisioningState": "Succeeded",
+                "failoverPriority": 0
+            }
+        ],
+        "readLocations": [
+            {
+                "id": "eth-kco6y-registrar-region3-centralus",
+                "locationName": "Central US",
+                "documentEndpoint": "https://eth-kco6y-registrar-region3-centralus.documents.azure.com:443/",
+                "provisioningState": "Succeeded",
+                "failoverPriority": 0
+            }
+        ],
+        "failoverPolicies": [
+            {
+                "id": "eth-kco6y-registrar-region3-centralus",
+                "locationName": "Central US",
+                "failoverPriority": 0
+            }
+        ]
+    },
+    {
+        "provisioningState": "Succeeded",
+        "documentEndpoint": "https://eth-kco6y-registrar-region4.documents.azure.com:443/",
+        "ipRangeFilter": "",
+        "enableAutomaticFailover": true,
+        "databaseAccountOfferType": "Standard",
+        "consistencyPolicy": {
+            "defaultConsistencyLevel": "BoundedStaleness",
+            "maxIntervalInSeconds": 5,
+            "maxStalenessPrefix": 100
+        },
+        "configurationOverrides": {
+            "EnableBsonSchema": "True"
+        },
+        "writeLocations": [
+            {
+                "id": "eth-kco6y-registrar-region4-centralus",
+                "locationName": "Central US",
+                "documentEndpoint": "https://eth-kco6y-registrar-region4-centralus.documents.azure.com:443/",
+                "provisioningState": "Succeeded",
+                "failoverPriority": 0
+            }
+        ],
+        "readLocations": [
+            {
+                "id": "eth-kco6y-registrar-region4-centralus",
+                "locationName": "Central US",
+                "documentEndpoint": "https://eth-kco6y-registrar-region4-centralus.documents.azure.com:443/",
+                "provisioningState": "Succeeded",
+                "failoverPriority": 0
+            }
+        ],
+        "failoverPolicies": [
+            {
+                "id": "eth-kco6y-registrar-region4-centralus",
+                "locationName": "Central US",
+                "failoverPriority": 0
+            }
+        ]
+    },
+    {
+        "provisioningState": "Succeeded",
+        "documentEndpoint": "https://eth-kco6y-registrar-region5.documents.azure.com:443/",
+        "ipRangeFilter": "",
+        "enableAutomaticFailover": true,
+        "databaseAccountOfferType": "Standard",
+        "consistencyPolicy": {
+            "defaultConsistencyLevel": "BoundedStaleness",
+            "maxIntervalInSeconds": 5,
+            "maxStalenessPrefix": 100
+        },
+        "configurationOverrides": {
+            "EnableBsonSchema": "True"
+        },
+        "writeLocations": [
+            {
+                "id": "eth-kco6y-registrar-region5-centralus",
+                "locationName": "Central US",
+                "documentEndpoint": "https://eth-kco6y-registrar-region5-centralus.documents.azure.com:443/",
+                "provisioningState": "Succeeded",
+                "failoverPriority": 0
+            }
+        ],
+        "readLocations": [
+            {
+                "id": "eth-kco6y-registrar-region5-centralus",
+                "locationName": "Central US",
+                "documentEndpoint": "https://eth-kco6y-registrar-region5-centralus.documents.azure.com:443/",
+                "provisioningState": "Succeeded",
+                "failoverPriority": 0
+            }
+        ],
+        "failoverPolicies": [
+            {
+                "id": "eth-kco6y-registrar-region5-centralus",
+                "locationName": "Central US",
+                "failoverPriority": 0
+            }
+        ]
+    }
+]
