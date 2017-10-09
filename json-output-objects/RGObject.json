@@ -1,0 +1,8 @@
+{
+    "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ashup",
+    "name": "ashup",
+    "location": "eastus",
+    "properties": {
+        "provisioningState": "Succeeded"
+    }
+}

@@ -1,0 +1,41 @@
+{
+    "provisioningState": "Succeeded",
+    "resourceGuid": "0d7f8fc1-ce0d-4649-b2af-d9676be70771",
+    "ipConfigurations": [
+        {
+            "name": "vmIpConfig",
+            "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ast1/providers/Microsoft.Compute/virtualMachineScaleSets/eth-apin-vmss/virtualMachines/0/networkInterfaces/eth-apin-nic/ipConfigurations/vmIpConfig",
+            "etag": "W/\"c5492eac-661e-4cab-be3b-ff9a8f298969\"",
+            "properties": {
+                "provisioningState": "Succeeded",
+                "privateIPAddress": "10.0.0.4",
+                "privateIPAllocationMethod": "Dynamic",
+                "subnet": {
+                    "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ast1/providers/Microsoft.Network/virtualNetworks/eth-apin-vnet/subnets/Subnet"
+                },
+                "primary": true,
+                "privateIPAddressVersion": "IPv4",
+                "loadBalancerBackendAddressPools": [
+                    {
+                        "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ast1/providers/Microsoft.Network/loadBalancers/eth-apin-lb/backendAddressPools/lbBePool"
+                    }
+                ],
+                "loadBalancerInboundNatRules": [
+                    {
+                        "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ast1/providers/Microsoft.Network/loadBalancers/eth-apin-lb/inboundNatRules/ssh-vm.0"
+                    }
+                ]
+            }
+        }
+    ],
+    "dnsSettings": {
+        "dnsServers": [],
+        "appliedDnsServers": []
+    },
+    "macAddress": "00-0D-3A-18-31-29",
+    "enableAcceleratedNetworking": false,
+    "enableIPForwarding": false,
+    "virtualMachine": {
+        "id": "/subscriptions/086ef973-2199-477b-9b40-c3d05c01a287/resourceGroups/ast1/providers/Microsoft.Compute/virtualMachineScaleSets/eth-apin-vmss/virtualMachines/0"
+    }
+}

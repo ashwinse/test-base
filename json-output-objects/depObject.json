@@ -1,0 +1,303 @@
+{
+    "name": "Microsoft.Template",
+    "properties": {
+        "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {
+                "adminUsername": {
+                    "defaultValue": "ashuser",
+                    "type": "String",
+                    "metadata": {
+                        "description": "User name for the Virtual Machine."
+                    }
+                },
+                "authenticationType": {
+                    "defaultValue": "Password",
+                    "allowedValues": [
+                        "Password",
+                        "sshPublicKey"
+                    ],
+                    "type": "String"
+                },
+                "adminPassword": {
+                    "defaultValue": "Ashpassword123",
+                    "type": "SecureString",
+                    "metadata": {
+                        "description": "Password for the Virtual Machine."
+                    }
+                },
+                "sshPublicKey": {
+                    "defaultValue": "",
+                    "type": "String"
+                },
+                "vmScaleSetCapacity": {
+                    "defaultValue": 2,
+                    "type": "Int"
+                }
+            },
+            "variables": {
+                "namePrefix": "[concat('eth-',variables('uniqString2'),'-')]",
+                "uniqString": "ss",
+                "uniqString2": "[toLower(substring(uniqueString(resourceGroup().id), 0, 4))]",
+                "location": "[resourceGroup().location]",
+                "nicName": "[concat(variables('namePrefix'),'nic')]",
+                "addressPrefix": "10.0.0.0/16",
+                "subnetName": "Subnet",
+                "subnetPrefix": "10.0.0.0/24",
+                "storageAccountType": "Standard_LRS",
+                "lbpublicIPAddressName": "[concat(variables('namePrefix'),'lbpip')]",
+                "publicIPAddressType": "Dynamic",
+                "vmssName": "[concat(variables('namePrefix'),'vmss')]",
+                "nodeVMSize": "Standard_A1",
+                "virtualNetworkName": "[concat(variables('namePrefix'),'vnet')]",
+                "ipConfigName": "vmIpConfig",
+                "loadBalancerName": "[concat(variables('namePrefix'),'lb')]",
+                "loadBalancerBackendAddressPoolName": "lbBePool",
+                "loadBalancerInboundNatRuleNamePrefix": "ssh-vm",
+                "lbID": "[resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName'))]",
+                "lbFrontEndIpConfigName": "LoadBalancerFrontEnd",
+                "lbFrontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/',variables('lbFrontEndIpConfigName'))]",
+                "lbBackendAddressPoolID": "[concat(variables('lbID'), '/backendAddressPools/', variables('loadBalancerBackendAddressPoolName'))]",
+                "lbNatRulePoolID": "[concat(variables('lbID'), '/inboundNatPools/',variables('loadBalancerInboundNatRuleNamePrefix'))]",
+                "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
+                "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
+                "baseUrl": "",
+                "ubuntuImage": {
+                    "publisher": "Canonical",
+                    "offer": "UbuntuServer",
+                    "sku": "16.04.0-LTS",
+                    "version": "latest"
+                },
+                "osProfilepassword": {
+                    "computerNamePrefix": "[variables('vmssName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
+                "osProfilesshPublicKey": {
+                    "computerNamePrefix": "[variables('vmssName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "[variables('sshKeyPath')]",
+                                    "keyData": "[parameters('sshPublicKey')]"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "osProfileReference": "[variables(concat('osProfile', parameters('authenticationType')))]"
+            },
+            "resources": [
+                {
+                    "type": "Microsoft.Network/publicIPAddresses",
+                    "name": "[variables('lbpublicIPAddressName')]",
+                    "apiVersion": "2017-03-01",
+                    "location": "[variables('location')]",
+                    "properties": {
+                        "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
+                        "dnsSettings": {
+                            "domainNameLabel": "[concat('dns-',variables('uniqString2'))]"
+                        }
+                    }
+                },
+                {
+                    "type": "Microsoft.Network/loadBalancers",
+                    "name": "[variables('loadBalancerName')]",
+                    "apiVersion": "2017-03-01",
+                    "location": "[variables('location')]",
+                    "properties": {
+                        "frontendIPConfigurations": [
+                            {
+                                "name": "[variables('lbFrontEndIpConfigName')]",
+                                "properties": {
+                                    "publicIPAddress": {
+                                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('lbpublicIPAddressName'))]"
+                                    },
+                                    "privateIPAllocationMethod": "Dynamic"
+                                }
+                            }
+                        ],
+                        "backendAddressPools": [
+                            {
+                                "name": "[variables('loadBalancerBackendAddressPoolName')]"
+                            }
+                        ],
+                        "loadBalancingRules": [],
+                        "probes": [],
+                        "inboundNatPools": [
+                            {
+                                "name": "[variables('loadBalancerInboundNatRuleNamePrefix')]",
+                                "properties": {
+                                    "frontendIPConfiguration": {
+                                        "id": "[variables('lbFrontEndIPConfigID')]"
+                                    },
+                                    "protocol": "tcp",
+                                    "frontendPortRangeStart": 2200,
+                                    "frontendPortRangeEnd": 2250,
+                                    "backendPort": 22
+                                }
+                            }
+                        ]
+                    },
+                    "dependsOn": [
+                        "[concat('Microsoft.Network/publicIPAddresses/', variables('lbPublicIPAddressName'))]",
+                        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+                    ]
+                },
+                {
+                    "type": "Microsoft.Network/virtualNetworks",
+                    "name": "[variables('virtualNetworkName')]",
+                    "apiVersion": "2017-03-01",
+                    "location": "[variables('location')]",
+                    "properties": {
+                        "addressSpace": {
+                            "addressPrefixes": [
+                                "[variables('addressPrefix')]"
+                            ]
+                        },
+                        "subnets": [
+                            {
+                                "name": "[variables('subnetName')]",
+                                "properties": {
+                                    "addressPrefix": "[variables('subnetPrefix')]"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "type": "Microsoft.Compute/virtualMachineScaleSets",
+                    "sku": {
+                        "name": "[variables('nodeVMSize')]",
+                        "tier": "Standard",
+                        "capacity": "[parameters('vmScaleSetCapacity')]"
+                    },
+                    "name": "[variables('vmssName')]",
+                    "apiVersion": "2017-03-30",
+                    "location": "[variables('location')]",
+                    "properties": {
+                        "singlePlacementGroup": true,
+                        "overprovision": true,
+                        "upgradePolicy": {
+                            "mode": "Manual"
+                        },
+                        "virtualMachineProfile": {
+                            "storageProfile": {
+                                "osDisk": {
+                                    "createOption": "FromImage",
+                                    "caching": "ReadWrite",
+                                    "managedDisk": {
+                                        "storageAccountType": "[variables('storageAccountType')]"
+                                    }
+                                },
+                                "imageReference": "[variables('ubuntuImage')]"
+                            },
+                            "osProfile": "[variables('osProfileReference')]",
+                            "networkProfile": {
+                                "networkInterfaceConfigurations": [
+                                    {
+                                        "name": "[variables('nicName')]",
+                                        "properties": {
+                                            "primary": true,
+                                            "ipConfigurations": [
+                                                {
+                                                    "name": "[variables('ipConfigName')]",
+                                                    "properties": {
+                                                        "subnet": {
+                                                            "id": "[variables('subnetRef')]"
+                                                        },
+                                                        "loadBalancerBackendAddressPools": [
+                                                            {
+                                                                "id": "[variables('lbBackendAddressPoolID')]"
+                                                            }
+                                                        ],
+                                                        "loadBalancerInboundNatPools": [
+                                                            {
+                                                                "id": "[variables('lbNatRulePoolID')]"
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            "extensionProfile": {
+                                "extensions": [
+                                    {
+                                        "name": "newscript",
+                                        "properties": {
+                                            "publisher": "Microsoft.Azure.Extensions",
+                                            "type": "CustomScript",
+                                            "typeHandlerVersion": "2.0",
+                                            "autoUpgradeMinorVersion": true,
+                                            "settings": {
+                                                "fileUris": [
+                                                    "https://raw.githubusercontent.com/ashwinse/test-base/master/sampleScript.sh"
+                                                ]
+                                            },
+                                            "protectedSettings": {
+                                                "commandToExecute": "[concat('sh sampleScript.sh \"file1\" \"file2\" \"file3\"')]"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName'))]"
+                    ]
+                }
+            ],
+            "outputs": {
+                "vnetObject": {
+                    "type": "Object",
+                    "value": "[reference(variables('virtualNetworkName'))]"
+                },
+                "subnetObject": {
+                    "type": "Object",
+                    "value": "[reference(concat('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'),'/subnets/',variables('subnetName')),'2017-03-01')]"
+                },
+                "lbObject": {
+                    "type": "Object",
+                    "value": "[reference(variables('loadBalancerName'))]"
+                },
+                "lbbeObject": {
+                    "type": "Object",
+                    "value": "[reference(concat('Microsoft.Network/loadBalancers/',variables('loadBalancerName'),'/backendAddressPools/',variables('loadBalancerBackendAddressPoolName')),'2017-03-01')]"
+                },
+                "pipObject": {
+                    "type": "Object",
+                    "value": "[reference(variables('lbpublicIPAddressName'))]"
+                },
+                "RGObject": {
+                    "type": "Object",
+                    "value": "[resourceGroup()]"
+                },
+                "DepObject": {
+                    "type": "Object",
+                    "value": "[deployment()]"
+                }
+            }
+        },
+        "parameters": {
+            "sshPublicKey": {
+                "value": ""
+            }
+        },
+        "mode": "Incremental",
+        "debugSetting": {
+            "detailLevel": "RequestContent, ResponseContent"
+        },
+        "provisioningState": "Accepted",
+        "validationLevel": "Template"
+    }
+}
