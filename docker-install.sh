@@ -1,14 +1,16 @@
 #!/bin/bash
-pwd=$1
-docker_ee_url=$2
+
+username=$1
+pwd=$2
+docker_ee_url=$3
 
 repo_url=`echo $docker_ee_url | rev | cut -c5- | rev`
 
-sudo usermod -l docker ubuntu
-usermod -d /home/docker -m docker
+sudo usermod -l $username ubuntu
+usermod -d /home/$username -m $username
 
 ##### Enable 'docker' user to ssh with a password
-echo -e "$pwd\n$pwd" | sudo passwd docker
+echo -e "$pwd\n$pwd" | sudo passwd $username
 file="/etc/ssh/sshd_config"
 passwd_auth="yes"
 cat $file \
@@ -17,8 +19,8 @@ cat $file \
 mv $file.new $file
 service sshd restart
 
-
-sudo wget -O /home/ubuntu/copy_certs.sh https://raw.githubusercontent.com/mikegcoleman/hybrid-workshop/master/provision_vms/utilities/copy_certs.sh
+##### Install docker ee
+sudo wget -O /home/$username/copy_certs.sh https://raw.githubusercontent.com/mikegcoleman/hybrid-workshop/master/provision_vms/utilities/copy_certs.sh
 sudo chmod +x copy_certs.sh
 sudo apt-get -y update 
 sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
@@ -29,5 +31,5 @@ $(lsb_release -cs) \
 stable-17.06"
 sudo apt-get -y update
 sudo apt-get -y install docker-ee
-sudo usermod -aG docker docker
+sudo usermod -aG docker $username
 sudo reboot
