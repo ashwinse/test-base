@@ -23,6 +23,7 @@ service sshd restart
 sudo apt-get purge ufw
 sudo apt-get install firewalld
 sudo systemctl start firewalld
+sudo systemctl enable firewalld
 sudo firewall-cmd --add-port=22/tcp --permanent
 sudo firewall-cmd --add-port=443/tcp --permanent
 sudo firewall-cmd --add-port=2376/tcp --permanent
