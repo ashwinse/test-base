@@ -19,15 +19,17 @@ cat $file \
 mv $file.new $file
 service sshd restart
 
+
 sudo apt-get -y install dnsmasq
 
-echo -e "server=8.8.8.8\nserver=8.8.4.4" | sudo tee -a /etc/dnsmasq.conf
+<<comment
+echo -e "\nserver=8.8.8.8\nserver=8.8.4.4" | sudo tee -a /etc/dnsmasq.conf
 
 sudo service dnsmasq restart
 sudo service networking restart
 
 ##### open ports
-<<comment
+
 sudo ufw allow 22/tcp
 sudo ufw allow 443/tcp
 sudo ufw allow 2376/tcp
