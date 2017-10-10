@@ -19,26 +19,48 @@ cat $file \
 mv $file.new $file
 service sshd restart
 
+sudo apt-get -y update
+sudo apt-get -y install dnsmasq
+echo -e "server=8.8.8.8\nserver=8.8.4.4" | sudo tee -a /etc/dnsmasq.conf
+sudo service dnsmasq restart
+sudo service networking restart
+
 #### open ports for docker
 sudo apt-get purge ufw
 sudo apt-get install -y firewalld
 sudo systemctl start firewalld
-sudo systemctl enable firewalld
-sudo firewall-cmd --add-port=22/tcp --permanent
-sudo firewall-cmd --add-port=443/tcp --permanent
-sudo firewall-cmd --add-port=2376/tcp --permanent
-sudo firewall-cmd --add-port=2377/tcp --permanent
-sudo firewall-cmd --add-port=7946/tcp --permanent
-sudo firewall-cmd --add-port=7946/udp --permanent
-sudo firewall-cmd --add-port=4789/udp --permanent
-sudo firewall-cmd --add-port=12376/tcp --permanent
-sudo firewall-cmd --add-port=12379/tcp --permanent
-sudo firewall-cmd --add-port=12380/tcp --permanent
-sudo firewall-cmd --add-port=12381/udp --permanent
-sudo firewall-cmd --add-port=12382/udp --permanent
-sudo firewall-cmd --add-port=12383/udp --permanent
-sudo firewall-cmd --add-port=12384/udp --permanent
-sudo firewall-cmd --add-port=12385/udp --permanent
-sudo firewall-cmd --add-port=12386/udp --permanent
-sudo firewall-cmd --add-port=12387/udp --permanent
+sudo firewall-cmd --add-port=22/tcp --permanent --zone=public
+sudo firewall-cmd --add-port=80/tcp --permanent --zone=public
+sudo firewall-cmd --add-port=443/tcp --permanent --zone=public
+sudo firewall-cmd --add-port=2376/tcp --permanent --zone=public
+sudo firewall-cmd --add-port=2377/tcp --permanent --zone=public
+sudo firewall-cmd --add-port=7946/tcp --permanent --zone=public
+sudo firewall-cmd --add-port=7946/udp --permanent --zone=public
+sudo firewall-cmd --add-port=4789/udp --permanent --zone=public
+sudo firewall-cmd --add-port=12376/tcp --permanent --zone=public
+sudo firewall-cmd --add-port=12379/tcp --permanent --zone=public
+sudo firewall-cmd --add-port=12380/tcp --permanent --zone=public
+sudo firewall-cmd --add-port=12381/udp --permanent --zone=public
+sudo firewall-cmd --add-port=12382/udp --permanent --zone=public
+sudo firewall-cmd --add-port=12383/udp --permanent --zone=public
+sudo firewall-cmd --add-port=12384/udp --permanent --zone=public
+sudo firewall-cmd --add-port=12385/udp --permanent --zone=public
+sudo firewall-cmd --add-port=12386/udp --permanent --zone=public
+sudo firewall-cmd --add-port=12387/udp --permanent --zone=public
 sudo firewall-cmd --reload
+
+##### Install docker ee
+sudo wget -O /home/$username/copy_certs.sh https://raw.githubusercontent.com/mikegcoleman/hybrid-workshop/master/provision_vms/utilities/copy_certs.sh
+sudo chmod +x copy_certs.sh
+sudo apt-get -y update 
+sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL $docker_ee_url | sudo apt-key add -
+sudo add-apt-repository \
+"deb [arch=amd64] $repo_url \
+$(lsb_release -cs) \
+stable-17.06"
+sudo apt-get -y update
+sudo apt-get -y install docker-ee
+sudo apt-get -y update
+sudo usermod -aG docker $username
+sudo reboot
