@@ -1,11 +1,14 @@
 #!/bin/bash
-ubuntu_passwd=$1
+pwd=$1
 docker_ee_url=$2
 
 repo_url=`echo $docker_ee_url | rev | cut -c5- | rev`
 
-##### Enable 'ubuntu' user to ssh with a password
-echo $ubuntu_passwd | sudo passwd --stdin ubuntu
+sudo usermod -l docker ubuntu
+usermod -d /home/docker -m docker
+
+##### Enable 'docker' user to ssh with a password
+echo -e "$pwd\n$pwd" | sudo passwd docker
 file="/etc/ssh/sshd_config"
 passwd_auth="yes"
 cat $file \
