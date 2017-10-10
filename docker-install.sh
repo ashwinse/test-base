@@ -29,5 +29,5 @@ $(lsb_release -cs) \
 stable-17.06"
 sudo apt-get -y update
 sudo apt-get -y install docker-ee
-sudo usermod -aG docker ubuntu
+sudo usermod -aG docker docker
 sudo reboot
