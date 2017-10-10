@@ -19,6 +19,36 @@ cat $file \
 mv $file.new $file
 service sshd restart
 
+sudo apt-get -y install dnsmasq
+
+echo -e "server=8.8.8.8\nserver=8.8.4.4" | sudo tee -a /etc/dnsmasq.conf
+
+sudo service dnsmasq restart
+sudo service networking restart
+
+##### Install docker ee
+sudo ufw allow 22/tcp
+sudo ufw allow 443/tcp
+sudo ufw allow 2376/tcp
+sudo ufw allow 2377/tcp
+sudo ufw allow 7946/tcp
+sudo ufw allow 7946/udp
+sudo ufw allow 4789/udp
+sudo ufw allow 12376/tcp
+sudo ufw allow 12379/tcp
+sudo ufw allow 12380/tcp
+sudo ufw allow 12381/tcp
+sudo ufw allow 12382/tcp
+sudo ufw allow 12383/tcp
+sudo ufw allow 12384/tcp
+sudo ufw allow 12386/tcp
+sudo ufw allow 12387/tcp
+
+sudo ufw enable
+sudo ufw reload
+
+
+
 ##### Install docker ee
 sudo wget -O /home/$username/copy_certs.sh https://raw.githubusercontent.com/mikegcoleman/hybrid-workshop/master/provision_vms/utilities/copy_certs.sh
 sudo chmod +x copy_certs.sh
@@ -31,5 +61,6 @@ $(lsb_release -cs) \
 stable-17.06"
 sudo apt-get -y update
 sudo apt-get -y install docker-ee
+sudo apt-get -y update
 sudo usermod -aG docker $username
 sudo reboot
