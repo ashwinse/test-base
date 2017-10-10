@@ -41,25 +41,3 @@ sudo firewall-cmd --add-port=12385/udp --permanent
 sudo firewall-cmd --add-port=12386/udp --permanent
 sudo firewall-cmd --add-port=12387/udp --permanent
 sudo firewall-cmd --reload
-
-##### Install docker ee
-sudo wget -O /home/$username/copy_certs.sh https://raw.githubusercontent.com/mikegcoleman/hybrid-workshop/master/provision_vms/utilities/copy_certs.sh
-sudo chmod +x copy_certs.sh
-sudo apt-get -y update 
-sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
-curl -fsSL $docker_ee_url | sudo apt-key add -
-sudo add-apt-repository \
-"deb [arch=amd64] $repo_url \
-$(lsb_release -cs) \
-stable-17.06"
-sudo apt-get -y update
-sudo apt-get -y install docker-ee
-sudo apt-get -y update
-sudo usermod -aG docker $username
-
-sudo apt-get -y install dnsmasq
-echo -e "server=8.8.8.8\nserver=8.8.4.4" | sudo tee -a /etc/dnsmasq.conf
-sudo service dnsmasq restart
-sudo service networking restart
-
-sudo reboot
