@@ -26,7 +26,8 @@ echo -e "server=8.8.8.8\nserver=8.8.4.4" | sudo tee -a /etc/dnsmasq.conf
 sudo service dnsmasq restart
 sudo service networking restart
 
-##### Install docker ee
+##### open ports
+<<comment
 sudo ufw allow 22/tcp
 sudo ufw allow 443/tcp
 sudo ufw allow 2376/tcp
@@ -46,6 +47,7 @@ sudo ufw allow 12387/tcp
 
 sudo ufw enable
 sudo ufw reload
+comment
 
 
 
