@@ -9,6 +9,9 @@ repo_url=`echo $docker_ee_url | rev | cut -c5- | rev`
 sudo usermod -l $username ubuntu
 usermod -d /home/$username -m $username
 
+sudo apt-get -y install dnsmasq
+sudo apt-get -y install dnsmasq
+
 ##### Enable 'docker' user to ssh with a password
 echo -e "$pwd\n$pwd" | sudo passwd $username
 file="/etc/ssh/sshd_config"
@@ -20,11 +23,10 @@ mv $file.new $file
 service sshd restart
 
 
-sudo apt-get -y install dnsmasq
-# echo -e "server=8.8.8.8\nserver=8.8.4.4" | sudo tee -a /etc/dnsmasq.conf
-# sudo service dnsmasq restart
-# sudo service networking restart
 
+echo -e "server=8.8.8.8\nserver=8.8.4.4" | sudo tee -a /etc/dnsmasq.conf
+sudo service dnsmasq restart
+sudo service networking restart
 
 
 
@@ -42,4 +44,4 @@ sudo apt-get -y update
 sudo apt-get -y install docker-ee
 sudo apt-get -y update
 sudo usermod -aG docker $username
-# sudo reboot
+#sudo reboot
