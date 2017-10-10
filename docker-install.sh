@@ -21,7 +21,7 @@ service sshd restart
 
 #### open ports for docker
 sudo apt-get purge ufw
-sudo apt-get install firewalld
+sudo apt-get install -y firewalld
 sudo systemctl start firewalld
 sudo systemctl enable firewalld
 sudo firewall-cmd --add-port=22/tcp --permanent
