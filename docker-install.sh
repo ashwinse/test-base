@@ -64,4 +64,5 @@ sudo apt-get -y update
 sudo apt-get -y install docker-ee
 sudo apt-get -y update
 sudo usermod -aG docker $username
+sudo docker image pull docker/ucp:2.2.3
 sudo reboot
