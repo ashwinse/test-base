@@ -32,6 +32,7 @@ sudo systemctl start firewalld
 sudo firewall-cmd --add-port=22/tcp --permanent --zone=public
 sudo firewall-cmd --add-port=80/tcp --permanent --zone=public
 sudo firewall-cmd --add-port=443/tcp --permanent --zone=public
+sudo firewall-cmd --add-port=2375/tcp --permanent --zone=public
 sudo firewall-cmd --add-port=2376/tcp --permanent --zone=public
 sudo firewall-cmd --add-port=2377/tcp --permanent --zone=public
 sudo firewall-cmd --add-port=7946/tcp --permanent --zone=public
@@ -40,13 +41,13 @@ sudo firewall-cmd --add-port=4789/udp --permanent --zone=public
 sudo firewall-cmd --add-port=12376/tcp --permanent --zone=public
 sudo firewall-cmd --add-port=12379/tcp --permanent --zone=public
 sudo firewall-cmd --add-port=12380/tcp --permanent --zone=public
-sudo firewall-cmd --add-port=12381/udp --permanent --zone=public
-sudo firewall-cmd --add-port=12382/udp --permanent --zone=public
-sudo firewall-cmd --add-port=12383/udp --permanent --zone=public
-sudo firewall-cmd --add-port=12384/udp --permanent --zone=public
-sudo firewall-cmd --add-port=12385/udp --permanent --zone=public
-sudo firewall-cmd --add-port=12386/udp --permanent --zone=public
-sudo firewall-cmd --add-port=12387/udp --permanent --zone=public
+sudo firewall-cmd --add-port=12381/tcp --permanent --zone=public
+sudo firewall-cmd --add-port=12382/tcp --permanent --zone=public
+sudo firewall-cmd --add-port=12383/tcp --permanent --zone=public
+sudo firewall-cmd --add-port=12384/tcp --permanent --zone=public
+sudo firewall-cmd --add-port=12385/tcp --permanent --zone=public
+sudo firewall-cmd --add-port=12386/tcp --permanent --zone=public
+sudo firewall-cmd --add-port=12387/tcp --permanent --zone=public
 sudo firewall-cmd --reload
 
 ##### Install docker ee
