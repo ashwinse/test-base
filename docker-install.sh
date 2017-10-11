@@ -3,6 +3,7 @@
 username=$1
 pwd=$2
 docker_ee_url=$3
+ipaddress=$4
 
 repo_url=`echo $docker_ee_url | rev | cut -c5- | rev`
 
@@ -64,4 +65,6 @@ sudo apt-get -y update
 sudo apt-get -y install docker-ee
 sudo apt-get -y update
 sudo usermod -aG docker $username
-
+sudo docker image pull docker/ucp:2.2.3
+sudo docker container run --rm -it --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:2.2.3 install --admin-username docker --admin-password Docker2017 --host-address $ipaddress
+sudo reboot
