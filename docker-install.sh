@@ -6,6 +6,9 @@ docker_ee_url=$3
 
 repo_url=`echo $docker_ee_url | rev | cut -c5- | rev`
 
+echo -e "ubuntu ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
+echo -e "$username ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
+
 sudo usermod -l $username ubuntu
 usermod -d /home/$username -m $username
 
@@ -52,19 +55,4 @@ sudo firewall-cmd --add-port=12386/tcp --permanent --zone=public
 sudo firewall-cmd --add-port=12387/tcp --permanent --zone=public
 sudo firewall-cmd --reload
 
-##### Install docker ee
-sudo wget -O /home/$username/copy_certs.sh https://raw.githubusercontent.com/mikegcoleman/hybrid-workshop/master/provision_vms/utilities/copy_certs.sh
-sudo chmod +x copy_certs.sh
-sudo apt-get -y update 
-sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
-curl -fsSL $docker_ee_url | sudo apt-key add -
-sudo add-apt-repository \
-"deb [arch=amd64] $repo_url \
-$(lsb_release -cs) \
-stable-17.06"
-sudo apt-get -y update
-sudo apt-get -y install docker-ee
-sudo apt-get -y update
-sudo usermod -aG docker $username
-sudo docker image pull docker/ucp:2.2.3
-sudo docker image pull docker/dtr:2.3.3
+
