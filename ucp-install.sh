@@ -11,7 +11,7 @@ sudo service dnsmasq restart
 sudo service networking restart
 
 #### open ports for docker
-sudo apt-get purge ufw
+sudo apt-get purge -y ufw
 sudo apt-get install -y firewalld
 sudo systemctl start firewalld
 sudo firewall-cmd --add-port=22/tcp --permanent --zone=public
