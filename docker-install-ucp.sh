@@ -54,6 +54,6 @@ sudo apt-get -y install docker-ee
 sudo apt-get -y update
 sudo usermod -aG docker $username
 sudo docker image pull docker/ucp:2.2.3
-sudo docker image pull docker/dtr:2.3.3
+#sudo docker image pull docker/dtr:2.3.3
 sudo docker container run --rm -it --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:2.2.3 install --admin-username docker --admin-password Docker2017 --host-address $private_ip --san $public_ip
 sudo reboot
