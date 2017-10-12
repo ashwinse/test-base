@@ -19,7 +19,7 @@ cat $file \
 mv $file.new $file
 service sshd restart
 
-echo -e "$username ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
+#echo -e "$username ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
 
 sudo apt-get -y update
 sudo apt-get -y install dnsmasq
