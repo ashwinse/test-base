@@ -2,9 +2,7 @@
 
 username=$1
 password=$2
-docker_ee_url=$3
 
-repo_url=`echo $docker_ee_url | rev | cut -c5- | rev`
 
 echo -e "ubuntu ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
 echo -e "$username ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
