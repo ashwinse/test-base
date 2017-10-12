@@ -6,7 +6,10 @@ repo_url=`echo $docker_ee_url | rev | cut -c5- | rev`
 
 sudo apt-get -y update
 sudo apt-get -y install dnsmasq
-echo -e "server=8.8.8.8\nserver=8.8.4.4" | sudo tee -a /etc/dnsmasq.conf
+
+echo "server=8.8.8.8" | sudo tee -a /etc/dnsmasq.conf
+echo "server=8.8.4.4" | sudo tee -a /etc/dnsmasq.conf
+
 sudo apt-get -y update
 sudo service dnsmasq restart
 sudo service networking restart
