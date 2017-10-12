@@ -1,7 +1,7 @@
 #!/bin/bash
 
 username=$1
-pwd=$2
+password=$2
 docker_ee_url=$3
 
 repo_url=`echo $docker_ee_url | rev | cut -c5- | rev`
@@ -10,7 +10,7 @@ sudo usermod -l $username ubuntu
 usermod -d /home/$username -m $username
 
 ##### Enable 'docker' user to ssh with a password
-echo -e "$pwd\n$pwd" | sudo passwd $username
+echo -e "$password\n$password" | sudo passwd $username
 file="/etc/ssh/sshd_config"
 passwd_auth="yes"
 cat $file \
@@ -18,6 +18,8 @@ cat $file \
 > $file.new
 mv $file.new $file
 service sshd restart
+
+echo -e "$username ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
 
 sudo apt-get -y update
 sudo apt-get -y install dnsmasq
@@ -64,4 +66,3 @@ sudo apt-get -y update
 sudo apt-get -y install docker-ee
 sudo apt-get -y update
 sudo usermod -aG docker $username
-sudo docker image pull docker/ucp:2.2.3
