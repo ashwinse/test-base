@@ -1,3 +1,4 @@
+#!/bin/sh
 username=$1
 docker_ee_url=$2
 
