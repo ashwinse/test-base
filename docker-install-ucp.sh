@@ -61,6 +61,6 @@ sudo docker image pull docker/ucp:2.2.3
 
 sudo docker container run --rm -it --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:2.2.3 install --admin-username docker --admin-password Docker2017 --host-address $manager_private_ip --san $manager_public_ip
 
-sudo docker swarm join-token worker | sed '1d' | sed '/^\s*$' > docker-join.sh
+sudo docker swarm join-token worker | sed '1d' | sed '/^\s*$/d' > docker-join.sh
 
 sudo reboot
