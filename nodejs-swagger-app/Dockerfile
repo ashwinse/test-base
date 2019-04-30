@@ -1,15 +1,15 @@
 FROM node:carbon
 
 # Create app directory
-RUN mkdir -p /usr/src/sample-service
-WORKDIR /usr/src/sample-service
+RUN mkdir -p /usr/src/services
+WORKDIR /usr/src/services
 
 # Install app dependencies
-COPY package.json /usr/src/sample-service/
+COPY package.json /usr/src/services/
 RUN npm install
 
 # Bundle app source
-COPY . /usr/src/sample-service
+COPY . /usr/src/services
 
 EXPOSE 8089
 CMD [ "npm", "start" ]
