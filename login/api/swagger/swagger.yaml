@@ -1,0 +1,42 @@
+swagger: "2.0"
+info:
+  description: "User login Example"
+  version: "1.0"
+  title: "Sample Input"
+basePath: "/"
+schemes:
+- "http"
+# format of bodies a client can send (Content-Type)
+
+paths:
+ /print/{input}:  
+    get:
+      tags:
+      - "User  details by id"
+      summary: "Get Details"
+      description: "Get Details by user Id"
+      operationId: "printInput"
+      parameters:
+        - name: input
+          in: path
+          description: input
+          required: true
+          type: string
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Print the given input data."
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/userlog"
+        default:
+          description: "Unexpected error"
+      x-swagger-router-controller: "logService" 
+
+ /swagger:
+    x-swagger-pipe: swagger_raw
+definitions:  
+  userlog:
+   type: "object"
