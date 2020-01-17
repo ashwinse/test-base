@@ -1,0 +1,27 @@
+
+# To delete all pods except few pods
+kubectl -n tl-qld-pint delete pods $(kubectl get pods -n tl-qld-pint | grep -v rdb |grep -v NAME | awk '{print $1}')
+
+# To connect Azure storage account as backend
+kubectl create secret -n tl-int generic sa-secret --from-literal=azurestorageaccountname=rdbac --from-literal=azurestorageaccountkey=U2QVogVE1lPqPkklH5fq6h+XyiryTOAmGmxRzqnha3a1uXJpa4M5RwFdXQAestBEFkmLzV3ZrfvAui2+eYGtZg==
+
+# To create secrets from file 
+kubectl create secret generic db-user-pass --from-file= <path to pem file>
+
+# For Ui
+
+kubectl proxy
+
+
+# For Draining node
+
+kubectl drain <node_name> --ignore-daemonsets --force --delete-local-data
+
+
+# to expose svc 
+kubectl port-forward svc/<svc-name> <any-port>:<svc-port>
+
+
+# to expose pods
+kubectl port-forward <pod-name> <any-port>
+

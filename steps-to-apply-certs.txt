@@ -1,0 +1,11 @@
+1. Convert the .crt files to .pfx using Command Prompt
+	openssl pkcs12 -export -out qloudable-npr.pfx -inkey qloudable-npr.key -in 2289f3206db82816.crt -certfile gd_bundle-g2-g1.crt
+2. You will be asked to enter the export key. It is Welcome12345!!
+3. After obtaining the pfx file now convert the pfx file to private_key.pem and public_certificate.cer file using
+
+	openssl pkcs12 -in <filename.pfx> -nocerts -nodes -out <private_key.pem>
+	openssl pkcs12 -in <filename.pfx> -clcerts -nokeys -out <public_certificate.pem>
+	openssl pkcs12 -in <filename.pfx> -cacerts -nokeys -out <ca_certificate.pem>
+	
+4. Now convert the private_key.key to rsa key 
+	openssl rsa -in private_key.pem -out DecPrivateKey.pem

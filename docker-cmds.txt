@@ -1,0 +1,97 @@
+docker service ls | grep tl-pint_ | awk {'print $2'} > tl-pint-servicenames && for i in `cat tl-pint-servicenames`; do docker service update "$i" --detach=false --force ; done
+docker service ls | grep tl-int_ | awk {'print $2'} > tl-int-servicenames && for i in `cat tl-int-servicenames`; do docker service update "$i" --detach=false --force ; done
+docker service ls | grep tl-stg_ | awk {'print $2'} > tl-stg-servicenames && for i in `cat tl-stg-servicenames`; do docker service update "$i" --detach=false --force ; done
+
+docker stack deploy --with-registry-auth --resolve-image always -c dee-tl-dr-stg.yaml tl-stg
+docker network create ucp-hrm-traininglabs-staging -d overlay --attachable \
+--label com.docker.ucp.mesh.http=true \
+--label com.docker.ucp.access.label=/traininglabs/staging \
+--label com.docker.ucp.collection.staging=true \
+--label com.docker.ucp.collection.traininglabs=true \
+--label com.docker.ucp.collection.root=true \
+--label com.docker.ucp.collection.swarm=true 
+
+
+
+apt-cache madison docker-ee // to get list of docker ee version
+
+./install-docker.sh --version 3:17.06.2~ee~17~3-0~ubuntu --url https://storebits.docker.com/ee/ubuntu/sub-911651cb-c446-4f80-913d-4059a61e31ef
+
+
+
+docker swarm init --force-new-cluster --advertise-addr 10.11.21.2
+// to install UCP in UCP server 
+
+
+docker container run --rm -it --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:2.2.14 install --host-address 10.10.21.2 --admin-username admin --admin-password password1 --san ucpdr.qloudableincdr.com
+
+
+
+// after this join the servers to the swarm with manager token
+
+====================== Create UCP-HRM network ==============================
+docker network create ucp-hrm-traininglabs-staging -d overlay --attachable \
+--label com.docker.ucp.mesh.http=true \
+--label com.docker.ucp.access.label=/traininglabs/staging \
+--label com.docker.ucp.collection.staging=true \
+--label com.docker.ucp.collection.traininglabs=true \
+--label com.docker.ucp.collection.root=true \
+--label com.docker.ucp.collection.swarm=true 
+
+====================== Backup UCP ========================
+docker container run \
+  --log-driver none --rm \
+  --name ucp \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  docker/ucp:2.2.14 backup \
+  --interactive > ucp-backup.tar
+  
+============== Uninstall UCP ======================
+  docker container run --rm -it \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  --name ucp \
+  docker/ucp:2.2.14 uninstall-ucp --interactive --purge-config
+  
+
+============== Restore from Backup UCP ======================
+  docker container run --rm -i --name ucp \
+  -v /var/run/docker.sock:/var/run/docker.sock  \
+  docker/ucp:2.2.14 restore < ucp-backup.tar
+  
+  
+
+
+
+for i in `cat tl-int-servicenames`; do docker service update "$i" --detach=false --force ; done
+
+
+			       5:18.09.5~3-0~ubuntu-bionic
+			       5:18.09.5~3-0~ubuntu-xenial	
+ docker-ee | 5:18.09.4~3-0~ubuntu-xenial | https://storebits.docker.com/ee/ubuntu/sub-911651cb-c446-4f80-913d-4059a61e31ef/ubuntu xenial/stable-18.09 amd64 Packages
+ docker-ee | 5:18.09.3~3-0~ubuntu-xenial | https://storebits.docker.com/ee/ubuntu/sub-911651cb-c446-4f80-913d-4059a61e31ef/ubuntu xenial/stable-18.09 amd64 Packages
+ docker-ee | 5:18.09.2~3-0~ubuntu-xenial | https://storebits.docker.com/ee/ubuntu/sub-911651cb-c446-4f80-913d-4059a61e31ef/ubuntu xenial/stable-18.09 amd64 Packages
+ docker-ee | 5:18.09.1~3-0~ubuntu-xenial | https://storebits.docker.com/ee/ubuntu/sub-911651cb-c446-4f80-913d-4059a61e31ef/ubuntu xenial/stable-18.09 amd64 Packages
+ docker-ee | 5:18.09.0~3-0~ubuntu-xenial | https://storebits.docker.com/ee/ubuntu/sub-911651cb-c446-4f80-913d-4059a61e31ef/ubuntu xenial/stable-18.09 amd64 Packages
+
+
+   
+   
+journalctl -u docker
+
+docker service create --name testservice --replicas 10 nginx
+docker service update --replicas 20 testservice
+docker service ps -f desired-state=running testnodeservice
+
+
+
+docker service create --name testhealth --replicas 20 --constraint "node.labels.nodetype==service_node"
+ --health-cmd "curl http://127.0.0.1:8080/ping || exit 1" --health-interval 2s --health-retries 5 ehazlett/docker-demo
+
+
+docker service create --name testhealthfail --replicas 5 --constraint "node.labels.nodetype==service_node"
+ --health-cmd "curl http://127.0.0.1/ping || exit 1" --health-interval 2s --health-retries 5 ehazlett/docker-demo
+
+
+for i in `cat ee.txt`; do docker exec "$i" bash -c "/bin/terraform destroy -auto-approve" ; done
+ 
+
