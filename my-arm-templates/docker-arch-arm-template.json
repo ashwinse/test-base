@@ -1,0 +1,685 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "defaultValue": "ashuser",
+            "type": "string"
+        },
+        "adminPassword": {
+            "defaultValue": "Ashpassword123",
+            "type": "string"
+        }
+    },
+    "variables": {
+        "location": "westus",
+        "suffix": "[substring(uniqueString(resourceGroup().id),0,6)]",
+        "vnetName": "vnet",
+        "avsetNamesArray": [
+            "ucp_w_avset",
+            "dtr_w_avset",
+            "ucp_c_avset"
+        ],
+        "lbPipNamesArray": [
+            "app_lb_pip",
+            "dtr_lb_pip",
+            "ucp_lb_pip"
+        ],
+        "lbPipDnsArray": [
+            "[concat('app-lb-',variables('suffix'))]",
+            "[concat('dtr-lb-',variables('suffix'))]",
+            "[concat('ucp-lb-',variables('suffix'))]"
+        ],
+        "dtrstoreName": "[concat('dtrstore',variables('suffix'))]",
+        "appLbName": "app-lb",
+        "appLbId": "[resourceId('Microsoft.Network/loadBalancers', variables('appLbName'))]",
+        "dtrLbName": "dtr-lb",
+        "dtrLbId": "[resourceId('Microsoft.Network/loadBalancers', variables('dtrLbName'))]",
+        "ucpLbName": "ucp-lb",
+        "ucpLbId": "[resourceId('Microsoft.Network/loadBalancers', variables('ucpLbName'))]",
+        "dtrWorkerVMName": "dtr-w",
+        "dtrWorkerVMsize": "Standard_A2",
+        "ucpWorkerVMName": "ucp-w",
+        "ucpWorkerVMsize": "Standard_A2",
+        "ucpControllerVMName": "ucp-c",
+        "ucpControllerVMsize": "Standard_A4",
+        "dtrwNicName": "dtr-w-nic",
+        "ucpcNicName": "ucp-c-nic",
+        "ucpwNicName": "ucp-w-nic",
+        "ucp-w-count": 3,
+        "dtr-w-count": 1,
+        "ucp-c-count": 1
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[variables('vnetName')]",
+            "apiVersion": "2017-06-01",
+            "location": "[variables('location')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "subnet1",
+                        "properties": {
+                            "addressPrefix": "10.0.1.0/24"
+                        }
+                    },
+                    {
+                        "name": "subnet2",
+                        "properties": {
+                            "addressPrefix": "10.0.2.0/24"
+                        }
+                    },
+                    {
+                        "name": "subnet3",
+                        "properties": {
+                            "addressPrefix": "10.0.3.0/24"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/availabilitySets",
+            "sku": {
+                "name": "Aligned"
+            },
+            "name": "[variables('avsetNamesArray')[copyIndex()]]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "[variables('location')]",
+            "copy": {
+                "name": "loop",
+                "count": 3
+            },
+            "properties": {
+                "platformUpdateDomainCount": 5,
+                "platformFaultDomainCount": 2
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('lbPipNamesArray')[copyIndex()]]",
+            "apiVersion": "2017-06-01",
+            "location": "[variables('location')]",
+            "copy": {
+                "name": "loop",
+                "count": 3
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4,
+                "dnsSettings": {
+                    "domainNameLabel": "[variables('lbPipDnsArray')[copyIndex()]]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Network/loadBalancers",
+            "name": "[variables('appLbName')]",
+            "apiVersion": "2017-06-01",
+            "location": "[variables('location')]",
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "LoadBalancerFrontEnd",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('lbPipNamesArray')[0])]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "app-bkpool"
+                    }
+                ],
+                "loadBalancingRules": [],
+                "probes": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 44554,
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        }
+                    }
+                ],
+                "copy": [
+                    {
+                        "name": "inboundNatRules",
+                        "count": "[variables('ucp-w-count')]",
+                        "input": {
+                            "name": "[concat('ucp-w-ssh', copyIndex('inboundNatRules'))]",
+                            "properties": {
+                                "frontendIPConfiguration": {
+                                    "id": "[concat(variables('appLbId'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]"
+                                },
+                                "frontendPort": "[concat('4000',copyIndex('inboundNatRules'))]",
+                                "backendPort": 22,
+                                "idleTimeoutInMinutes": 4,
+                                "protocol": "Tcp"
+                            }
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('lbPipNamesArray')[0])]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/loadBalancers",
+            "name": "[variables('dtrLbName')]",
+            "apiVersion": "2017-06-01",
+            "location": "[variables('location')]",
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "LoadBalancerFrontEnd",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('lbPipNamesArray')[1])]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "dtr-bkpool",
+                        "properties": {
+                            "provisioningState": "Succeeded"
+                        }
+                    }
+                ],
+                "loadBalancingRules": [
+                    {
+                        "name": "http",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(variables('dtrLbId'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]"
+                            },
+                            "frontendPort": 80,
+                            "backendPort": 80,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "backendAddressPool": {
+                                "id": "[concat(variables('dtrLbId'),'/backendAddressPools/dtr-bkpool')]"
+                            },
+                            "probe": {
+                                "id": "[concat(variables('dtrLbId'),'/probes/http-hlt')]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "https",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(variables('dtrLbId'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]"
+                            },
+                            "frontendPort": 443,
+                            "backendPort": 443,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "backendAddressPool": {
+                                "id": "[concat(variables('dtrLbId'),'/backendAddressPools/dtr-bkpool')]"
+                            },
+                            "probe": {
+                                "id": "[concat(variables('dtrLbId'),'/probes/https-hlt')]"
+                            }
+                        }
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "https-hlt",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 443,
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        }
+                    },
+                    {
+                        "name": "http-hlt",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 80,
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        }
+                    }
+                ],
+                "copy": [
+                    {
+                        "name": "inboundNatRules",
+                        "count": "[variables('dtr-w-count')]",
+                        "input": {
+                            "name": "[concat('dtr-w-ssh', copyIndex('inboundNatRules'))]",
+                            "properties": {
+                                "frontendIPConfiguration": {
+                                    "id": "[concat(variables('dtrLbId'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]"
+                                },
+                                "frontendPort": "[concat('5000',copyIndex('inboundNatRules'))]",
+                                "backendPort": 22,
+                                "idleTimeoutInMinutes": 4,
+                                "protocol": "Tcp"
+                            }
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('lbPipNamesArray')[1])]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/loadBalancers",
+            "name": "[variables('ucpLbName')]",
+            "apiVersion": "2017-06-01",
+            "location": "[variables('location')]",
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "LoadBalancerFrontEnd",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('lbPipNamesArray')[2])]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "ucp-bkpool"
+                    }
+                ],
+                "loadBalancingRules": [
+                    {
+                        "name": "https",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(variables('ucpLbId'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]"
+                            },
+                            "frontendPort": 443,
+                            "backendPort": 443,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "backendAddressPool": {
+                                "id": "[concat(variables('ucpLbId'),'/backendAddressPools/ucp-bkpool')]"
+                            },
+                            "probe": {
+                                "id": "[concat(variables('ucpLbId'),'/probes/https-hlt')]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "http",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(variables('ucpLbId'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]"
+                            },
+                            "frontendPort": 80,
+                            "backendPort": 80,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "backendAddressPool": {
+                                "id": "[concat(variables('ucpLbId'),'/backendAddressPools/ucp-bkpool')]"
+                            },
+                            "probe": {
+                                "id": "[concat(variables('ucpLbId'),'/probes/http-hlt')]"
+                            }
+                        }
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "https-hlt",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 443,
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        }
+                    },
+                    {
+                        "name": "http-hlt",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 80,
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        }
+                    }
+                ],
+                "copy": [
+                    {
+                        "name": "inboundNatRules",
+                        "count": "[variables('ucp-c-count')]",
+                        "input": {
+                            "name": "[concat('ucp-c-ssh', copyIndex('inboundNatRules'))]",
+                            "properties": {
+                                "frontendIPConfiguration": {
+                                    "id": "[concat(variables('ucpLbId'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]"
+                                },
+                                "frontendPort": "[concat('6000',copyIndex('inboundNatRules'))]",
+                                "backendPort": 22,
+                                "idleTimeoutInMinutes": 4,
+                                "protocol": "Tcp"
+                            }
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('lbPipNamesArray')[2])]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(variables('dtrwNicName'),copyIndex())]",
+            "apiVersion": "2017-06-01",
+            "location": "[variables('location')]",
+            "copy": {
+                "name": "loop",
+                "count": "[variables('dtr-w-count')]"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "[concat('ipconfig',copyIndex())]",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',variables('vnetName')),'/subnets/subnet',copyIndex(1))]"
+                            },
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('dtrLbName')), '/backendAddressPools/dtr-bkpool')]"
+                                }
+                            ],
+                            "loadBalancerInboundNatRules": [
+                                {
+                                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('dtrLbName')), '/inboundNatRules/dtr-w-ssh',copyIndex())]"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
+                "[resourceId('Microsoft.Network/loadBalancers', variables('dtrLbname'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(variables('ucpcNicName'),copyIndex())]",
+            "apiVersion": "2017-06-01",
+            "location": "[variables('location')]",
+            "copy": {
+                "name": "loop",
+                "count": "[variables('ucp-c-count')]"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "[concat('ipconfig',copyIndex())]",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')),'/subnets/subnet',copyIndex(1))]"
+                            },
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('ucpLbName')), '/backendAddressPools/ucp-bkpool')]"
+                                }
+                            ],
+                            "loadBalancerInboundNatRules": [
+                                {
+                                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('ucpLbName')), '/inboundNatRules/ucp-c-ssh',copyIndex())]"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
+                "[resourceId('Microsoft.Network/loadBalancers', variables('ucpLbName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(variables('ucpwNicName'),copyIndex())]",
+            "apiVersion": "2017-06-01",
+            "location": "[variables('location')]",
+            "copy": {
+                "name": "loop",
+                "count": "[variables('ucp-w-count')]"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "[concat('ipconfig',copyIndex())]",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), '/subnets/subnet',copyIndex(1))]"
+                            },
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('appLbName')), '/backendAddressPools/app-bkpool')]"
+                                }
+                            ],
+                            "loadBalancerInboundNatRules": [
+                                {
+                                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('appLbName')), '/inboundNatRules/ucp-w-ssh',copyIndex())]"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
+                "[resourceId('Microsoft.Network/loadBalancers', variables('appLbName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[variables('dtrstoreName')]",
+            "apiVersion": "2016-01-01",
+            "location": "[variables('location')]"
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(variables('dtrWorkerVMName'),copyIndex())]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "[variables('location')]",
+            "copy": {
+                "name": "loop",
+                "count": "[variables('dtr-w-count')]"
+            },
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('avsetNamesArray')[1])]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "[variables('dtrWorkerVMsize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "OpenLogic",
+                        "offer": "CentOS",
+                        "sku": "7.3",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[concat(variables('dtrWorkerVMName'),copyIndex(),'_OsDisk')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS"
+                        },
+                        "diskSizeGB": 51
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[concat(variables('dtrWorkerVMName'),copyIndex())]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('dtrwNicName'),copyIndex()))]"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/availabilitySets', variables('avsetNamesArray')[1])]",
+                "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('dtrwNicName'),copyIndex()))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(variables('ucpWorkerVMName'),copyIndex())]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "[variables('location')]",
+            "copy": {
+                "name": "loop",
+                "count": "[variables('ucp-w-count')]"
+            },
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('avsetNamesArray')[0])]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "[variables('ucpWorkerVMsize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "OpenLogic",
+                        "offer": "CentOS",
+                        "sku": "7.3",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[concat(variables('ucpWorkerVMName'),copyIndex(),'_OsDisk')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS"
+                        },
+                        "diskSizeGB": 51
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[concat(variables('ucpWorkerVMName'),copyIndex())]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('ucpwNicName'),copyIndex()))]"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/availabilitySets', variables('avsetNamesArray')[0])]",
+                "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('ucpwNicName'),copyIndex()))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(variables('ucpControllerVMName'),copyIndex())]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "[variables('location')]",
+            "copy": {
+                "name": "loop",
+                "count": "[variables('ucp-c-count')]"
+            },
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('avsetNamesArray')[2])]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "[variables('ucpControllerVMsize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "OpenLogic",
+                        "offer": "CentOS",
+                        "sku": "7.3",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[concat(variables('ucpControllerVMName'),copyIndex(),'_OsDisk')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS"
+                        },
+                        "diskSizeGB": 51
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[concat(variables('ucpControllerVMName'),copyIndex())]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('ucpcNicName'),copyIndex()))]"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/availabilitySets', variables('avsetNamesArray')[2])]",
+                "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('ucpcNicName'),copyIndex()))]"
+            ]
+        }
+    ]
+}

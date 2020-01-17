@@ -1,0 +1,248 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmssName": {
+            "type": "string"
+        },
+        "numNodes": {
+            "type": "int"
+        },
+        "authenticationType": {
+            "type": "string"
+        },
+        "nicName": {
+            "type": "string"
+        },
+        "storageAccountType": {
+            "type": "string"
+        },
+        "nodeVMSize": {
+            "type": "string"
+        },
+        "adminUsername": {
+            "type": "string"
+        },
+        "adminPassword": {
+            "type": "securestring"
+        },
+        "sshPublicKey": {
+            "type": "string"
+        },
+        "ubuntuImage": {
+            "type": "object"
+        },
+        "namingInfix": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "ipConfigName": {
+            "type": "string"
+        },
+        
+        "subnetRef": {
+            "type": "string"
+        },
+        "loadBalancerName": {
+            "type": "string"
+        },
+        "loadBalancerBackendAddressPoolName": {
+            "type": "string"
+        },
+        "loadBalancerInboundNatRuleNamePrefix": {
+            "type": "string"
+        },
+        "apiVersionVirtualMachineScaleSets":{
+            "type": "string"
+        },
+        "apiVersionAutoScaleSets":{
+            "type": "string"
+        },
+        "autoscaleMin": {
+            "type": "int"
+        },
+        "autoscaleMax": {
+            "type": "int"
+        },
+        "autoscaleDefault": {
+            "type": "int"
+        },
+        "scaleInCPUPercentageThreshold":{
+            "type": "int"
+        },
+        "scaleInInterval":{
+            "type": "int"
+        },
+        "scaleOutCPUPercentageThreshold":{
+            "type": "int"
+        },
+        "scaleOutInterval": {
+            "type": "int"
+        },
+        "autoScaleName": {
+            "type": "string"
+        },
+        "fileUris": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "commandToExecute": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "variables": {
+        "osProfilepassword": {
+            "computerNamePrefix": "[parameters('namingInfix')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPassword')]"
+        },
+        "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
+        "osProfilesshPublicKey": {
+            "computerNamePrefix": "[parameters('namingInfix')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPassword')]",
+            "linuxConfiguration": {
+                "disablePasswordAuthentication": true,
+                "ssh": {
+                    "publicKeys": [
+                        {
+                            "path": "[variables('sshKeyPath')]",
+                            "keyData": "[parameters('sshPublicKey')]"
+                        }
+                    ]
+                }
+            }
+        },
+        "osProfileReference": "[variables(concat('osProfile', parameters('authenticationType')))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "name": "[parameters('vmssName')]",
+            "location": "[parameters('location')]",
+            "apiVersion": "[parameters('apiVersionVirtualMachineScaleSets')]",
+            "sku": {
+                "name": "[parameters('nodeVMSize')]",
+                "tier": "Standard",
+                "capacity": "[parameters('numNodes')]"
+            },
+            "properties": {
+                "singlePlacementGroup": true,
+                "overprovision": true,
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadWrite",
+                            "managedDisk": {
+                                "storageAccountType": "[parameters('storageAccountType')]"
+                            }
+                        },
+                        "imageReference": "[parameters('ubuntuImage')]"
+                    },
+                    "osProfile": "[variables('osProfileReference')]",
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[parameters('nicName')]",
+                                "properties": {
+                                    "primary": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[parameters('ipConfigName')]",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[parameters('subnetRef')]"
+                                                },
+                                                "loadBalancerBackendAddressPools": [
+                                                    {
+                                                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancerName')), '/backendAddressPools/',parameters('loadBalancerBackendAddressPoolName'))]"
+                                                    }
+                                                ],
+                                                "loadBalancerInboundNatPools": [
+                                                    {
+                                                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancerName')), '/inboundNatPools/',parameters('loadBalancerInboundNatRuleNamePrefix'))]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Insights/autoscaleSettings",
+            "apiVersion": "[parameters('apiVersionAutoScaleSets')]",
+            "name": "[parameters('autoScaleName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachineScaleSets',parameters('vmssName'))]"
+            ],
+            "properties": {
+                "name": "[parameters('autoScaleName')]",
+                "targetResourceUri": "[resourceId('Microsoft.Compute/virtualMachineScaleSets',parameters('vmssName'))]",
+                "enabled": true,
+                "profiles": [
+                    {
+                        "name": "Profile",
+                        "capacity": {
+                            "minimum": "[parameters('autoscaleMin')]",
+                            "maximum": "[parameters('autoscaleMax')]",
+                            "default": "[parameters('autoscaleDefault')]"
+                        },
+                        "rules": [
+                            {
+                                "metricTrigger": {
+                                    "metricName": "Percentage CPU",
+                                    "metricNamespace": "",
+                                    "metricResourceUri": "[resourceId('Microsoft.Compute/virtualMachineScaleSets',parameters('vmssName'))]",
+                                    "timeGrain": "PT1M",
+                                    "statistic": "Average",
+                                    "timeWindow": "PT5M",
+                                    "timeAggregation": "Average",
+                                    "operator": "GreaterThan",
+                                    "threshold": "[parameters('scaleOutCPUPercentageThreshold')]"
+                                },
+                                "scaleAction": {
+                                    "direction": "Increase",
+                                    "type": "ChangeCount",
+                                    "value": "[parameters('scaleOutInterval')]",
+                                    "cooldown": "PT1M"
+                                }
+                            },
+                            {
+                                "metricTrigger": {
+                                    "metricName": "Percentage CPU",
+                                    "metricNamespace": "",
+                                    "metricResourceUri": "[resourceId('Microsoft.Compute/virtualMachineScaleSets',parameters('vmssName'))]",
+                                    "timeGrain": "PT1M",
+                                    "statistic": "Average",
+                                    "timeWindow": "PT5M",
+                                    "timeAggregation": "Average",
+                                    "operator": "LessThan",
+                                    "threshold": "[parameters('scaleInCPUPercentageThreshold')]"
+                                },
+                                "scaleAction": {
+                                    "direction": "Decrease",
+                                    "type": "ChangeCount",
+                                    "value": "[parameters('scaleInInterval')]",
+                                    "cooldown": "PT1M"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}

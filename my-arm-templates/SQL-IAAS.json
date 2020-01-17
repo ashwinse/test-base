@@ -1,0 +1,302 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+    },
+    "variables": {
+        "location": "[resourceGroup().location]",
+        "suffix": "[substring(uniqueString(resourceGroup().id), 0, 7)]",
+        "adminUsername": "testdrive",
+        "adminPassword": "TestDriveUser123",
+        
+        "vnetName": "sqlvnet",
+        "vnetAddressPrefix": "10.4.0.0/16",
+        "vnetSubnetName": "sqlsubnet1",
+        "vnetSubnetAddressPrefix": "10.4.2.0/24",
+        "baseUrl": "https://aztdrepo.blob.core.windows.net/informatica",
+        
+        "storageAccountName": "[concat('sql', variables('suffix'))]",
+        
+        "storageAccountType": "Standard_LRS",
+        
+        
+        "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('vnetName'))]",
+        "subnetID": "[concat(variables('vnetID'),'/subnets/', variables('vnetSubnetName'))]",
+        
+        "sqlVmName": "sqlserver",
+        "sqlVmPipName": "sql-pip",
+        "sqlVmNsgName": "sql-nsg",
+        "sqlVmSize": "Standard_DS2_v2",
+        "sqlDnsPrefix": "[concat('sqldns',variables('suffix'))]",
+        
+        "sqlVmNicName": "sqlvmnic",
+        
+        "sqlStorageSetupUrl": "[concat(variables('baseUrl'),'/nested/storage.json' )]",
+        "vnetUrl": "[concat(variables('baseUrl'),'/nested/vnet.json' )]",
+        
+        "sqlPipSetupUrl": "[concat(variables('baseUrl'),'/nested/public-ip.json' )]",
+        
+        "sqlNicSetupUrl": "[concat(variables('baseUrl'),'/nested/network-interface.json' )]",
+        "sqlVmSetupUrl": "[concat(variables('baseUrl'),'/nested/vm-withoutplan-with-1disk.json' )]",
+        "sqlIaasSetupUrl": "[concat(variables('baseUrl'),'/nested/sqlIaasExtension.json' )]",
+        "informaticaTags": {
+            "provider": "AACF690D-C725-4C78-9B1E-E586595B369F"
+        },
+        "sqlAuthenticationLogin": "sqluser",
+        "sqlAuthenticationPassword": "TestDriveUser123"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "sqlStorageSetup",
+            "apiVersion": "2016-06-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('sqlStorageSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageAccountName": {
+                        "value": "[variables('storageAccountName')]"
+                    },
+                    "storageAccountType": {
+                        "value": "[variables('storageAccountType')]"
+                    },
+                    "location": {
+                        "value": "[variables('location')]"
+                    }
+                }
+            }
+        },
+      
+       
+       
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "sqlVmPipSetup",
+            "apiVersion": "2016-06-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('sqlPipSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "publicIPAddressName": {
+                        "value": "[variables('sqlVmPipName')]"
+                    },
+                    "publicIPdnsPrefix": {
+                        "value": "[variables('sqlDnsPrefix')]"
+                    },
+                    "location": {
+                        "value": "[variables('location')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "sqlVnetSetup",
+            "apiVersion": "2016-06-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vnetUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vnetName": {
+                        "value": "[variables('vnetName')]"
+                    },
+                    "vnetAddressPrefix": {
+                        "value": "[variables('vnetAddressPrefix')]"
+                    },
+                    "vnetSubnetName": {
+                        "value": "[variables('vnetSubnetName')]"
+                    },
+                    "vnetSubnetAddressPrefix": {
+                        "value": "[variables('vnetSubnetAddressPrefix')]"
+                    },
+                    "location": {
+                        "value": "[variables('location')]"
+                    },
+                    "provider": {
+                        "value": "[toUpper(variables('informaticaTags').provider)]"
+                    }
+                }
+            }
+        },
+        
+        
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "sqlNicSetup",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/sqlVmPipSetup",
+                "Microsoft.Resources/deployments/sqlVnetSetup",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('sqlVmNsgName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('sqlNicSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "networkInterfaceName": {
+                        "value": "[variables('sqlVmNicName')]"
+                    },
+                    "networkSecurityGroupName": {
+                        "value": "[variables('sqlVmNsgName')]"
+                    },
+                    "publicIPAddressName": {
+                        "value": "[variables('sqlVmPipName')]"
+                    },
+                    "location": {
+                        "value": "[variables('location')]"
+                    },
+                    "subnetRef": {
+                        "value": "[variables('SubnetID')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[variables('sqlVmNsgName')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2016-09-01",
+            "location": "[variables('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-rdp",
+                        "properties": {
+                            "priority": 1000,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "Tcp",
+                            "destinationPortRange": "3389",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "default-allow-sql",
+                        "properties": {
+                            "priority": 1001,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "Tcp",
+                            "destinationPortRange": "1433",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "sqlVmSetup",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/sqlStorageSetup",
+                "Microsoft.Resources/deployments/sqlNicSetup"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('sqlVmSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vmName": {
+                        "value": "[variables('sqlVmName')]"
+                    },
+                    "vmSize": {
+                        "value": "[variables('sqlVmSize')]"
+                    },
+                    "adminUsername": {
+                        "value": "[variables('adminUsername')]"
+                    },
+                    "adminPassword": {
+                        "value": "[variables('adminPassword')]"
+                    },
+                    "location": {
+                        "value": "[variables('location')]"
+                    },
+                    "imagePublisher": {
+                        "value": "MicrosoftSQLServer"
+                    },
+                    "imageOffer": {
+                        "value": "SQL2012SP3-WS2012R2"
+                    },
+                    "imageSKU": {
+                        "value": "Standard"
+                    },
+                    "imageVersion": {
+                        "value": "latest"
+                    },
+                    "storageAccountName": {
+                        "value": "[variables('storageAccountName')]"
+                    },
+                    "networkInterfaceName": {
+                        "value": "[variables('sqlVmNicName')]"
+                    },
+                    "dataDiskSizeGB": {
+                        "value": "100"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "sqlIaasExtension",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/sqlVmSetup"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('sqlIaasSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vmName": {
+                        "value": "[variables('sqlVmName')]"
+                    },
+                    "sqlAuthenticationUsername": {
+                        "value": "[variables('sqlAuthenticationLogin')]"
+                    },
+                    "sqlAuthenticationPassword": {
+                        "value": "[variables('sqlAuthenticationPassword')]"
+                    },
+                    "location": {
+                        "value": "[variables('location')]"
+                    }
+                }
+            }
+        }
+        
+    ],
+    "outputs": {
+        
+        "sqlVM-Rdp-Ip": {
+            "type": "string",
+            "value": "[reference('sqlVmPipSetup').outputs.fqdn.value]"
+        },
+        "sqlAuthUsername": {
+            "type": "string",
+            "value": "[variables('sqlAuthenticationLogin')]"
+        },
+        "sqlAuthPassword": {
+            "type": "string",
+            "value": "[variables('sqlAuthenticationPassword')]"
+        }
+    }
+}

@@ -1,0 +1,35 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sourceImageVhdUri": {
+            "type": "string",
+            "defaultValue": "https://dockervhds.blob.core.windows.net/docker-lin/ubuntu-1604-1706-ee-osDisk.9811daed-7556-47ec-a636-16457e9c645d.vhd"
+        },
+        "imageName": {
+            "type": "string",
+            "defaultValue": "ubuntu-docker-1706-ee-osDisk"
+        }
+    },
+    "variables": {
+        "computeApiVersion": "2017-03-30"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Compute/images",
+            "apiVersion": "[variables('computeApiVersion')]",
+            "name": "[parameters('imageName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "storageProfile": {
+                    "osDisk": {
+                        "osType": "Linux",
+                        "osState": "Generalized",
+                        "blobUri": "[parameters('sourceImageVhdUri')]",
+                        "storageAccountType": "Standard_LRS"
+                    }
+                }
+            }
+        }
+    ]
+}

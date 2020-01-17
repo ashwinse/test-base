@@ -1,0 +1,51 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "westus"
+        }
+    },
+    "variables": {
+        "dbAccName": "[concat('xcscxc', '-registrar')]",
+        "dbKind": "GlobalDocumentDB",
+        "failoverRegion1": "[resourceGroup().location]"
+    },
+    "resources": [
+        {
+            "name": "[variables('dbAccName')]",
+            "type": "Microsoft.DocumentDB/databaseAccounts",
+            "apiVersion": "2015-04-08",
+            "location": "[parameters('location')]",
+            "tags": {},
+            "kind": "[variables('dbKind')]",
+            "properties": {
+                "name": "[variables('dbAccName')]",
+                "consistencyPolicy": {
+                    "defaultConsistencyLevel": "BoundedStaleness",
+                    "maxIntervalInSeconds": 5,
+                    "maxStalenessPrefix": 100
+                },
+                "locations": [
+                    {
+                        "locationName": "[variables('failoverRegion1')]",
+                        "failoverPriority": 0
+                    }
+                ],
+                "databaseAccountOfferType": "Standard",
+                "enableAutomaticFailover": true
+            }
+        }
+    ],
+    "outputs": {
+        "dbObject": {
+            "type": "object",
+            "value": "[reference(concat('Microsoft.DocumentDB/databaseAccounts/',variables('dbAccName')),'2015-04-08')]"
+        },
+        "peer-info-readonly-key": {
+            "type": "object",
+            "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('dbAccName')), '2015-04-08')]"
+        }
+    }
+}
